@@ -1,4 +1,4 @@
-{ 
+{
   "name": "msa",
   "description": "Display multiple sequences",
   "version": "0.0.0",
@@ -55,7 +55,7 @@
     "chai": "^1.9.1",
     "css-loader": "^0.23.1",
     "d3-scale": "^0.7.0",
-    "gulp": "^3.8.7",
+    "gulp": "^4.0.0",
     "gulp-chmod": "^1.1.0",
     "gulp-concat": "^2.3.4",
     "gulp-gzip": "0.0.8",

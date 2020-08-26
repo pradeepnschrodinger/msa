@@ -10,9 +10,6 @@ var gzip = require('gulp-gzip');
 
 var buildDir = "dist";
 
-gulp.task('default', ['build']);
-gulp.task('build', ['min-css', 'build-gzip']);
-
 // test are currently not run
 //gulp.task('test', ['test-mocha']);
 //gulp.task('test-mocha', function () {
@@ -27,35 +24,38 @@ gulp.task('build', ['min-css', 'build-gzip']);
 //   gulp.watch(['./src/**/*.js', './test/**/*.js'], ['test-mocha']);
 //});
 
-gulp.task('css',['init'], function () {
+gulp.task('init', function() {
+	  return mkdirp(buildDir)
+	});
+
+gulp.task('css',gulp.series('init'), function () {
     return gulp.src(path.join('css', '*.css') )
       .pipe(concat('msa.css'))
       .pipe(chmod(644))
       .pipe(gulp.dest(buildDir));
 });
 
-gulp.task('build-gzip', ['build-gzip-js', 'build-gzip-css']);
+gulp.task('min-css',gulp.series('css'), function () {
+	   return gulp.src(path.join(buildDir,"msa.css"))
+	   .pipe(minifyCSS())
+	   .pipe(rename('msa.min.css'))
+	   .pipe(chmod(644))
+	   .pipe(gulp.dest(buildDir));
+	});
+gulp.task('build-gzip-css', gulp.series('min-css'), function() {
+	  return gulp.src(path.join(buildDir, "msa.min.css"))
+	    .pipe(gzip({append: false, gzipOptions: { level: 9 }}))
+	    .pipe(rename("msa.min.gz.css"))
+	    .pipe(gulp.dest(buildDir));
+	});
+
 gulp.task('build-gzip-js', function() {
    return gulp.src(path.join(buildDir, "msa.js"))
      .pipe(gzip({append: false, gzipOptions: { level: 9 }}))
      .pipe(rename("msa.min.gz.js"))
      .pipe(gulp.dest(buildDir));
 });
-gulp.task('build-gzip-css', ['min-css'], function() {
-  return gulp.src(path.join(buildDir, "msa.min.css"))
-    .pipe(gzip({append: false, gzipOptions: { level: 9 }}))
-    .pipe(rename("msa.min.gz.css"))
-    .pipe(gulp.dest(buildDir));
-});
 
-gulp.task('min-css',['css'], function () {
-   return gulp.src(path.join(buildDir,"msa.css"))
-   .pipe(minifyCSS())
-   .pipe(rename('msa.min.css'))
-   .pipe(chmod(644))
-   .pipe(gulp.dest(buildDir));
-});
-
-gulp.task('init', function() {
-  return mkdirp(buildDir)
-});
+gulp.task('build-gzip', gulp.parallel('build-gzip-js', 'build-gzip-css'));
+gulp.task('build', gulp.series('min-css', 'build-gzip'));
+gulp.task('default', gulp.series('build'));
