@@ -5,7 +5,7 @@ var mocha = require('gulp-mocha');
 var concat = require('gulp-concat');
 var chmod = require('gulp-chmod');
 var rename = require('gulp-rename');
-var minifyCSS = require('gulp-minify-css');
+var minifyCSS = require('gulp-clean-css');
 var gzip = require('gulp-gzip');
 
 var buildDir = "dist";
