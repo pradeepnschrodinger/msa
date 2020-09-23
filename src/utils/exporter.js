@@ -97,7 +97,10 @@ const Exporter =
       return features.toJSON();
     });
     features = flatten(compact(features));
-    console.log(features);
+    if (!features || !features.length) {
+    	alert("No feature annotations found to export");
+    	return;
+    }
     var text = GFF.exportLines(features);
     var blob = new Blob([text], {type : 'text/plain'});
     return saveAs(blob, name);
@@ -105,6 +108,7 @@ const Exporter =
 
   saveAsImg: function(that,name) {
       // TODO: this is very ugly
+	  //let's look at https://www.edureka.co/community/67769/convert-entire-data-into-image-directory-without-using-canvas
       var canvas = that.getView('stage').getView('body').getView('seqblock').el;
       if ((typeof canvas !== "undefined" && canvas !== null)) {
         var url = canvas.toDataURL('image/png');

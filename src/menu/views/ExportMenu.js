@@ -18,7 +18,7 @@ const ExportMenu = MenuBuilder.extend({
   render: function() {
     this.setName("Export");
 
-    this.addNode("Share view (URL)" + ShareSym, () => {
+    /*this.addNode("Share view (URL)" + ShareSym, () => {
       return Exporter.shareLink(this.msa, function(link) {
         return window.open(link, '_blank');
       });
@@ -37,24 +37,29 @@ const ExportMenu = MenuBuilder.extend({
           return Exporter.openInJalview(url, this.g.colorscheme.get("scheme"));
         }
       }
-    });
+    }); */
+    
+    this.addNode("View in Jalview", () => {
+        var jalviewUrl = "http://www.jalview.org/";
+        return window.open(jalviewUrl, '_blank');
+      });
 
     this.addNode("Export alignment (FASTA)", () => {
       return Exporter.saveAsFile(this.msa, "all.fasta");
     });
 
-    this.addNode("Export alignment (URL)", () => {
+    /*this.addNode("Export alignment (URL)", () => {
       return Exporter.publishWeb(this.msa, function(link) {
         return window.open(link, '_blank');
       });
-    });
+    });*/
 
     this.addNode("Export selected sequences (FASTA)", () => {
-      return Exporter.saveSelection(this.msa, "selection.fasta");
+    	return Exporter.saveSelection(this.msa, "selection.fasta");
     });
 
     this.addNode("Export features (GFF)", () => {
-      return Exporter.saveAnnots(this.msa, "features.gff3");
+    	return Exporter.saveAnnots(this.msa, "features.gff3");
     });
 
     this.addNode("Export MSA image (PNG)", () => {
