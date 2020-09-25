@@ -116,18 +116,14 @@ const Exporter =
       }
   }*/
   saveAsImg: function(that,name) {
-      // TODO: this is very ugly
-	  console.log(that);
+      // TODO: this is less ugly, but it still doesn't download the full alignment, only what's shown on screen
 	  var elementToCapture = document.getElementsByClassName('biojs_msa_stage')[0];
 	  html2canvas(elementToCapture).then(function(canvas) {
-		  var link = document.createElement('a');
-		    link.download = 'test.png';
-		    link.href = canvas.toDataURL();
-		    link.click();
-		    link.remove();
-		    //document.body.appendChild(canvas);
-		    //var url = canvas.toDataURL('image/png');
-	        //return saveAs(blobURL(url), name, "image/png");
+		  document.querySelector('body').appendChild(canvas);
+		  var url = canvas.toDataURL('image/png');
+		  saveAs(blobURL(url), name, "image/png");
+		  canvas.remove();
+		  return;
 	  });
   }
   };
