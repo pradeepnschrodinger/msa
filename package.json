@@ -36,6 +36,7 @@
     "blueimp_canvastoblob": "^1.0.0",
     "browser-saveas": "^1.0.1",
     "dom-helper": "^1.0.0",
+    "html2canvas": "^1.0.0-rc.7",
     "jbone": "^1.1.2",
     "koala-js": "^1.0.7",
     "linear-scale": "^0.0.3",

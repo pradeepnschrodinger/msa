@@ -5,6 +5,7 @@ import {fasta as Fasta,
 const blobURL = require("blueimp_canvastoblob");
 const saveAs = require("browser-saveas");
 import {flatten, compact} from "lodash";
+import html2canvas from 'html2canvas';
 
 const Exporter =
 
@@ -106,14 +107,28 @@ const Exporter =
     return saveAs(blob, name);
   },
 
-  saveAsImg: function(that,name) {
+  /*saveAsImg: function(that,name) {
       // TODO: this is very ugly
-	  //let's look at https://www.edureka.co/community/67769/convert-entire-data-into-image-directory-without-using-canvas
       var canvas = that.getView('stage').getView('body').getView('seqblock').el;
       if ((typeof canvas !== "undefined" && canvas !== null)) {
         var url = canvas.toDataURL('image/png');
         return saveAs(blobURL(url), name, "image/png");
       }
+  }*/
+  saveAsImg: function(that,name) {
+      // TODO: this is very ugly
+	  console.log(that);
+	  var elementToCapture = document.getElementsByClassName('biojs_msa_stage')[0];
+	  html2canvas(elementToCapture).then(function(canvas) {
+		  var link = document.createElement('a');
+		    link.download = 'test.png';
+		    link.href = canvas.toDataURL();
+		    link.click();
+		    link.remove();
+		    //document.body.appendChild(canvas);
+		    //var url = canvas.toDataURL('image/png');
+	        //return saveAs(blobURL(url), name, "image/png");
+	  });
   }
   };
 export default Exporter;
