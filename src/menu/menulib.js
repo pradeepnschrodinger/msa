@@ -73,28 +73,29 @@ const MenuBuilder = view.extend({
   },
 
   buildDOM: function() {
-    let span = document.createElement("span");
-    span.appendChild(this._buildM({
+    let div = document.createElement("div");
+    div.className = "dropdown";
+    div.appendChild(this._buildM({
       nodes: this._nodes,
       name: this.name
     }));
-    return span;
+    return div;
   },
   _buildM: function(data) {
     let displayedButton, frag, key, li, node, style, _ref;
     let nodes = data.nodes;
     let name = data.name;
-    let menu = document.createElement("div");
-    menu.className = "smenu-dropdown smenu-dropdown-tip";
-    menu.style.display = "none";
 
     let menuUl = document.createElement("ul");
-    menuUl.className = "smenu-dropdown-menu";
+    menuUl.className = "dropdown-menu";
+    menuUl.setAttribute('aria-labelledby', name.replace(/\s+/g, '')+"DropDown");
+    menuUl.style.display = "none";
 
     // currently we support one-level
     for (let i = 0, _len = nodes.length; i < _len; i++) {
       node = nodes[i];
       li = document.createElement("li");
+      li.className = "dropdown-item";
       li.textContent = node.label;
       _ref = node.style;
       for (key in _ref) {
@@ -106,29 +107,31 @@ const MenuBuilder = view.extend({
       menuUl.appendChild(li);
     }
     this.trigger("new:menu", menuUl);
-    menu.appendChild(menuUl);
 
     displayedButton = document.createElement("a");
     displayedButton.textContent = name;
-    displayedButton.className = "smenubar_alink";
+    displayedButton.className = "btn btn-secondary dropdown-toggle";
+    displayedButton.setAttribute('role', 'button');
+    displayedButton.setAttribute('data-toggle', 'dropdown');
+    displayedButton.id = name.replace(/\s+/g, '')+"DropDown";
     this.trigger("new:button", displayedButton);
 
     // HACK to be able to hide the submenu
     // listens globally for click events
     jbone(displayedButton).on("click", ((_this) => {
       return (e) => {
-        _this._showMenu(e, menu, displayedButton);
+        _this._showMenu(e, menuUl, displayedButton);
         return window.setTimeout(() => {
           return jbone(document.body).one("click", (e) => {
-            return menu.style.display = "none";
+            return menuUl.style.display = "none";
           });
         }, 5);
       };
     })(this));
 
     frag = document.createDocumentFragment();
-    frag.appendChild(menu);
     frag.appendChild(displayedButton);
+    frag.appendChild(menuUl);
     return frag;
   },
 
@@ -137,9 +140,8 @@ const MenuBuilder = view.extend({
     let rect;
     menu.style.display = "block";
     menu.style.position = "absolute";
+    menu.className += " show";
     rect = target.getBoundingClientRect();
-    //menu.style.left = rect.left + "px";
-    //menu.style.top = (rect.top + target.offsetHeight) + "px";
   }
 });
 export default MenuBuilder;
