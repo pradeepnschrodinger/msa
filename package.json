@@ -44,7 +44,6 @@
     "mouse-pos": "^1.0.3",
     "msa-colorschemes": "^1.0.10",
     "msa-seqtools": "^0.1.8",
-    "stat.seqs": "^0.1.21",
     "xhr": "^2.2.0"
   },
   "devDependencies": {

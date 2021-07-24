@@ -1,6 +1,6 @@
 const Sequence = require("biojs-model").seq;
 import BMath from "./bmath";
-const Stat = require("stat.seqs");
+const Stat = require("../statSeqs");
 
 const SeqGen = {
   _generateSequence: (len) => {
