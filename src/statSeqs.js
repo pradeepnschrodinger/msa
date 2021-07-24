@@ -1,5 +1,6 @@
 // File copied from https://github.com/wilzbach/stat.seqs/blob/99185e18009d1f08454cdd091e8eeb2206c7c0f0/lib/index.js
 var _ = require("underscore");
+const Collection = require("backbone-thin").Collection;
 
 var stat = function(seqs, opts) {
   // if someone forgets new
@@ -50,7 +51,7 @@ stat.prototype.resetSeqs = function reset(seqs) {
   this.seqs = [];
 
   // support sequence models
-  if (! seqs instanceof Array || "at" in seqs) {
+  if (! seqs instanceof Array || seqs instanceof Collection) {
     this.mseqs = seqs;
     var mSeqsPluck = function() {
       var seqArr = this.mseqs.pluck("seq");
