@@ -14,7 +14,7 @@ const View = boneView.extend({
       return this.el.style.height = this.g.zoomer.get("rowHeight") + "px";
     });
 
-    return this.listenTo(this.g.selcol,"change reset add", this.setSelection);
+    return this.listenTo(this.g.selcol,"change reset add remove", this.setSelection);
   },
 
   draw: function() {

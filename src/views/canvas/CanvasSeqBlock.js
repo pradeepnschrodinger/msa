@@ -23,7 +23,7 @@ const View = boneView.extend({
     this.listenTo(this.g.columns,"change:hidden", this.render);
     this.listenTo(this.g.zoomer,"change:alignmentWidth change:alignmentHeight", this.render);
     this.listenTo(this.g.colorscheme, "change", this.render);
-    this.listenTo(this.g.selcol, "reset add", this.render);
+    this.listenTo(this.g.selcol, "reset add remove", this.render);
     this.listenTo(this.model, "reset add", this.render);
 
     // el props

@@ -203,10 +203,30 @@ const SelectionManager = Collection.extend({
   // method to decide whether to start a new selection
   // or append to the old one (depending whether CTRL was pressed)
   _handleE: function(e, selection) {
-    if (e.ctrlKey || e.metaKey) {
-      return this.add(selection);
+    if (selection.get("type") === "row") {
+      const selectedRowSeqIds = this.models.map(m => m.get("seqId"))
+      const selectionId = selection.get("seqId")
+      if (e.ctrlKey || e.metaKey) {
+        if (selectedRowSeqIds.includes(selectionId)) {
+          const modelToRemove = this.models.find(m => m.get("seqId") === selectionId)
+          this.remove([modelToRemove])
+        } else {
+          this.add(selection)
+        }
+      } else {
+        if (selectedRowSeqIds.includes(selectionId)) {
+          const modelToRemove = this.models.find(m => m.get("seqId") === selectionId)
+          this.remove([modelToRemove])
+        } else {
+          this.reset([selection]);
+        }
+      }
     } else {
-      return this.reset([selection]);
+      if (e.ctrlKey || e.metaKey) {
+        this.add(selection);
+      } else {
+        this.reset([selection]);
+      }
     }
   },
 
