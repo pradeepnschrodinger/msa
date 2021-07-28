@@ -6,7 +6,6 @@ const jbone = require("jbone");
 import CharCache from "./CanvasCharCache";
 import SelectionClass from "./CanvasSelection";
 import CanvasSeqDrawer from "./CanvasSeqDrawer";
-import CanvasCoordsCache from "./CanvasCoordsCache";
 
 const View = boneView.extend({
 
@@ -24,7 +23,7 @@ const View = boneView.extend({
     this.listenTo(this.g.columns,"change:hidden", this.render);
     this.listenTo(this.g.zoomer,"change:alignmentWidth change:alignmentHeight", this.render);
     this.listenTo(this.g.colorscheme, "change", this.render);
-    this.listenTo(this.g.selcol, "reset add", this.render);
+    this.listenTo(this.g.selcol, "reset add remove", this.render);
     this.listenTo(this.model, "reset add", this.render);
 
     // el props
@@ -35,7 +34,7 @@ const View = boneView.extend({
 
     this.ctx = this.el.getContext('2d');
     this.cache = new CharCache(this.g);
-    this.coordsCache = new CanvasCoordsCache(this.g, this.model);
+
 
     // clear the char cache
     this.listenTo(this.g.zoomer, "change:residueFont", function() {
@@ -167,8 +166,11 @@ const View = boneView.extend({
     this.el.setAttribute('height', this.g.zoomer.get("alignmentHeight") + "px");
     this.el.setAttribute('width', this.g.zoomer.getAlignmentWidth() + "px");
 
-    this.g.zoomer._checkScrolling( this._checkScrolling([this.g.zoomer.get('_alignmentScrollLeft'),
-    this.g.zoomer.get('_alignmentScrollTop')] ),{header: "canvasseq"});
+    const zoomerScrollLeft = this.g.zoomer.get('_alignmentScrollLeft');
+    const zoomerScrollRight = this.g.zoomer.get('_alignmentScrollTop');
+    const scrollObj = this._checkScrolling( [ zoomerScrollLeft, zoomerScrollRight ])
+
+    this.g.zoomer._checkScrolling( scrollObj, {header: "canvasseq"});
 
     this._setColor();
 
@@ -373,8 +375,12 @@ const View = boneView.extend({
   // @returns: [xScroll,yScroll] valid coordinates
   _checkScrolling: function(scrollObj) {
 
+    // These calculations are taken from src/views/canvas/CanvasCoordsCache.js:
+    const maxScrollHeight = this.g.zoomer.getMaxAlignmentHeight() - this.g.zoomer.get('alignmentHeight');
+    const maxScrollWidth = this.g.zoomer.getMaxAlignmentWidth() - this.g.zoomer.getAlignmentWidth();
+
     // 0: maxLeft, 1: maxTop
-    const max = [this.coordsCache.maxScrollWidth, this.coordsCache.maxScrollHeight];
+    const max = [maxScrollWidth, maxScrollHeight];
 
     for (let i = 0; i <= 1; i++) {
       if (scrollObj[i] > max[i]) {

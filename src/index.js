@@ -1,4 +1,5 @@
 import MSA from "./msa";
+import {getMeta as originalFastaMetaParser} from "msa-seqtools"
 
 const MSAWrapper = function() {
   var msa = function(args) {
@@ -33,7 +34,8 @@ const io = {
     xhr: require('xhr'),
     fasta: fasta,
     clustal: clustal,
-    gff: gff
+    gff: gff,
+    originalFastaMetaParser: originalFastaMetaParser
 }
 
 export {io};

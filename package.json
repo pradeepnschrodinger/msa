@@ -43,7 +43,7 @@
     "lodash": "^4.13.1",
     "mouse-pos": "^1.0.3",
     "msa-colorschemes": "^1.0.10",
-    "stat.seqs": "^0.1.21",
+    "msa-seqtools": "^0.1.8",
     "xhr": "^2.2.0"
   },
   "devDependencies": {
@@ -93,7 +93,7 @@
   "scripts": {
     "test": "echo 'temporarily disabled'",
     "prepare": "node ./node_modules/webpack/bin/webpack.js -p && gulp build && babel -d lib src",
-    "build": "node ./node_modules/webpack/bin/webpack.js -p && gulp build",
+    "build": "node ./node_modules/webpack/bin/webpack.js && gulp build",
     "sniper": "node ./node_modules/sniper/bin/sniper .",
     "watch": "node ./node_modules/webpack/bin/webpack.js -w",
     "w": "prunner \"npm run sniper\" \"npm run watch\""

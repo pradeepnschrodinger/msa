@@ -22,7 +22,7 @@ const Eventhandler = require("biojs-events");
 import Stage from "./views/Stage";
 
 // statistics
-const Stats = require("stat.seqs");
+const Stats = require("./statSeqs");
 
 // utils
 const $ = require("jbone");

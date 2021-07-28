@@ -134,10 +134,16 @@ module.exports = Zoomer = Model.extend({
 
   _adjustWidth: function() {
     if (!(this.el !== undefined && this.model !== undefined)) { return; }
+
+    // This is to account for the margins/padding around the canvas's actual
+    // content area:
+    const marginAdjustment = 35;
+
+    let parentWidth
     if ((this.el.parentNode != null) && this.el.parentNode.offsetWidth !== 0) {
-      var parentWidth = this.el.parentNode.offsetWidth;
+      parentWidth = this.el.parentNode.offsetWidth - marginAdjustment;
     } else {
-      parentWidth = document.body.clientWidth - 35;
+      parentWidth = document.body.clientWidth - marginAdjustment;
     }
 
     // TODO: dirty hack
@@ -148,7 +154,8 @@ module.exports = Zoomer = Model.extend({
     val = Math.floor( val / this.get("columnWidth")) * this.get("columnWidth");
 
     //@set "alignmentWidth", val
-    return this.attributes.alignmentWidth = val;
+    this.set("alignmentWidth", val)
+    return val;
   },
 
   autoResize: function() {

@@ -38,11 +38,6 @@ const ExportMenu = MenuBuilder.extend({
         }
       }
     }); */
-    
-    this.addNode("View in Jalview", () => {
-        var jalviewUrl = "http://www.jalview.org/";
-        return window.open(jalviewUrl, '_blank');
-      });
 
     this.addNode("Export alignment (FASTA)", () => {
       return Exporter.saveAsFile(this.msa, "all.fasta");
