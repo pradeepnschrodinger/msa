@@ -55,25 +55,30 @@ const LabelView = view.extend({
       id.style.width = this.g.zoomer.get("labelIdLength") + "px";
       id.style.display = "inline-block";
       this.el.appendChild(id);
+      this.el.setAttribute("title", val)
     }
 
     if (this.g.vis.get("labelPartition")) {
       var part = document.createElement("span");
       part.style.width= this.g.zoomer.get("labelPartLength") + "px";
-      part.textContent = this.model.get("partition");
+      const textContent = this.model.get("partition");
+      part.textContent = textContent;
       part.style.display = "inline-block";
       this.el.appendChild(id);
       this.el.appendChild(part);
+      this.el.setAttribute("title", textContent)
     }
 
     if (this.g.vis.get("labelName")) {
       var name = document.createElement("span");
-      name.textContent = this.model.get("name");
+      const textContent = this.model.get("name");
+      name.textContent = textContent;
       if (this.model.get("ref") && this.g.config.get("hasRef")) {
         name.style.fontWeight = "bold";
       }
       name.style.width= this.g.zoomer.get("labelNameLength") + "px";
       this.el.appendChild(name);
+      this.el.setAttribute("title", textContent)
     }
 
     this.el.style.overflow = scroll;
