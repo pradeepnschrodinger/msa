@@ -14,7 +14,21 @@ const View = boneView.extend({
     }
 
     if (this.g.vis.get("sequences")) {
-      var seqblock = new SeqBlock({model: this.model, g: this.g});
+      var seqblock;
+      if (this.g.config.get("shouldRenderSeqBlockAsSvg") === true) {
+        const childEl = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        seqblock = new SeqBlock({
+          model: this.model,
+          g: this.g,
+          el: childEl,
+        });
+      } else {
+        seqblock = new SeqBlock({
+          model: this.model,
+          g: this.g,
+          el: document.createElement("canvas"),
+        });
+      }
       seqblock.ordering = 0;
       this.addView("seqblock",seqblock);
     }

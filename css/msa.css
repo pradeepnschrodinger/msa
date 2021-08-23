@@ -25,6 +25,8 @@
     text-overflow: clip;
     /*margin:auto; */
     text-align: left;
+
+    text-overflow: ellipsis;
 }
 
 .biojs_msa_header {

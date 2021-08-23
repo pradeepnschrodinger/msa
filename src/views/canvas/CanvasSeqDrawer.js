@@ -152,7 +152,14 @@ const Drawer = {
   // chrome: 2000ms drawLetter - 1000ms drawRect
   // FF: 1700ms drawLetter - 300ms drawRect
   _drawLetter: function(that,data) {
-    return that.ctx.drawImage(that.cache.getFontTile(data.c, data.rectWidth, data.rectHeight), data.xPos, data.yPos,data.rectWidth,data.rectHeight);
+    if (that.g.config.get("shouldRenderSeqBlockAsSvg") === true) {
+      that.ctx.fillStyle = "black";
+      that.ctx.textAlign = "center";
+      that.ctx.textBaseline = "middle";
+      that.ctx.fillText(data.c, data.xPos + data.rectWidth / 2, data.yPos + data.rectHeight - data.rectHeight / 2);
+    } else {
+      return that.ctx.drawImage( that.cache.getFontTile(data.c, data.rectWidth, data.rectHeight), data.xPos, data.yPos, data.rectWidth, data.rectHeight);
+    }
   }
 };
 

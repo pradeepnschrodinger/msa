@@ -103,22 +103,6 @@ const OrderingMenu = MenuBuilder.extend({
     }
     ), precode: setIdent});
 
-    models.push({text: "Gaps " + arrowUp, comparator: ((a,b) => {
-      var val = this.gaps[a.id] - this.gaps[b.id];
-      if (val > 0) { return 1; }
-      if (val < 0) { return -1; }
-      return 0;
-    }
-    ), precode: setGaps});
-
-    models.push({text: "Gaps " + arrowDown, comparator: ((a,b) => {
-      var val = this.gaps[a.id] - this.gaps[b.id];
-      if (val < 0) { return 1; }
-      if (val > 0) { return -1; }
-      return 0;
-    }
-    ), precode: setGaps});
-
     models.push({text: "Consensus to top", comparator(seq) {
         return !seq.get("ref");
     }});

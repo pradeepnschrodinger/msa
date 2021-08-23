@@ -135,21 +135,27 @@ module.exports = Zoomer = Model.extend({
   _adjustWidth: function() {
     if (!(this.el !== undefined && this.model !== undefined)) { return; }
 
-    // This is to account for the margins/padding around the canvas's actual
-    // content area:
-    const marginAdjustment = 35;
+    var calcWidth = this.getAlignmentWidth( this.model.getMaxLength() - this.g.columns.get('hidden').length);
 
-    let parentWidth
-    if ((this.el.parentNode != null) && this.el.parentNode.offsetWidth !== 0) {
-      parentWidth = this.el.parentNode.offsetWidth - marginAdjustment;
+    let val
+    if (this.g.config.get("shouldRenderSeqBlockAsSvg") === true) {
+      val = calcWidth
     } else {
-      parentWidth = document.body.clientWidth - marginAdjustment;
+      // This is to account for the margins/padding around the canvas's actual
+      // content area:
+      const marginAdjustment = 35;
+      let parentWidth
+      if ((this.el.parentNode != null) && this.el.parentNode.offsetWidth !== 0) {
+        parentWidth = this.el.parentNode.offsetWidth - marginAdjustment;
+      } else {
+        parentWidth = document.body.clientWidth - marginAdjustment;
+      }
+
+      // TODO: dirty hack
+      var maxWidth = parentWidth - this.getLeftBlockWidth();
+      val = Math.min(maxWidth,calcWidth);
     }
 
-    // TODO: dirty hack
-    var maxWidth = parentWidth - this.getLeftBlockWidth();
-    var calcWidth = this.getAlignmentWidth( this.model.getMaxLength() - this.g.columns.get('hidden').length);
-    var val = Math.min(maxWidth,calcWidth);
     // round to a valid AA box
     val = Math.floor( val / this.get("columnWidth")) * this.get("columnWidth");
 

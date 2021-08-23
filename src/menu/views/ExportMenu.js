@@ -53,9 +53,9 @@ const ExportMenu = MenuBuilder.extend({
     	return Exporter.saveSelection(this.msa, "selection.fasta");
     });
 
-    this.addNode("Export features (GFF)", () => {
-    	return Exporter.saveAnnots(this.msa, "features.gff3");
-    });
+    this.addNode("Export MSA image (SVG)", () => {
+      this.g.trigger("export:svg")
+    })
 
     this.addNode("Export MSA image (PNG)", () => {
       return Exporter.saveAsImg(this.msa, "biojs-msa.png");
