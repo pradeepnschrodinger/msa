@@ -3,7 +3,7 @@ import {fasta as Fasta,
         xhr} from "bio.io";
 
 const blobURL = require("blueimp_canvastoblob");
-const saveAs = require("browser-saveas");
+const saveAs = require("file-saver");
 import {flatten, compact} from "lodash";
 import html2canvas from 'html2canvas';
 
