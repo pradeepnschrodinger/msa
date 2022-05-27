@@ -74,7 +74,7 @@ const MetaView = view.extend({
         if (Object.keys(links).length > 0) {
           var menu = new MenuBuilder({name: "↗"});
           console.log(Object.keys(links));
-          links.forEach(function(val, key) {
+          Object.entries(links).forEach(function(val, key) {
             return menu.addNode(key,function(e) {
               return window.open(val);
             });
