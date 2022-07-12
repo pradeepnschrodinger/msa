@@ -57,7 +57,7 @@ const FilterMenu = MenuBuilder.extend({
       let threshold = prompt("Enter threshold (in percent)", 20);
       threshold = threshold / 100;
       return this.model.each((el) => {
-        if (el.get('identity') < threshold) {
+    	if (this.g.stats.identity()[el.id] < threshold) {
           return el.set('hidden', true);
         }
       });
@@ -78,7 +78,7 @@ const FilterMenu = MenuBuilder.extend({
       const threshold = prompt("Enter threshold (in percent)", 40);
       return this.model.each((el,i) => {
         const seq = el.get('seq');
-        const gaps = _.reduce(seq, (memo, c) => c === '-' ? ++memo: undefined,0);
+        const gaps = [...seq].reduce((memo, c) => c === '-' ? ++memo : memo, 0);
         if (gaps >  threshold) {
           return el.set('hidden', true);
         }
