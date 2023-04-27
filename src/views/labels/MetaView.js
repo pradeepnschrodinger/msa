@@ -53,6 +53,7 @@ const MetaView = view.extend({
       const modelIndex = this.model.collection.indexOf(this.model);
       var ident = this.g.stats.identity()[modelIndex];
       var identSpan = document.createElement('span');
+      identSpan.classList.add('meta_identity_value');
 
       if (this.model.get("ref") && this.g.config.get("hasRef")) {
         identSpan.textContent = "ref.";

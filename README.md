@@ -407,11 +407,13 @@ vis: {
     labelId: true,
     labelPartition: false,
     labelCheckbox: false,
+    labelIdentity: 'Ident',
 
     // meta stuff
     metaGaps: true,
     metaIdentity: true,
-    metaLinks: true
+    metaIdentityCalculator: undefined, // this can be overriden with a custom function of the following signature: (currentSequence: string, allSequence: string[]) => string[]
+    metaLinks: true,
 },
 zoomer: {
     // general
@@ -448,7 +450,7 @@ zoomer: {
     // meta cell
     metaGapWidth: 35,
     metaIdentWidth: 40,
-    metaLinksWidth: 25
+    metaLinksWidth: 35
 }
 ```
 

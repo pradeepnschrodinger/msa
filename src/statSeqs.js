@@ -112,6 +112,11 @@ calcValues.forEach(function(key) {
 });
 
 stat.prototype.identity = function identitiy(seq) {
+  // NOTE (pradeep): Do not cache if the user provided the identity function to give them more control.
+  if (this.customIdentity) {
+    return this.customIdentity(this.seqs);
+  }
+
   // do not cache if its called with a special compare seq
   var ident;
   if (this._identity === undefined || seq) {
