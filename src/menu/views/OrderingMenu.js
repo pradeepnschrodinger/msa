@@ -87,16 +87,19 @@ const OrderingMenu = MenuBuilder.extend({
     };
 
     models.push({text: "Identity " + arrowUp,comparator: ((a,b) => {
-      var val = this.ident[a.id] - this.ident[b.id];
-      console.log(this.ident[a.id],this.ident[b.id]);
+      var aIndex = this.g.seqs.indexOf(a);
+      var bIndex = this.g.seqs.indexOf(b);
+      var val = this.ident[aIndex] - this.ident[bIndex];
       if (val > 0) { return 1; }
       if (val < 0) { return -1; }
       return 0;
     }
     ), precode: setIdent});
-
+    
     models.push({text: "Identity " + arrowDown, comparator: ((a,b) => {
-      var val = this.ident[a.id] - this.ident[b.id];
+      var aIndex = this.g.seqs.indexOf(a);
+      var bIndex = this.g.seqs.indexOf(b);
+      var val = this.ident[aIndex] - this.ident[bIndex];
       if (val > 0) { return -1; }
       if (val < 0) { return 1; }
       return 0;
