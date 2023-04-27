@@ -32,7 +32,9 @@ const LabelView = view.extend({
   render: function() {
     dom.removeAllChilds(this.el);
 
-    this.el.style.width = `${this.g.zoomer.getLabelWidth()}px`;
+    // TODO (pradeep): Width doesn't work here, but min-width does.
+    this.el.style['min-width'] = `${this.g.zoomer.getLabelWidth()}px`;
+
     //@el.style.height = "#{@g.zoomer.get "rowHeight"}px"
     this.el.setAttribute("class", "biojs_msa_labels");
 

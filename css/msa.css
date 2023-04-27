@@ -34,16 +34,17 @@
     text-align: left;
 }
 
-.biojs_msa_labelrow:before {
-    content: '';
-    display: inline-block;
-    width: 0;
+.biojs_msa_labelrow {
     height: 100%;
-    vertical-align: middle;
+    display: flex;
 }
 
-.biojs_msa_labelrow{
-    height: 100%;
+.biojs_msa_albody {
+  display: flex;
+}
+
+.biojs_msa_labelblock {
+  flex: 1 1; /* grow or shrink to fit the exact remaining space */
 }
 
 .biojs_msa_labelblock::-webkit-scrollbar, .biojs_msa_rheader::-webkit-scrollbar{
@@ -105,6 +106,16 @@
     border-color: #6c757d;
 }
 
+.dropdown-metalink .dropdown-toggle {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .dropup,
 .dropright,
 .dropdown,
@@ -126,6 +137,7 @@
     margin-left: 0; }
 
 .dropdown-menu {
+  display: none; // hidden by default unless the `show` class name is applied
   position: absolute;
   top: 100%;
   left: 0;

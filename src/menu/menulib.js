@@ -10,6 +10,9 @@ const MenuBuilder = view.extend({
     this._nodes = [];
     this.name = opts.name || "";
     this.el.className += "smenubar";
+    if (opts.dropdownClassName) {
+      this.dropdownClassName = opts.dropdownClassName;
+    }
   },
   render: function() {
 
@@ -75,6 +78,9 @@ const MenuBuilder = view.extend({
   buildDOM: function() {
     let div = document.createElement("div");
     div.className = "dropdown";
+    if (this.dropdownClassName) {
+      div.className += ' ' + this.dropdownClassName;
+    }
     div.appendChild(this._buildM({
       nodes: this._nodes,
       name: this.name
@@ -89,7 +95,6 @@ const MenuBuilder = view.extend({
     let menuUl = document.createElement("ul");
     menuUl.className = "dropdown-menu";
     menuUl.setAttribute('aria-labelledby', name.replace(/\s+/g, '')+"DropDown");
-    menuUl.style.display = "none";
 
     // currently we support one-level
     for (let i = 0, _len = nodes.length; i < _len; i++) {
@@ -123,7 +128,8 @@ const MenuBuilder = view.extend({
         _this._showMenu(e, menuUl, displayedButton);
         return window.setTimeout(() => {
           return jbone(document.body).one("click", (e) => {
-            return menuUl.style.display = "none";
+            menuUl.classList.remove("show");
+            return true;
           });
         }, 5);
       };
@@ -138,9 +144,8 @@ const MenuBuilder = view.extend({
   // internal method to display the lower menu on a click
   _showMenu: function(e, menu, target) {
     let rect;
-    menu.style.display = "block";
     menu.style.position = "absolute";
-    menu.className += " show";
+    menu.classList.add("show");
     rect = target.getBoundingClientRect();
   }
 });

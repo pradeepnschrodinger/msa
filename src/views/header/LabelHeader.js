@@ -81,6 +81,9 @@ const LabelHeader = view.extend({
     if (this.g.vis.get("metaIdentity")) {
       metaHeader.appendChild(this.addEl("Ident", this.g.zoomer.get('metaIdentWidth')));
     }
+    if (this.g.vis.get("metaLinks")) {
+      metaHeader.appendChild(this.addEl("Links", this.g.zoomer.get('metaLinksWidth')));
+    }
     // if @.g.vis.get "metaLinks"
     //   metaHeader.appendChild @addEl("Links")
 
