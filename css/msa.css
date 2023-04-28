@@ -43,12 +43,8 @@
   display: flex;
 }
 
-.biojs_msa_labelblock {
-  flex: 1 1; /* grow or shrink to fit the exact remaining space */
-}
-
 .biojs_msa_labelblock::-webkit-scrollbar, .biojs_msa_rheader::-webkit-scrollbar{
-    // FIX scrollbars on Mac
+     /* FIX scrollbars on Mac */
     -webkit-appearance: none;
     width: 7px;
     height: 7px;

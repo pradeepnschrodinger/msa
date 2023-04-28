@@ -12,6 +12,8 @@ const View = boneView.extend({
     this.listenTo(this.g.zoomer,"change:alignmentHeight", this._setHeight);
     this.listenTo(this.model,"change:reference", this.draw);
 
+    this.listenTo(this.g.zoomer, "change:labelWidth change:metaWidth", this.render);
+
     return this.listenTo(this.model,"reset add remove", () => {
       this.draw();
       return this.render();
@@ -51,6 +53,7 @@ const View = boneView.extend({
     this.el.style.overflowX = "hidden";
     this.el.style.fontSize = `${this.g.zoomer.get('labelFontsize')}px`;
     this.el.style.lineHeight = `${this.g.zoomer.get("labelLineHeight")}`;
+    this.el.style.width = 0 + this.g.zoomer.getLeftBlockWidth() + "px";
     this._setHeight();
     return this;
   },
