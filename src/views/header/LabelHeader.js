@@ -9,7 +9,7 @@ const LabelHeader = view.extend({
   initialize: function(data) {
     this.g = data.g;
 
-    this.listenTo(this.g.vis, "change:metacell change:labels", this.render);
+    this.listenTo(this.g.vis, "change:metacell change:labels change: labelCustomColumnsNames", this.render);
     return this.listenTo(this.g.zoomer, "change:labelWidth change:metaWidth", this.render);
   },
 
@@ -55,6 +55,15 @@ const LabelHeader = view.extend({
       var name = this.addEl("Label");
       //name.style.marginLeft = "50px"
       labelHeader.appendChild(name);
+    }
+
+    if (this.g.vis.get("labelCustomColumns")) {
+      this.g.vis.get("labelCustomColumnsNames").forEach( (col, index) => {
+        const length = this.g.zoomer.get("labelCustomColumnLengths") ? this.g.zoomer.get("labelCustomColumnLengths")[index] : this.g.zoomer.get("labelCustomValueDefaultLength");
+        var labelCustom = this.addEl(col, length);
+
+        labelHeader.appendChild(labelCustom);
+      });
     }
 
     return labelHeader;

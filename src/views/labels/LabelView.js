@@ -22,8 +22,8 @@ const LabelView = view.extend({
     this.delegateEvents(events);
     this.listenTo(this.g.config, "change:registerMouseHover", this.manageEvents);
     this.listenTo(this.g.config, "change:registerMouseClick", this.manageEvents);
-    this.listenTo(this.g.vis, "change:labelName change:labelId change:labelPartition change:labelCheckbox", this.render);
-    this.listenTo( this.g.zoomer, "change:labelIdLength change:labelNameLength change:labelPartLength change:labelCheckLength", this.render
+    this.listenTo(this.g.vis, "change:labelName change:labelId change:labelPartition change:labelCheckbox change:labelCustomColumns change:labelCustomColumnsNames change:labelCustomColumnsValuesGetter", this.render);
+    this.listenTo( this.g.zoomer, "change:labelIdLength change:labelNameLength change:labelPartLength change:labelCheckLength change:labelCustomColumnLengths change:labelCustomValueDefaultLength", this.render
     );
     return this.listenTo( this.g.zoomer, "change:labelFontSize change:labelLineHeight change:labelWidth change:rowHeight", this.render
     );
@@ -83,6 +83,17 @@ const LabelView = view.extend({
       this.el.setAttribute("title", textContent)
     }
 
+    if (this.g.vis.get("labelCustomColumns")) {
+      this.g.vis.get("labelCustomColumnsNames").forEach((name, index) => {
+        var customValue = document.createElement("span");
+        const valFunc = this.g.vis.get("labelCustomColumnsValuesGetter")[index];
+        customValue.textContent = valFunc(this.model.get("id"), this.model.get("seq"));
+        customValue.name = name;
+        customValue.style.width = (this.g.zoomer.get("labelCustomColumnLengths") ? this.g.zoomer.get("labelCustomColumnLengths")[index] : this.g.zoomer.get("labelCustomValueDefaultLength")) + "px";
+        customValue.style.display = "inline-block";
+        this.el.appendChild(customValue);
+      });
+    }
     this.el.style.overflow = scroll;
     this.el.style.fontSize = `${this.g.zoomer.get('labelFontsize')}px`;
     return this;

@@ -9,7 +9,7 @@ module.exports = Zoomer = Model.extend({
     this.g = options.g;
 
     // events
-    this.listenTo( this, "change:labelIdLength change:labelNameLength change:labelPartLength change:labelCheckLength", (function() {
+    this.listenTo( this, "change:labelIdLength change:labelNameLength change:labelPartLength change:labelCheckLength change:labelCustomColumnLengths change:labelCustomValueDefaultLength", (function() {
       return this.trigger("change:labelWidth", this.getLabelWidth());
     }), this
     );
@@ -34,6 +34,7 @@ module.exports = Zoomer = Model.extend({
     labelIdLength: 20,
     labelIdentityLength: 25,
     labelNameLength: 100,
+    labelCustomValueDefaultLength: 50,
     labelPartLength: 15,
     labelCheckLength: 15,
     labelFontsize: 13,
@@ -128,6 +129,14 @@ module.exports = Zoomer = Model.extend({
      var val = 0;
      if (this.g.vis.get("labelName")) { val += this.get("labelNameLength"); }
      if (this.g.vis.get("labelId")) { val += this.get("labelIdLength"); }
+     if (this.g.vis.get("labelCustomColumns")) {
+        if (this.get("labelCustomColumnLengths")) {
+          this.get("labelCustomColumnLengths").forEach((width)=> val += width);
+        }
+        else {
+          val += this.get("labelCustomValueDefaultLength") * this.g.vis.get("labelCustomColumnsValuesGetter").length;
+        }
+     }
      if (this.g.vis.get("labelPartition")) { val += this.get("labelPartLength"); }
      if (this.g.vis.get("labelCheckbox")) { val += this.get("labelCheckLength"); }
      return val;
