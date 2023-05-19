@@ -4,25 +4,16 @@ yourDiv.textContent = "loading";
 
 var opts = {};
 opts.el = yourDiv;
-
-const customValueCalculator = (id, currentSequence) => {
-  return Math.random() * 100;
-};
-
 opts.vis = {
   conserv: false,
-  overviewbox: false,
-  labelCustomColumnsNames: ['homoscore'],
-  labelCustomColumnsValuesGetter: [customValueCalculator],
-  labelCustomColumns: true,
+  overviewbox: false
 };
 opts.zoomer = {
   boxRectHeight: 1,
   boxRectWidth: 1,
   alignmentHeight: window.innerHeight * 0.8,
   labelFontsize: 12,
-  labelIdLength: 50,
-  labelCustomColumnLengths: [120],
+  labelIdLength: 50
 };
 var m = msa(opts);
 

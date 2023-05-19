@@ -9,7 +9,7 @@ const LabelHeader = view.extend({
   initialize: function(data) {
     this.g = data.g;
 
-    this.listenTo(this.g.vis, "change:metacell change:labels change: labelCustomColumnsNames", this.render);
+    this.listenTo(this.g.vis, "change:metacell change:labels change:customColumnsGetter change:customColumnsCount", this.render);
     return this.listenTo(this.g.zoomer, "change:labelWidth change:metaWidth", this.render);
   },
 
@@ -57,15 +57,25 @@ const LabelHeader = view.extend({
       labelHeader.appendChild(name);
     }
 
-    if (this.g.vis.get("labelCustomColumns")) {
-      this.g.vis.get("labelCustomColumnsNames").forEach( (col, index) => {
-        const length = this.g.zoomer.get("labelCustomColumnLengths") ? this.g.zoomer.get("labelCustomColumnLengths")[index] : this.g.zoomer.get("labelCustomValueDefaultLength");
-        var labelCustom = this.addEl(col, length);
-
-        labelHeader.appendChild(labelCustom);
-      });
+    if (this.g.vis.get("customColumnsGetter")) {
+      for(var idx = 0; idx < this.g.vis.get("customColumnsCount"); idx++) {
+        const column = this.g.vis.get("customColumnsGetter")(idx);
+        const length = column.length || 50;
+        const header = column.header;
+        if ( header instanceof Element || header instanceof HTMLDocument ) {
+          labelHeader.appendChild(header);
+        } 
+        else if (typeof header === 'function') {
+          const val = header();
+          const labelCustom = this.addEl(val, length);
+          labelHeader.appendChild(labelCustom);
+        }
+        else {
+          const labelCustom = this.addEl(header, length);
+          labelHeader.appendChild(labelCustom);
+        }
+      }
     }
-
     return labelHeader;
   },
 

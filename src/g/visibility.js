@@ -41,7 +41,7 @@ module.exports = Visibility = Model.extend({
     }), this
     );
 
-    this.listenTo( this, "change:labelName change:labelId change:labelPartition change:labelCheckbox change:labelIdentity change:labelCustomColumns", (function() {
+    this.listenTo( this, "change:labelName change:labelId change:labelPartition change:labelCheckbox change:labelIdentity change:customColumnsGetter change:customColumnsCount", (function() {
       return this.trigger("change:labels");
     }), this
     );

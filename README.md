@@ -408,6 +408,8 @@ vis: {
     labelPartition: false,
     labelCheckbox: false,
     labelIdentity: 'Ident',
+    customColumnsGetter: columnGetterFunc // this is a custom function which will return information (cell, width, header) of custom columns, it will take index of the column as an arguement and will of the following signature: (index: number) => {width: number, cell: function || string || DOMElement}
+    customColumnsCount: 3 //number of custom columns
 
     // meta stuff
     metaGaps: true,
