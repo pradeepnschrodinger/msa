@@ -79,6 +79,7 @@ const LabelView = view.extend({
         name.style.fontWeight = "bold";
       }
       name.style.width= this.g.zoomer.get("labelNameLength") + "px";
+      name.style.display = "inline-block";
       this.el.appendChild(name);
       this.el.setAttribute("title", textContent)
     }
@@ -97,7 +98,7 @@ const LabelView = view.extend({
           var customValue = document.createElement("span");
           var val;
           if ( typeof cell === 'function' ) {
-            val = cell(this.model.get("id"), this.model.get("seq"));
+            val = cell(this.model.toJSON());
             if (val instanceof Element || val instanceof HTMLDocument) {
               this.el.appendChild(val);
               continue;

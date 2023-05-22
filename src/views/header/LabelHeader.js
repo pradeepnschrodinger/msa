@@ -52,7 +52,7 @@ const LabelHeader = view.extend({
     }
 
     if (this.g.vis.get("labelName")) {
-      var name = this.addEl("Label");
+      var name = this.addEl("Label", this.g.zoomer.get("labelNameLength"));
       //name.style.marginLeft = "50px"
       labelHeader.appendChild(name);
     }

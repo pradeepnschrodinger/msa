@@ -5,8 +5,8 @@ yourDiv.textContent = "loading";
 var opts = {};
 opts.el = yourDiv;
 
-const customValueCalculator = (id, seq) => {
-  return id + seq[0];
+const customValueCalculator = (attr) => {
+  return attr.id + attr.seq[0];
 }
 
 const getDomElement = (text, width) => {
@@ -17,8 +17,8 @@ const getDomElement = (text, width) => {
   domEl.style.display = "inline-block";
   return domEl;
 }
-const customDomCalculator = (id, seq) => {
-  const domEl = getDomElement(id+seq.length, 90)
+const customDomCalculator = (attr) => {
+  const domEl = getDomElement(attr.id+attr.name, 90)
   domEl.style.backgroundColor = "red";
   return domEl;
 }
