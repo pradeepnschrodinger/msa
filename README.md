@@ -408,8 +408,20 @@ vis: {
     labelPartition: false,
     labelCheckbox: false,
     labelIdentity: 'Ident',
-    customColumnsGetter: columnGetterFunc // this is a custom function which will return information (cell, width, header) of custom columns, it will take index of the column as an arguement and will of the following signature: (index: number) => {width: number, cell: function || string || DOMElement, header: function || string || DOMElement}
-    customColumnsCount: 3 //number of custom columns
+    /*
+    this can be overridden with a custom function of the following signature:
+        (index: number) => ColumnInfo
+      where ColumnInfo represents the details about a column:
+        {
+          width: number, 
+          header: (function | string | DOMElement),
+          cell: (function | string | DOMElement),
+        }
+      `header` or `cell` can also be a function of the following signature:
+        (seqId: string) => (string | DOMElement)
+    */
+    customColumnsGetter: undefined,
+    customColumnsCount: 0, // number of custom columns
 
     // meta stuff
     metaGaps: true,

@@ -60,9 +60,9 @@ const LabelHeader = view.extend({
     if (this.g.vis.get("customColumnsGetter")) {
       for(var idx = 0; idx < this.g.vis.get("customColumnsCount"); idx++) {
         const column = this.g.vis.get("customColumnsGetter")(idx);
-        const length = column.length || 50;
+        const length = column.length || this.g.zoomer.get("customColumnsDefaultLength");
         const header = column.header;
-        if ( header instanceof Element || header instanceof HTMLDocument ) {
+        if ( header instanceof Element ) {
           labelHeader.appendChild(header);
         } 
         else if (typeof header === 'function') {

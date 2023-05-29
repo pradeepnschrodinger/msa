@@ -9,7 +9,7 @@ module.exports = Zoomer = Model.extend({
     this.g = options.g;
 
     // events
-    this.listenTo( this, "change:labelIdLength change:labelNameLength change:labelPartLength change:labelCheckLength change:customColumnsGetter change:customColumnsCount", (function() {
+    this.listenTo( this, "change:labelIdLength change:labelNameLength change:labelPartLength change:labelCheckLength change:customColumnsGetter change:customColumnsCount change:customColumnsDefaultLength", (function() {
       return this.trigger("change:labelWidth", this.getLabelWidth());
     }), this
     );
@@ -34,11 +34,11 @@ module.exports = Zoomer = Model.extend({
     labelIdLength: 20,
     labelIdentityLength: 25,
     labelNameLength: 100,
-    labelCustomValueDefaultLength: 50,
     labelPartLength: 15,
     labelCheckLength: 15,
     labelFontsize: 13,
     labelLineHeight: "13px",
+    customColumnsDefaultLength: 50,
 
     // marker
     markerFontsize: "10px",
@@ -131,7 +131,7 @@ module.exports = Zoomer = Model.extend({
      if (this.g.vis.get("labelId")) { val += this.get("labelIdLength"); }
      if (this.g.vis.get("customColumnsGetter")) {
         for (var idx = 0 ; idx < this.g.vis.get("customColumnsCount") ; idx++) {
-          val += this.g.vis.get("customColumnsGetter")(idx).length || 50;
+          val += this.g.vis.get("customColumnsGetter")(idx).length || this.get("customColumnsDefaultLength");
         }
      }
      if (this.g.vis.get("labelPartition")) { val += this.get("labelPartLength"); }

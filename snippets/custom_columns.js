@@ -5,8 +5,8 @@ yourDiv.textContent = "loading";
 var opts = {};
 opts.el = yourDiv;
 
-const customValueCalculator = (attr) => {
-  return attr.id + attr.seq[0];
+const customValueCalculator = (id) => {
+  return id + " custom";
 }
 
 const getDomElement = (text, width) => {
@@ -17,8 +17,8 @@ const getDomElement = (text, width) => {
   domEl.style.display = "inline-block";
   return domEl;
 }
-const customDomCalculator = (attr) => {
-  const domEl = getDomElement(attr.id+attr.name, 90)
+const customDomCalculator = (id) => {
+  const domEl = getDomElement("seq " + id, 90)
   domEl.style.backgroundColor = "red";
   return domEl;
 }
@@ -26,7 +26,7 @@ const customDomCalculator = (attr) => {
 const customColumns = [
   {
     header: 'Custom 1',
-    length: 50,
+    length: 90,
     cell: customValueCalculator,
   }, 
   {
@@ -73,12 +73,6 @@ m.render();
 renderMSA(msa.utils.seqgen.getDummySequences(20,20));
 
 function renderMSA(seqs) {
-  // hide some UI elements for large alignments
-  if (seqs.length > 1000) {
-    m.g.vis.set("conserv", false);
-    m.g.vis.set("metacell", false);
-    m.g.vis.set("overviewbox", false);
-  }
   m.seqs.reset(seqs);
   m.g.zoomer.set("alignmentWidth", "auto");
   m.render();

@@ -88,30 +88,27 @@ const LabelView = view.extend({
       for (var idx = 0; idx < this.g.vis.get("customColumnsCount"); idx++) {
         const column = this.g.vis.get("customColumnsGetter")(idx);
         const cell = column.cell;
+        var customValue = document.createElement("span");
         var val;
 
         if ( cell instanceof Element || cell instanceof HTMLDocument) {
           this.el.appendChild(cell);
           continue;
         }
-        else {
-          var customValue = document.createElement("span");
-          var val;
-          if ( typeof cell === 'function' ) {
-            val = cell(this.model.toJSON());
-            if (val instanceof Element || val instanceof HTMLDocument) {
-              this.el.appendChild(val);
-              continue;
-            } 
-          }
-          else {
-            val = cell;
-          }
-          customValue.textContent = val;
-          customValue.style.width = (column.length || 50) + "px";
-          customValue.style.display = "inline-block";
-          this.el.appendChild(customValue);
+        else if ( typeof cell === 'function' ) {
+          val = cell(this.model.get("id"));
+          if (val instanceof Element ) {
+            this.el.appendChild(val);
+            continue;
+          } 
         }
+        else {
+          val = cell;
+        }
+        customValue.textContent = val;
+        customValue.style.width = (column.length || this.g.zoomer.get("customColumnsDefaultLength")) + "px";
+        customValue.style.display = "inline-block";
+        this.el.appendChild(customValue);
       }
     }
     this.el.style.overflow = scroll;
