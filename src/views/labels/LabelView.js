@@ -87,33 +87,32 @@ const LabelView = view.extend({
     if (this.g.vis.get("customColumnsGetter")) {
       for (var idx = 0; idx < this.g.vis.get("customColumnsCount"); idx++) {
         const column = this.g.vis.get("customColumnsGetter")(idx);
-        const cell = column.cell;
-        var customValue = document.createElement("span");
-        var val;
+        const width = column.length || this.g.zoomer.get("customColumnsDefaultLength");
+        var cell = column.cell;
+        if (typeof cell === 'function') {
+          cell = cell(this.model.get("id"));
+        }
 
-        if ( cell instanceof Element || cell instanceof HTMLDocument) {
-          this.el.appendChild(cell);
-          continue;
+        if (!(cell instanceof Element )) {
+          cell = this.addEl(cell, width);
         }
-        else if ( typeof cell === 'function' ) {
-          val = cell(this.model.get("id"));
-          if (val instanceof Element ) {
-            this.el.appendChild(val);
-            continue;
-          } 
-        }
-        else {
-          val = cell;
-        }
-        customValue.textContent = val;
-        customValue.style.width = (column.length || this.g.zoomer.get("customColumnsDefaultLength")) + "px";
-        customValue.style.display = "inline-block";
-        this.el.appendChild(customValue);
+        this.el.appendChild(cell);
+
       }
     }
     this.el.style.overflow = scroll;
     this.el.style.fontSize = `${this.g.zoomer.get('labelFontsize')}px`;
     return this;
+  },
+
+  addEl: function(content, width) {
+    var id = document.createElement("span");
+    id.textContent = content;
+    if ((typeof width !== "undefined" && width !== null)) {
+      id.style.width = width + "px";
+    }
+    id.style.display = "inline-block";
+    return id;
   },
 
   _onclick: function(evt) {

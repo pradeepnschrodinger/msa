@@ -61,19 +61,16 @@ const LabelHeader = view.extend({
       for(var idx = 0; idx < this.g.vis.get("customColumnsCount"); idx++) {
         const column = this.g.vis.get("customColumnsGetter")(idx);
         const length = column.length || this.g.zoomer.get("customColumnsDefaultLength");
-        const header = column.header;
-        if ( header instanceof Element ) {
-          labelHeader.appendChild(header);
+        var header = column.header;
+        
+        if (typeof header === 'function') {
+          header = header();
+        }
+
+        if (!( header instanceof Element )) {
+          header = this.addEl(header, length);
         } 
-        else if (typeof header === 'function') {
-          const val = header();
-          const labelCustom = this.addEl(val, length);
-          labelHeader.appendChild(labelCustom);
-        }
-        else {
-          const labelCustom = this.addEl(header, length);
-          labelHeader.appendChild(labelCustom);
-        }
+        labelHeader.appendChild(header);
       }
     }
     return labelHeader;

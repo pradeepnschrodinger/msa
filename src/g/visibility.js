@@ -21,7 +21,7 @@ module.exports = Visibility = Model.extend({
     labelIdentity: 'Ident',
     labelPartition: false,
     labelCheckbox: false,
-    labelCustomColumns: false,
+    customColumnsCount: 0,
 
     // meta stuff
     metaGaps: true,
