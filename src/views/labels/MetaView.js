@@ -23,7 +23,7 @@ const MetaView = view.extend({
   render: function() {
     dom.removeAllChilds(this.el);
 
-    this.el.style.display = "inline-block";
+    this.el.style.display = "inline-flex";
 
     var width = this.g.zoomer.getMetaWidth();
     this.el.style.width = width - 10;
@@ -50,9 +50,8 @@ const MetaView = view.extend({
 
 
     if (this.g.vis.get("metaIdentity")) {
-      // identity
-      // TODO: there must be a better way to pass the id
-      var ident = this.g.stats.identity()[this.model.id];
+      const modelIndex = this.model.collection.indexOf(this.model);
+      var ident = this.g.stats.identity()[modelIndex];
       var identSpan = document.createElement('span');
 
       if (this.model.get("ref") && this.g.config.get("hasRef")) {
@@ -72,7 +71,7 @@ const MetaView = view.extend({
       if (this.model.attributes.ids) {
         var links = st.buildLinks(this.model.attributes.ids);
         if (Object.keys(links).length > 0) {
-          var menu = new MenuBuilder({name: "↗"});
+          var menu = new MenuBuilder({name: "↗", dropdownClassName: 'dropdown-metalink' });
           console.log(Object.keys(links));
           Object.entries(links).forEach(function(val, key) {
             return menu.addNode(key,function(e) {
@@ -82,7 +81,13 @@ const MetaView = view.extend({
 
           var linkEl = menu.buildDOM();
           linkEl.style.cursor = "pointer";
-          return this.el.appendChild(linkEl);
+
+          var metaLinksSpan = document.createElement('span');
+          metaLinksSpan.style.display = "inline-block";
+          metaLinksSpan.style.width = 25;
+          metaLinksSpan.appendChild(linkEl);
+          
+          return this.el.appendChild(metaLinksSpan);
         }
       }
     }

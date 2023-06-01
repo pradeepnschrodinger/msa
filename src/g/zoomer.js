@@ -59,7 +59,7 @@ module.exports = Zoomer = Model.extend({
     // meta cell
     metaGapWidth: 35,
     metaIdentWidth: 40,
-    // metaLinksWidth: 25
+    metaLinksWidth: 25,
 
     // internal props
     _alignmentScrollLeft: 0,

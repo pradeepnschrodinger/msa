@@ -56,8 +56,8 @@ const FilterMenu = MenuBuilder.extend({
     this.addNode("Hide seqs by identity", () => {
       let threshold = prompt("Enter threshold (in percent)", 20);
       threshold = threshold / 100;
-      return this.model.each((el) => {
-    	if (this.g.stats.identity()[el.id] < threshold) {
+      return this.model.each((el, index) => {
+    	  if (this.g.stats.identity()[index] < threshold) {
           return el.set('hidden', true);
         }
       });
