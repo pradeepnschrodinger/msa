@@ -21,17 +21,7 @@ module.exports = Colorscheme = Model.extend({
         return stat.scale(stat.conservation());
       }}
     );
-    // the stats module sends an event every time it is refreshed
-    return stat.on( "reset", (function() {
-      // some dynamic modules might require a redraw
-      if (this.getSelectedScheme().type === "dyn") {
-        var ref;
-        if (ref = "reset", this.getSelectedScheme().indexOf(ref) >= 0) {
-          return this.getSelectedScheme().reset();
-        }
-      }
-    }
-    ),this);
+    return this;
   },
 
   // You can enter your own color scheme here
