@@ -353,8 +353,11 @@ m.g.vis.on("change:alignmentWidth", function(prev, new){
 
 ```
 msa.g.on("residue:click", function(data){ ... }):
+
+// requires `msa.conf.registerMouseHover` to be true
 msa.g.on("residue:mousein", function(data){ ... }):
 msa.g.on("residue:mouseout", function(data){ ... }):
+msa.g.on("residue:hover", function(data){ ... }):
 ```
 
 If you want to listen to mouse events, you need to set the flag: `conf.registerMouseHover`.
