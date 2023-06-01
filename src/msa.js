@@ -118,7 +118,10 @@ const MSA = boneView.extend({
   _loadSeqs: function(data) {
     // stats
     var pureSeq = this.seqs.pluck("seq");
-    this.g.stats = new Stats(this.seqs, {useGaps: true});
+    this.g.stats = new Stats(this.seqs, { 
+      useGaps: true, 
+      customIdentity: data.vis.metaIdentityCalculator,
+    });
     this.g.stats.alphabetSize = this.g.config.get("alphabetSize");
     this.g.columns = new Columns(data.columns,this.g.stats);  // for action on the columns like hiding
 

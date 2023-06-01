@@ -79,7 +79,10 @@ const LabelHeader = view.extend({
       metaHeader.appendChild(this.addEl("Gaps", this.g.zoomer.get('metaGapWidth')));
     }
     if (this.g.vis.get("metaIdentity")) {
-      metaHeader.appendChild(this.addEl("Ident", this.g.zoomer.get('metaIdentWidth')));
+      metaHeader.appendChild(this.addEl(this.g.vis.get("labelIdentity"), this.g.zoomer.get('metaIdentWidth')));
+    }
+    if (this.g.vis.get("metaLinks")) {
+      metaHeader.appendChild(this.addEl("Links", this.g.zoomer.get('metaLinksWidth')));
     }
     if (this.g.vis.get("metaLinks")) {
       metaHeader.appendChild(this.addEl("Links", this.g.zoomer.get('metaLinksWidth')));

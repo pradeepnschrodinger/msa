@@ -32,6 +32,7 @@ module.exports = Zoomer = Model.extend({
 
     // labels
     labelIdLength: 20,
+    labelIdentityLength: 25,
     labelNameLength: 100,
     labelPartLength: 15,
     labelCheckLength: 15,

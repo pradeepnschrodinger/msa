@@ -18,6 +18,7 @@ module.exports = Visibility = Model.extend({
     labels: true,
     labelName: true,
     labelId: true,
+    labelIdentity: 'Ident',
     labelPartition: false,
     labelCheckbox: false,
 
@@ -39,7 +40,7 @@ module.exports = Visibility = Model.extend({
     }), this
     );
 
-    this.listenTo( this, "change:labelName change:labelId change:labelPartition change:labelCheckbox", (function() {
+    this.listenTo( this, "change:labelName change:labelId change:labelPartition change:labelCheckbox change:labelIdentity", (function() {
       return this.trigger("change:labels");
     }), this
     );
