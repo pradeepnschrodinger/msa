@@ -404,7 +404,9 @@ vis: {
     // about the labels
     labels: true,
     labelName: true,
+    labelNameText: "Name",
     labelId: true,
+    labelIdText: "Id",
     labelPartition: false,
     labelCheckbox: false,
     labelIdentity: 'Ident',

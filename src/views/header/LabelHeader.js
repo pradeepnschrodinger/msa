@@ -44,7 +44,8 @@ const LabelHeader = view.extend({
     }
 
     if (this.g.vis.get("labelId")) {
-      labelHeader.appendChild(this.addEl("ID", this.g.zoomer.get("labelIdLength")));
+      var text = this.g.vis.get("labelIdText");
+      labelHeader.appendChild(this.addEl(text, this.g.zoomer.get("labelIdLength")));
     }
 
     if (this.g.vis.get("labelPartition")) {
@@ -52,7 +53,8 @@ const LabelHeader = view.extend({
     }
 
     if (this.g.vis.get("labelName")) {
-      var name = this.addEl("Label", this.g.zoomer.get("labelNameLength"));
+      var text = this.g.vis.get("labelNameText");
+      var name = this.addEl(text, this.g.zoomer.get("labelNameLength"));
       //name.style.marginLeft = "50px"
       labelHeader.appendChild(name);
     }
