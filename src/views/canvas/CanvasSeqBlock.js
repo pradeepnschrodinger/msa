@@ -306,7 +306,7 @@ const View = boneView.extend({
     }
 
     this.previousRes = residue;
-    this.g.trigger("residue:hover", res);
+    this.g.trigger("residue:hover", residueEvent);
   },
 
   // starts the touch mode
