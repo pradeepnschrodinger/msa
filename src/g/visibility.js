@@ -17,7 +17,9 @@ module.exports = Visibility = Model.extend({
     // about the labels
     labels: true,
     labelName: true,
+    labelNameText: "Label",
     labelId: true,
+    labelIdText: "ID",
     labelIdentity: 'Ident',
     labelPartition: false,
     labelCheckbox: false,
