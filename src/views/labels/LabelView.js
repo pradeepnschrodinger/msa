@@ -22,7 +22,7 @@ const LabelView = view.extend({
     this.delegateEvents(events);
     this.listenTo(this.g.config, "change:registerMouseHover", this.manageEvents);
     this.listenTo(this.g.config, "change:registerMouseClick", this.manageEvents);
-    this.listenTo(this.g.vis, "change:labelName change:labelId change:labelPartition change:labelCheckbox", this.render);
+    this.listenTo(this.g.vis, "change:labelName change:labelId change:labelPartition change:labelCheckbox change:customColumnsGetter change:customColumnsCount", this.render);
     this.listenTo( this.g.zoomer, "change:labelIdLength change:labelNameLength change:labelPartLength change:labelCheckLength", this.render
     );
     return this.listenTo( this.g.zoomer, "change:labelFontSize change:labelLineHeight change:labelWidth change:rowHeight", this.render
@@ -79,13 +79,40 @@ const LabelView = view.extend({
         name.style.fontWeight = "bold";
       }
       name.style.width= this.g.zoomer.get("labelNameLength") + "px";
+      name.style.display = "inline-block";
       this.el.appendChild(name);
       this.el.setAttribute("title", textContent)
     }
 
+    if (this.g.vis.get("customColumnsGetter")) {
+      for (var idx = 0; idx < this.g.vis.get("customColumnsCount"); idx++) {
+        const column = this.g.vis.get("customColumnsGetter")(idx);
+        const width = column.length || this.g.zoomer.get("customColumnsDefaultLength");
+        var cell = column.cell;
+        if (typeof cell === 'function') {
+          cell = cell(this.model.get("id"));
+        }
+
+        if (!(cell instanceof Element )) {
+          cell = this.addEl(cell, width);
+        }
+        this.el.appendChild(cell);
+
+      }
+    }
     this.el.style.overflow = scroll;
     this.el.style.fontSize = `${this.g.zoomer.get('labelFontsize')}px`;
     return this;
+  },
+
+  addEl: function(content, width) {
+    var id = document.createElement("span");
+    id.textContent = content;
+    if ((typeof width !== "undefined" && width !== null)) {
+      id.style.width = width + "px";
+    }
+    id.style.display = "inline-block";
+    return id;
   },
 
   _onclick: function(evt) {

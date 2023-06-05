@@ -408,6 +408,20 @@ vis: {
     labelPartition: false,
     labelCheckbox: false,
     labelIdentity: 'Ident',
+    /*
+    this can be overridden with a custom function of the following signature:
+        (index: number) => ColumnInfo
+      where ColumnInfo represents the details about a column:
+        {
+          width: number, 
+          header: (function | string | DOMElement),
+          cell: (function | string | DOMElement),
+        }
+      `header` or `cell` can also be a function of the following signature:
+        (seqId: string) => (string | DOMElement)
+    */
+    customColumnsGetter: undefined,
+    customColumnsCount: 0, // number of custom columns
 
     // meta stuff
     metaGaps: true,
