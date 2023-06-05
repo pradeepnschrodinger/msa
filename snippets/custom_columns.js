@@ -50,7 +50,7 @@ opts.vis = {
   overviewbox: false,
   customColumnsGetter: customColumnCalculator,
   customColumnsCount: 3,
-  labelName: false,
+  labelNameText: "Seq Name"
 };
 opts.zoomer = {
   boxRectHeight: 1,
