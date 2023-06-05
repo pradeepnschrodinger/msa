@@ -9,7 +9,7 @@ module.exports = Zoomer = Model.extend({
     this.g = options.g;
 
     // events
-    this.listenTo( this, "change:labelIdLength change:labelNameLength change:labelPartLength change:labelCheckLength", (function() {
+    this.listenTo( this, "change:labelIdLength change:labelNameLength change:labelPartLength change:labelCheckLength change:customColumnsGetter change:customColumnsCount change:customColumnsDefaultLength", (function() {
       return this.trigger("change:labelWidth", this.getLabelWidth());
     }), this
     );
@@ -38,6 +38,7 @@ module.exports = Zoomer = Model.extend({
     labelCheckLength: 15,
     labelFontsize: 13,
     labelLineHeight: "13px",
+    customColumnsDefaultLength: 50,
 
     // marker
     markerFontsize: "10px",
@@ -128,6 +129,11 @@ module.exports = Zoomer = Model.extend({
      var val = 0;
      if (this.g.vis.get("labelName")) { val += this.get("labelNameLength"); }
      if (this.g.vis.get("labelId")) { val += this.get("labelIdLength"); }
+     if (this.g.vis.get("customColumnsGetter")) {
+        for (var idx = 0 ; idx < this.g.vis.get("customColumnsCount") ; idx++) {
+          val += this.g.vis.get("customColumnsGetter")(idx).length || this.get("customColumnsDefaultLength");
+        }
+     }
      if (this.g.vis.get("labelPartition")) { val += this.get("labelPartLength"); }
      if (this.g.vis.get("labelCheckbox")) { val += this.get("labelCheckLength"); }
      return val;
