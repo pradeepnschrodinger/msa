@@ -9,7 +9,7 @@ const LabelHeader = view.extend({
   initialize: function(data) {
     this.g = data.g;
 
-    this.listenTo(this.g.vis, "change:metacell change:labels", this.render);
+    this.listenTo(this.g.vis, "change:metacell change:labels change:customColumnsGetter change:customColumnsCount", this.render);
     return this.listenTo(this.g.zoomer, "change:labelWidth change:metaWidth", this.render);
   },
 
@@ -52,11 +52,27 @@ const LabelHeader = view.extend({
     }
 
     if (this.g.vis.get("labelName")) {
-      var name = this.addEl("Label");
+      var name = this.addEl("Label", this.g.zoomer.get("labelNameLength"));
       //name.style.marginLeft = "50px"
       labelHeader.appendChild(name);
     }
 
+    if (this.g.vis.get("customColumnsGetter")) {
+      for(var idx = 0; idx < this.g.vis.get("customColumnsCount"); idx++) {
+        const column = this.g.vis.get("customColumnsGetter")(idx);
+        const length = column.length || this.g.zoomer.get("customColumnsDefaultLength");
+        var header = column.header;
+        
+        if (typeof header === 'function') {
+          header = header();
+        }
+
+        if (!( header instanceof Element )) {
+          header = this.addEl(header, length);
+        } 
+        labelHeader.appendChild(header);
+      }
+    }
     return labelHeader;
   },
 
