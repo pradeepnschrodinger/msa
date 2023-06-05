@@ -5,7 +5,7 @@ yourDiv.textContent = "loading";
 var opts = {};
 opts.el = yourDiv;
 
-const customValueCalculator = (id) => {
+const getCustomText = (id) => {
   return id + " custom";
 }
 
@@ -17,7 +17,7 @@ const getDomElement = (text, width) => {
   domEl.style.display = "inline-block";
   return domEl;
 }
-const customDomCalculator = (id) => {
+const getStyledDiv = (id) => {
   const domEl = getDomElement("seq " + id, 90)
   domEl.style.backgroundColor = "red";
   return domEl;
@@ -27,7 +27,7 @@ const customColumns = [
   {
     header: 'Custom 1',
     length: 90,
-    cell: customValueCalculator,
+    cell: getCustomText,
   }, 
   {
     header: getDomElement("Custom 2", 120),
@@ -37,7 +37,7 @@ const customColumns = [
   {
     header: 'Custom 3',
     length: 90,
-    cell: customDomCalculator,
+    cell: getStyledDiv,
   }
 ]
 
