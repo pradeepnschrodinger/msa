@@ -1,7 +1,7 @@
 const boneView = require("backbone-childs");
 const mouse = require("mouse-pos");
 const C2S = require("canvas2svg");
-import {throttle} from "lodash";
+import {throttle, isEqual, omit} from "lodash";
 const jbone = require("jbone");
 
 import CharCache from "./CanvasCharCache";
@@ -112,6 +112,7 @@ const View = boneView.extend({
     if (this.g.config.get("registerMouseHover")) {
       events.mousein = "_onmousein";
       events.mouseout = "_onmouseout";
+      events.mousemove = "_onmousemove";
     }
 
     events.mousewheel = "_onmousewheel";
@@ -222,7 +223,7 @@ const View = boneView.extend({
     return this;
   },
 
-  _onmousemove: function(e, reversed) {
+  _onmousedrag: function(e, reversed) {
     if (this.dragStart.length === 0) { return; }
 
     const dragEnd = mouse.abs(e);
@@ -276,7 +277,7 @@ const View = boneView.extend({
 
   // converts touches into old mouse event
   _ontouchmove: function(e) {
-    this._onmousemove(e.changedTouches[0], true);
+    this._onmousedrag(e.changedTouches[0], true);
     e.preventDefault();
     return e.stopPropagation();
   },
@@ -285,10 +286,27 @@ const View = boneView.extend({
   _onmousedown: function(e) {
     this.dragStart = mouse.abs(e);
     this.dragStartScroll = [this.g.zoomer.get('_alignmentScrollLeft'), this.g.zoomer.get('_alignmentScrollTop')];
-    jbone(document.body).on('mousemove.overmove', (e) => this._onmousemove(e));
+    jbone(document.body).on('mousemove.overmove', (e) => this._onmousedrag(e));
     jbone(document.body).on('mouseup.overup', () => this._cleanup());
     //jbone(document.body).on 'mouseout.overout', (e) => @_onmousewinout(e)
     return e.preventDefault();
+  },
+
+  _onmousemove: function(e) {
+    const residueEvent = this._getResidueAtMouseEvent(e);
+    this._onresiduehover(residueEvent);
+  },
+
+  _onresiduehover: function(residueEvent) {
+    const residue = this._unwrapResidue(residueEvent);
+
+    // don't retrigger the hover event if the hovered residue hasn't changed
+    if (isEqual(residue, this.previousRes)) {
+      return;
+    }
+
+    this.previousRes = residue;
+    this.g.trigger("residue:hover", residueEvent);
   },
 
   // starts the touch mode
@@ -321,7 +339,7 @@ const View = boneView.extend({
   _touchCleanup: function(e) {
     if (e.changedTouches.length > 0) {
       // maybe we can send a final event
-      this._onmousemove(e.changedTouches[0], true);
+      this._onmousedrag(e.changedTouches[0], true);
     }
 
     this.dragStart = [];
@@ -341,7 +359,7 @@ const View = boneView.extend({
   },
 
   _onclick: function(e) {
-    const res = this._getClickPos(e);
+    const res = this._getResidueAtMouseEvent(e);
     if ((typeof res !== "undefined" && res !== null)) {
       if ((res.feature != null)) {
         this.g.trigger("feature:click", res);
@@ -353,7 +371,7 @@ const View = boneView.extend({
   },
 
   _onmousein: function(e) {
-    const res = this._getClickPos(e);
+    const res = this._getResidueAtMouseEvent(e);
     if ((typeof res !== "undefined" && res !== null)) {
       if ((res.feature != null)) {
         this.g.trigger("feature:mousein", res);
@@ -365,7 +383,7 @@ const View = boneView.extend({
   },
 
   _onmouseout: function(e) {
-    const res = this._getClickPos(e);
+    const res = this._getResidueAtMouseEvent(e);
     if ((typeof res !== "undefined" && res !== null)) {
       if ((res.feature != null)) {
         this.g.trigger("feature:mouseout", res);
@@ -377,7 +395,7 @@ const View = boneView.extend({
     return this.throttledDraw();
   },
 
-  _getClickPos: function(e) {
+  _getResidueAtMouseEvent: function(e) {
     const coords = mouse.rel(e);
 
     coords[0] += this.g.zoomer.get("_alignmentScrollLeft");
@@ -406,6 +424,10 @@ const View = boneView.extend({
       // click on a seq
       return {seqId:seqId, rowPos: x, evt:e};
     }
+  },
+
+  _unwrapResidue(residueEvent) {
+    return omit(residueEvent, 'evt');
   },
 
   // checks whether the scrolling coordinates are valid
