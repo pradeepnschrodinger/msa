@@ -14,7 +14,8 @@ module.exports = Zoomer = Model.extend({
     }), this
     );
 
-     this.listenTo(options.model,"reset add remove", () => {
+    this.listenTo(options.model, "reset add remove", () => {
+      // This recalculates the width of the alignment if there is any row added or removed or reset
       this._adjustWidth();
     });
 
