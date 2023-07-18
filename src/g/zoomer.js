@@ -13,6 +13,11 @@ module.exports = Zoomer = Model.extend({
       return this.trigger("change:labelWidth", this.getLabelWidth());
     }), this
     );
+
+     this.listenTo(options.model,"reset add remove", () => {
+      this._adjustWidth();
+    });
+
     this.listenTo( this, "change:metaLinksWidth change:metaIdentWidth change:metaGapWidth", (function() {
       return this.trigger("change:metaWidth", this.getMetaWidth());
     }), this
