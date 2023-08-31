@@ -204,19 +204,22 @@ const View = boneView.extend({
     }
 
 
-    const zoomerScrollLeft = this.g.zoomer.get('_alignmentScrollLeft');
-    const zoomerScrollRight = this.g.zoomer.get('_alignmentScrollTop');
-    const scrollObj = this._checkScrolling( [ zoomerScrollLeft, zoomerScrollRight ])
-
-    this.g.zoomer._checkScrolling( scrollObj, {header: "canvasseq"});
+    if (!this.isPinned) {
+      const zoomerScrollLeft = this.g.zoomer.get('_alignmentScrollLeft');
+      const zoomerScrollTop = this.g.zoomer.get('_alignmentScrollTop');
+      const scrollObj = this._checkScrolling( [ zoomerScrollLeft, zoomerScrollTop ])
+  
+      this.g.zoomer._checkScrolling( scrollObj, {header: "canvasseq"});
+    }
 
     this._setColor();
 
-    this.seqDrawer = new CanvasSeqDrawer( this.g,this.ctx,this.model,
-      {width: this.el.width,
+    this.seqDrawer = new CanvasSeqDrawer( this.g,this.ctx,this.model, {
+      width: this.el.width,
       height: this.el.height,
       color: this.color,
-      cache: this.cache
+      cache: this.cache,
+      isPinned: this.isPinned,
     });
 
     this.throttledDraw();
