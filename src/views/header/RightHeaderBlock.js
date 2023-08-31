@@ -35,17 +35,17 @@ const View = boneView.extend({
       },
     })));
 
-    const seqBlock = new SeqBlock({
-      model: this.model,
-      g: this.g,
-      el: document.createElement("canvas"),
-      isPinned: true,
-    });
-    // NOTE (pradeep): Hacky! Required for pinning the block
-    seqBlock.el.style.position = 'absolute';
-    seqBlock.el.style.bottom = 0;
+    // const seqBlock = new SeqBlock({
+    //   model: this.model,
+    //   g: this.g,
+    //   el: document.createElement("canvas"),
+    //   isPinned: true,
+    // });
+    // // NOTE (pradeep): Hacky! Required for pinning the block
+    // seqBlock.el.style.position = 'absolute';
+    // seqBlock.el.style.bottom = 0;
 
-    this.addView("pinnedSeqBlock", seqBlock);
+    // this.addView("pinnedSeqBlock", seqBlock);
 
     this.draw();
 

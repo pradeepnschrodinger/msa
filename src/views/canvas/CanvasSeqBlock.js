@@ -139,10 +139,15 @@ const View = boneView.extend({
 
     // draw all the stuff
     if ((this.seqDrawer != null)  && this.model.length > 0) {
-      // char based
-      this.seqDrawer.drawLetters();
-      // row based
-      this.seqDrawer.drawRows(this.sel._appendSelection, this.sel);
+      // NOTE (pradeep): We don't support pinned sequences yet
+      if (!this.isPinned) {
+        // char based
+        this.seqDrawer.drawLetters();
+        // row based
+        this.seqDrawer.drawRows(this.sel._appendSelection, this.sel);
+      }
+
+      // draw features
       return this.seqDrawer.drawRows(this.drawFeatures, this);
     }
   },
@@ -152,7 +157,11 @@ const View = boneView.extend({
     const rectHeight = this.g.zoomer.get("rowHeight");
     if (data.model.attributes.height > 1) {
       const ctx = this.ctx;
-      data.model.attributes.features.each(function(feature) {
+      // draw background
+      data.model.attributes.features.each((feature) => {
+        if (feature.attributes.isPinned != this.isPinned) {
+          return;
+        }
         ctx.fillStyle = feature.attributes.fillColor || "red";
         const len = feature.attributes.xEnd - feature.attributes.xStart + 1;
         const y = (feature.attributes.row + 1) * rectHeight;
@@ -165,7 +174,10 @@ const View = boneView.extend({
       ctx.textBaseline = 'middle';
       ctx.textAlign = "center";
 
-      return data.model.attributes.features.each(function(feature) {
+      return data.model.attributes.features.each((feature) => {
+        if (feature.attributes.isPinned != this.isPinned) {
+          return;
+        }
         const len = feature.attributes.xEnd - feature.attributes.xStart + 1;
         const y = (feature.attributes.row + 1) * rectHeight;
         return ctx.fillText( feature.attributes.text, data.xZero + feature.attributes.xStart *

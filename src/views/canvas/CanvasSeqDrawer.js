@@ -34,13 +34,14 @@ const Drawer = {
 
     for (let i = start; i < this.model.length; i++) {
       const seq = this.model.at(i);
-      if (seq.get('hidden')) {
+      if (seq.get('hidden') || (this.isPinned != seq.get('isPinned'))) {
         continue;
       }
       callback.call(target, {model: seq, yPos: y, y: i, hidden: hidden});
 
-      const seqHeight = (seq.attributes.height || 1) * this.rectHeight;
-      y = y + seqHeight;
+      const pinnedAttributesHeight = seq.attributes.features.filter(feature => feature.attributes.isPinned).length;
+      const attributesCount = this.isPinned ? pinnedAttributesHeight : (seq.attributes.height - pinnedAttributesHeight)
+      y = y + (attributesCount *  this.rectHeight);
 
       // out of viewport - stop
       if (y > this.height) {
