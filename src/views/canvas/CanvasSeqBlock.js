@@ -12,6 +12,7 @@ const View = boneView.extend({
 
   initialize: function(data) {
     this.g = data.g;
+    this.isPinned = data.isPinned;
 
     this.listenTo(this.g.zoomer, "change:_alignmentScrollLeft change:_alignmentScrollTop", function(model,value, options) {
       if ((!(((typeof options !== "undefined" && options !== null) ? options.origin : undefined) != null)) || options.origin !== "canvasseq") {
@@ -175,6 +176,9 @@ const View = boneView.extend({
   },
 
   getPlannedElHeight() {
+    if (this.isPinned) {
+      return this.g.zoomer.get('rowHeight') * 2;
+    }
     return this.g.zoomer.get("alignmentHeight");
   },
 
@@ -451,6 +455,7 @@ const View = boneView.extend({
       }
     }
 
+    console.log(scrollObj)
     return scrollObj;
   }
 });

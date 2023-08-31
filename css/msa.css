@@ -55,9 +55,13 @@
 }
 
 .biojs_msa_rheader {
-  display: flex;
-  overflow-x: auto;
   display: inline-block;
+  position: relative;
+}
+
+.biojs_msa_rheaders {
+  height: 100%;
+  overflow-x: auto;
 }
 
 .biojs_msa_labelblock::-webkit-scrollbar, .biojs_msa_rheader::-webkit-scrollbar{
