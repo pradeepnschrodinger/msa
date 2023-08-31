@@ -32,6 +32,17 @@
 .biojs_msa_header {
     white-space: nowrap;
     text-align: left;
+    display: flex;
+    flex-direction: row;
+}
+
+.biojs_msa_headers {
+    display: flex;
+    height: 100%;
+}
+
+.biojs_msa_header_label {
+    align-self: flex-end;
 }
 
 .biojs_msa_labelrow {
@@ -41,6 +52,12 @@
 
 .biojs_msa_albody {
   display: flex;
+}
+
+.biojs_msa_rheader {
+  display: flex;
+  overflow-x: auto;
+  display: inline-block;
 }
 
 .biojs_msa_labelblock::-webkit-scrollbar, .biojs_msa_rheader::-webkit-scrollbar{

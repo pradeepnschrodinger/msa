@@ -24,7 +24,7 @@ opts.conf = {
 opts.vis = {
   conserv: false,
   overviewbox: false,
-  seqlogo: true
+  seqlogo: false
 };
 
 // init msa
@@ -37,15 +37,17 @@ clustal.read(url, function(err, seqs) {
 });
 
 // add features
-xhr("./data/fer1.gff3", function(err, request, body) {
-  var features = gffParser.parseSeqs(body);
-  m.seqs.addFeatures(features);
-});
+// xhr("./data/fer1.gff3", function(err, request, body) {
+//   var features = gffParser.parseSeqs(body);
+//   m.seqs.addFeatures(features);
+//   m.render();
+// });
 
-xhr("./data/fer1.gff_jalview", function(err, request, body) {
-  var features = gffParser.parseSeqs(body);
-  m.seqs.addFeatures(features);
-});
+// xhr("./data/fer1.gff_jalview", function(err, request, body) {
+//   var features = gffParser.parseSeqs(body);
+//   m.seqs.addFeatures(features);
+//   m.render();
+// });
 
 // the menu is independent to the MSA container
 var defMenu = new msa.menu.defaultmenu({
@@ -53,6 +55,28 @@ var defMenu = new msa.menu.defaultmenu({
   msa: m
 });
 defMenu.render();
+
+const features = {
+  "config": {
+      "type": "gff3"
+  },
+  "seqs": {
+      "FER_CAPAN": [
+          {
+              "feature": "gene",
+              "pinned": true,
+              "start": 10,
+              "end": 15,
+              "attributes": {
+                  "Name": "A feature",
+                  "Color": "blue"
+              }
+          },
+      ],
+  }
+}
+m.seqs.addFeatures(features)
+m.render();
 
 // BioJS event system test (you can safely remove this in your app)
 //instance=m.g

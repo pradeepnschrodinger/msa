@@ -30,7 +30,8 @@ const View = boneView.extend({
   render: function() {
     this.renderSubviews();
 
-    return this.el.className = "biojs_msa_header";
+    this.el.style.height = (this.g.zoomer.get('rowHeight') * 3);
+    this.el.className = "biojs_msa_header";
   }
 });
 export default View;
