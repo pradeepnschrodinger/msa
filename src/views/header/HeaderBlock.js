@@ -33,7 +33,7 @@ const View = boneView.extend({
     this.el.style.height = (
       15 +
       this.g.zoomer.get('rowHeight') * this.g.pinnedFeatures.getCurrentHeight()
-    );
+    ) + 'px';
     this.el.className = "biojs_msa_header";
   }
 });

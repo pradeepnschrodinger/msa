@@ -95,6 +95,15 @@ const features = [
   },
   {
     "feature": "gene",
+    "start": 16,
+    "end": 35,
+    "attributes": {
+        "Name": "Nekadrew",
+        "Color": "blue"
+    }
+  },
+  {
+    "feature": "gene",
     "start": 14,
     "end": 20,
     "attributes": {
@@ -103,8 +112,10 @@ const features = [
     }
   },
 ];
-m.pinnedFeatures.reset(features)
-m.render();
+setTimeout(() => {
+  m.pinnedFeatures.reset(features)
+  m.render();
+}, 0)
 
 // BioJS event system test (you can safely remove this in your app)
 //instance=m.g
