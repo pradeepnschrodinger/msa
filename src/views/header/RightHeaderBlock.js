@@ -5,6 +5,7 @@ import ConservationView from "./ConservationView";
 import SeqLogoWrapper from "./SeqLogoWrapper";
 import GapView from "./GapView";
 import SeqBlock from "../canvas/CanvasSeqBlock";
+import PinnedBlock from "../canvas/CanvasPinnedBlock";
 import { head } from "lodash";
 
 const View = boneView.extend({
@@ -35,17 +36,17 @@ const View = boneView.extend({
       },
     })));
 
-    // const seqBlock = new SeqBlock({
-    //   model: this.model,
-    //   g: this.g,
-    //   el: document.createElement("canvas"),
-    //   isPinned: true,
-    // });
-    // // NOTE (pradeep): Hacky! Required for pinning the block
-    // seqBlock.el.style.position = 'absolute';
-    // seqBlock.el.style.bottom = 0;
+    const pinnedBlock = new PinnedBlock({
+      model: this.g.pinnedFeatures,
+      g: this.g,
+      el: document.createElement("canvas"),
+      isPinned: true,
+    });
+    // NOTE (pradeep): Hacky! Required for pinning the block
+    pinnedBlock.el.style.position = 'absolute';
+    pinnedBlock.el.style.bottom = 0;
 
-    // this.addView("pinnedSeqBlock", seqBlock);
+    this.addView("pinnedSeqBlock", pinnedBlock);
 
     this.draw();
 
@@ -118,7 +119,7 @@ const View = boneView.extend({
       this.getView('headers').el.scrollLeft = scrollLeft;
 
       // NOTE (pradeep): Hacky! Required for pinning the block by reverse translating parent's scroll offset
-      // this.getView('pinnedSeqBlock').el.style.left = -scrollLeft;
+      // this.getView('pinnedBlock').el.style.left = -scrollLeft;
     }
   },
 

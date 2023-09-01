@@ -64,7 +64,6 @@ defMenu.render();
 //       "FER_CAPAN": [
 //           {
 //               "feature": "gene",
-//               "isPinned": true,
 //               "start": 10,
 //               "end": 15,
 //               "attributes": {
@@ -75,7 +74,18 @@ defMenu.render();
 //       ],
 //   }
 // }
-// m.seqs.addFeatures(features)
+const features = [
+  {
+      "feature": "gene",
+      "start": 10,
+      "end": 15,
+      "attributes": {
+          "Name": "Neka Name",
+          "Color": "blue"
+      }
+  },
+];
+m.pinnedFeatures.reset(features)
 m.render();
 
 // BioJS event system test (you can safely remove this in your app)

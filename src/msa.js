@@ -29,6 +29,7 @@ const $ = require("jbone");
 import FileHelper from "./utils/file";
 import TreeHelper from "./utils/tree";
 import ProxyHelper from "./utils/proxy";
+import FeatureCol from "./model/FeatureCol";
 
 // opts is a dictionary consisting of
 // @param el [String] id or reference to a DOM element
@@ -56,6 +57,7 @@ const MSA = boneView.extend({
 
     // load seqs and add subviews
     this.seqs = this.g.seqs = new SeqCollection(data.seqs, this.g);
+    this.pinnedFeatures = this.g.pinnedFeatures = new FeatureCol();
 
     // populate it and init the global models
     this.g.config = new Config(data.conf);
