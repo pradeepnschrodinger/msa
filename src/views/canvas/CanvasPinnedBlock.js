@@ -69,8 +69,21 @@ const CanvasPinnedBlock = boneView.extend({
       const width = (feature.attributes.xEnd - feature.attributes.xStart + 1) * rectWidth;
       const height = 1 * rectHeight;
       
+      // draw background block
       this.ctx.fillStyle = feature.attributes.fillColor;
       this.ctx.fillRect(x + xOffset, y, width, height);
+
+      // draw text
+      this.ctx.fillStyle = "black";
+      this.ctx.font = this.g.zoomer.get("residueFont") + "px mono";
+      this.ctx.textBaseline = 'middle';
+      this.ctx.textAlign = "center";
+
+      this.ctx.fillText(
+        feature.attributes.text, 
+        x + width/2 + xOffset,
+        y + height/2,
+      );
     })
   },
 
