@@ -10,9 +10,10 @@ const FeatureCol = Collection.extend({
     this.startOnCache = [];
     // invalidate cache
     this.on( "all", (function() {
+      this.assignRows();
       return this.startOnCache = [];
     }), this);
-    return Collection.apply(this, arguments);
+    Collection.apply(this, arguments);
   },
 
   // returns all features starting on index
@@ -38,7 +39,9 @@ const FeatureCol = Collection.extend({
   // tries to auto-fit the rows
   // not a very efficient algorithm
   assignRows: function() {
-
+    if (this.length === 0) {
+      return;
+    }
     const len = (this.max(function(el) { return el.get("xEnd"); })).attributes.xEnd;
     const rows = (() => {
       const result = [];

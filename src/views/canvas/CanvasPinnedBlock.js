@@ -28,44 +28,23 @@ const CanvasPinnedBlock = boneView.extend({
   },
 
   adjustSize() {
-    this.el.setAttribute('height', this.g.zoomer.get('rowHeight') * 2 + "px");
+    this.el.setAttribute('height', this.g.zoomer.get('rowHeight') * this.model.getCurrentHeight() + "px");
     this.el.setAttribute('width', this.g.zoomer.getAlignmentWidth() + "px");
   },
 
   render() {
     this.adjustSize();
-    this.drawPinnedFeatures();
+    this.drawFeatures();
   },
 
-  drawPinnedFeatures() {
-    // const record = {
-    //   "feature": "gene",
-    //   "start": 10,
-    //   "end": 15,
-    //   "attributes": {
-    //       "Name": "Neka Name",
-    //       "Color": "blue"
-    //   },
-    //   "xStart": 9,
-    //   "xEnd": 14,
-    //   "height": -1,
-    //   "text": "Neka Name",
-    //   "fillColor": "blue",
-    //   "fillOpacity": 0.5,
-    //   "type": "rectangle",
-    //   "borderSize": 1,
-    //   "borderColor": "black",
-    //   "borderOpacity": 0.5,
-    //   "validate": true,
-    //   "row": 0
-    // }
+  drawFeatures() {
     const rectWidth = this.g.zoomer.get("columnWidth");
-    const rectHeight = this.g.zoomer.get("rowHeight");  
+    const rectHeight = this.g.zoomer.get("rowHeight");
     const xOffset = this.getXOffset(rectWidth);
 
     this.model.forEach((feature) => {
       const x = feature.attributes.xStart * rectWidth;
-      const y = ((feature.attributes.row || 0) + 1) * rectWidth;
+      const y = (feature.attributes.row || 0) * rectWidth;
       const width = (feature.attributes.xEnd - feature.attributes.xStart + 1) * rectWidth;
       const height = 1 * rectHeight;
       

@@ -12,7 +12,6 @@ const View = boneView.extend({
 
   initialize: function(data) {
     this.g = data.g;
-    this.isPinned = data.isPinned;
 
     this.listenTo(this.g.zoomer, "change:_alignmentScrollLeft change:_alignmentScrollTop", function(model,value, options) {
       if ((!(((typeof options !== "undefined" && options !== null) ? options.origin : undefined) != null)) || options.origin !== "canvasseq") {
@@ -139,13 +138,10 @@ const View = boneView.extend({
 
     // draw all the stuff
     if ((this.seqDrawer != null)  && this.model.length > 0) {
-      // NOTE (pradeep): We don't support pinned sequences yet
-      if (!this.isPinned) {
-        // char based
-        this.seqDrawer.drawLetters();
-        // row based
-        this.seqDrawer.drawRows(this.sel._appendSelection, this.sel);
-      }
+      // char based
+      this.seqDrawer.drawLetters();
+      // row based
+      this.seqDrawer.drawRows(this.sel._appendSelection, this.sel);
 
       // draw features
       return this.seqDrawer.drawRows(this.drawFeatures, this);
@@ -159,9 +155,6 @@ const View = boneView.extend({
       const ctx = this.ctx;
       // draw background
       data.model.attributes.features.each((feature) => {
-        if (feature.attributes.isPinned != this.isPinned) {
-          return;
-        }
         ctx.fillStyle = feature.attributes.fillColor || "red";
         const len = feature.attributes.xEnd - feature.attributes.xStart + 1;
         const y = (feature.attributes.row + 1) * rectHeight;
@@ -175,9 +168,6 @@ const View = boneView.extend({
       ctx.textAlign = "center";
 
       return data.model.attributes.features.each((feature) => {
-        if (feature.attributes.isPinned != this.isPinned) {
-          return;
-        }
         const len = feature.attributes.xEnd - feature.attributes.xStart + 1;
         const y = (feature.attributes.row + 1) * rectHeight;
         return ctx.fillText( feature.attributes.text, data.xZero + feature.attributes.xStart *
@@ -188,9 +178,6 @@ const View = boneView.extend({
   },
 
   getPlannedElHeight() {
-    if (this.isPinned) {
-      return this.g.zoomer.get('rowHeight') * 2;
-    }
     return this.g.zoomer.get("alignmentHeight");
   },
 
@@ -216,13 +203,11 @@ const View = boneView.extend({
     }
 
 
-    if (!this.isPinned) {
-      const zoomerScrollLeft = this.g.zoomer.get('_alignmentScrollLeft');
-      const zoomerScrollTop = this.g.zoomer.get('_alignmentScrollTop');
-      const scrollObj = this._checkScrolling( [ zoomerScrollLeft, zoomerScrollTop ])
-  
-      this.g.zoomer._checkScrolling( scrollObj, {header: "canvasseq"});
-    }
+    const zoomerScrollLeft = this.g.zoomer.get('_alignmentScrollLeft');
+    const zoomerScrollTop = this.g.zoomer.get('_alignmentScrollTop');
+    const scrollObj = this._checkScrolling( [ zoomerScrollLeft, zoomerScrollTop ])
+
+    this.g.zoomer._checkScrolling( scrollObj, {header: "canvasseq"});
 
     this._setColor();
 
@@ -231,7 +216,6 @@ const View = boneView.extend({
       height: this.el.height,
       color: this.color,
       cache: this.cache,
-      isPinned: this.isPinned,
     });
 
     this.throttledDraw();

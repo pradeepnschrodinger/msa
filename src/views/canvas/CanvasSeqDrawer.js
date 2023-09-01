@@ -34,14 +34,11 @@ const Drawer = {
 
     for (let i = start; i < this.model.length; i++) {
       const seq = this.model.at(i);
-      if (seq.get('hidden') || (this.isPinned != seq.get('isPinned'))) {
+      if (seq.get('hidden')) {
         continue;
       }
       callback.call(target, {model: seq, yPos: y, y: i, hidden: hidden});
-
-      const pinnedAttributesHeight = seq.attributes.features.filter(feature => feature.attributes.isPinned).length;
-      const attributesCount = this.isPinned ? pinnedAttributesHeight : (seq.attributes.height - pinnedAttributesHeight)
-      y = y + (attributesCount *  this.rectHeight);
+      y = y + (seq.attributes.height *  this.rectHeight);
 
       // out of viewport - stop
       if (y > this.height) {
@@ -69,8 +66,8 @@ const Drawer = {
   // returns first sequence in the viewport
   // y is the position to start drawing
   getStartSeq: function() {
-    const alignmentScrollTop = this.isPinned ? 0 : this.g.zoomer.get('_alignmentScrollTop');
-    const start = (Math.max(0, Math.floor( alignmentScrollTop / this.rectHeight))) + 1;
+    const alignmentScrollTop = this.g.zoomer.get('_alignmentScrollTop');
+    const start = (Math.max(0, Math.floor(alignmentScrollTop / this.rectHeight))) + 1;
     let counter = 0;
     let i = 0;
     while (counter < start && i < this.model.length) {
@@ -173,7 +170,6 @@ const CanvasSeqDrawer = function(g,ctx,model,opts) {
   this.height = opts.height;
   this.color = opts.color;
   this.cache = opts.cache;
-  this.isPinned = opts.isPinned;
   this.rectHeight = this.g.zoomer.get("rowHeight");
   this.rectWidth = this.g.zoomer.get("columnWidth"); // note: this can change
   return this;

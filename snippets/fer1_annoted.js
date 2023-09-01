@@ -80,9 +80,27 @@ const features = [
       "start": 10,
       "end": 15,
       "attributes": {
-          "Name": "Neka Name",
+          "Name": "Nekadrew",
           "Color": "blue"
       }
+  },
+  {
+    "feature": "gene",
+    "start": 11,
+    "end": 16,
+    "attributes": {
+        "Name": "Niranjan",
+        "Color": "red"
+    }
+  },
+  {
+    "feature": "gene",
+    "start": 14,
+    "end": 20,
+    "attributes": {
+        "Name": "Shweta",
+        "Color": "yellow"
+    }
   },
 ];
 m.pinnedFeatures.reset(features)
