@@ -1,9 +1,11 @@
 import {extend} from "lodash";
+import { hdCanvas } from "../../utils/canvas";
 const boneView = require("backbone-childs");
 
 const CanvasPinnedBlock = boneView.extend({
   initialize(data) {
     this.g = data.g;
+    this.el = hdCanvas();
     this.ctx = this.el.getContext('2d');
     this.model = data.model;
     this.width = data.width;
@@ -30,14 +32,7 @@ const CanvasPinnedBlock = boneView.extend({
   adjustSize() {
     const height = (this.g.zoomer.get('rowHeight') * this.model.getCurrentHeight());
     const width = this.g.zoomer.getAlignmentWidth();
-    // NOTE (pradeep): Sharpness factor is used to render the canvas at a higher resolution for clarity
-    const sharpnessFactor = 2;
-
-    this.el.setAttribute('height', height * sharpnessFactor + "px");
-    this.el.style.height = height;
-    this.el.setAttribute('width', width * sharpnessFactor + "px");
-    this.el.style.width = width;
-    this.ctx.scale(sharpnessFactor, sharpnessFactor);
+    this.el.adjustSize({ width, height })
   },
 
   render() {
@@ -48,7 +43,7 @@ const CanvasPinnedBlock = boneView.extend({
   drawFeatures() {
     const rectWidth = this.g.zoomer.get("columnWidth");
     const rectHeight = this.g.zoomer.get("rowHeight");
-    const borderWidth = 1.5;
+    const borderWidth = 0.75;
     const xOffset = this.getXOffset(rectWidth);
 
     this.model.forEach((feature) => {

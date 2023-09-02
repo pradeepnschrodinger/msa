@@ -454,7 +454,6 @@ const View = boneView.extend({
       }
     }
 
-    console.log(scrollObj)
     return scrollObj;
   }
 });

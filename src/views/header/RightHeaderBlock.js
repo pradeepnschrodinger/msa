@@ -39,7 +39,6 @@ const View = boneView.extend({
     const pinnedBlock = new PinnedBlock({
       model: this.g.pinnedFeatures,
       g: this.g,
-      el: document.createElement("canvas"),
     });
     // NOTE (pradeep): Hacky! Required for pinning the block
     pinnedBlock.el.style.position = 'absolute';

@@ -30,9 +30,14 @@ class CanvasCharCache {
   createTile(letter, width, height) {
 
     const canvas = this.cache[letter] = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
+    const sharpnessFactor = 2;
+    canvas.setAttribute('height', height * sharpnessFactor + "px");
+    canvas.style.height = height + "px";
+    canvas.setAttribute('width', width * sharpnessFactor + "px");
+    canvas.style.width = width + "px";
+    
     this.ctx = canvas.getContext('2d');
+    this.ctx.setTransform(sharpnessFactor, 0, 0, sharpnessFactor, 0, 0);
     this.ctx.font = this.g.zoomer.get("residueFont") + "px mono";
 
     this.ctx.textBaseline = 'middle';
