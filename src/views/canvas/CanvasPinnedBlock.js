@@ -8,12 +8,6 @@ const CanvasPinnedBlock = boneView.extend({
     this.el = hdCanvas();
     this.ctx = this.el.getContext('2d');
     this.model = data.model;
-    this.width = data.width;
-    this.height = data.height;
-    this.color = data.color;
-    this.cache = data.cache;
-    this.rectHeight = this.g.zoomer.get("rowHeight");
-    this.rectWidth = this.g.zoomer.get("columnWidth");
 
     this.setupListeners();
   },

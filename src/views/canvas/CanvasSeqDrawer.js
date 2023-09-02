@@ -38,7 +38,9 @@ const Drawer = {
         continue;
       }
       callback.call(target, {model: seq, yPos: y, y: i, hidden: hidden});
-      y = y + (seq.attributes.height *  this.rectHeight);
+
+      const seqHeight = (seq.attributes.height || 1) * this.rectHeight;
+      y = y + seqHeight;
 
       // out of viewport - stop
       if (y > this.height) {

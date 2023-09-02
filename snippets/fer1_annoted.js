@@ -56,70 +56,51 @@ var defMenu = new msa.menu.defaultmenu({
 });
 defMenu.render();
 
-// const features = {
-//   "config": {
-//       "type": "gff3"
-//   },
-//   "seqs": {
-//       "FER_CAPAN": [
-//           {
-//               "feature": "gene",
-//               "start": 10,
-//               "end": 15,
-//               "attributes": {
-//                   "Name": "A feature",
-//                   "Color": "blue"
-//               }
-//           },
-//       ],
-//   }
-// }
-const features = [
+// pin features
+const pinnedFeatures = [
   {
       "feature": "gene",
-      "start": 10,
-      "end": 15,
+      "start": 0,
+      "end": 100,
       "attributes": {
-          "Name": "Nekadrew",
+          "Name": "VH",
           "Color": "#E5FCDD",
           "textColor": "#71B567",
         }
       },
       {
         "feature": "gene",
-        "start": 11,
-        "end": 16,
+        "start": 0,
+        "end": 20,
         "attributes": {
-          "Name": "Niranjan",
+          "Name": "HFR1",
           "Color": "#E5FCDD",
           "textColor": "#71B567",
     }
   },
   {
     "feature": "gene",
-    "start": 16,
-    "end": 35,
+    "start": 21,
+    "end": 30,
     "attributes": {
-        "Name": "Nekadrew",
+        "Name": "H1",
         "Color": "#E5FCDD",
         "textColor": "#71B567",
     }
   },
   {
     "feature": "gene",
-    "start": 14,
-    "end": 20,
+    "start": 36,
+    "end": 40,
     "attributes": {
-        "Name": "Shweta",
+        "Name": "HFR2",
         "Color": "#E5FCDD",
         "textColor": "#71B567",
     }
   },
 ];
-setTimeout(() => {
-  m.pinnedFeatures.reset(features)
-  m.render();
-}, 0)
+m.pinnedFeatures.reset(pinnedFeatures)
+m.render();
 
 // BioJS event system test (you can safely remove this in your app)
 //instance=m.g

@@ -51,16 +51,7 @@ const View = boneView.extend({
     return this.g.vis.once('change:loaded', this._adjustScrollingLeft, this);
   },
 
-  _removeViews: function(...views) {
-    for (const view of views) {
-      if (this.getView(view)) {
-        this.removeView(view);
-      }
-    }
-  },
-
   draw: function() {
-    // this._removeViews('conserv', 'markers', 'seqlogo', 'gapHeader');
     const headerView = this.getView('headers');
     headerView.removeViews();
 
@@ -115,9 +106,6 @@ const View = boneView.extend({
       var scrollLeft = this.g.zoomer.get("_alignmentScrollLeft");
       this.blockEvents = true;
       this.getView('headers').el.scrollLeft = scrollLeft;
-
-      // NOTE (pradeep): Hacky! Required for pinning the block by reverse translating parent's scroll offset
-      // this.getView('pinnedBlock').el.style.left = -scrollLeft;
     }
   },
 
