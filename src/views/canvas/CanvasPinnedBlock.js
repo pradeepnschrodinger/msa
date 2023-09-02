@@ -28,8 +28,16 @@ const CanvasPinnedBlock = boneView.extend({
   },
 
   adjustSize() {
-    this.el.setAttribute('height', this.g.zoomer.get('rowHeight') * this.model.getCurrentHeight() + "px");
-    this.el.setAttribute('width', this.g.zoomer.getAlignmentWidth() + "px");
+    const height = (this.g.zoomer.get('rowHeight') * this.model.getCurrentHeight());
+    const width = this.g.zoomer.getAlignmentWidth();
+    // NOTE (pradeep): Sharpness factor is used to render the canvas at a higher resolution for clarity
+    const sharpnessFactor = 2;
+
+    this.el.setAttribute('height', height * sharpnessFactor + "px");
+    this.el.style.height = height;
+    this.el.setAttribute('width', width * sharpnessFactor + "px");
+    this.el.style.width = width;
+    this.ctx.scale(sharpnessFactor, sharpnessFactor);
   },
 
   render() {
@@ -40,6 +48,7 @@ const CanvasPinnedBlock = boneView.extend({
   drawFeatures() {
     const rectWidth = this.g.zoomer.get("columnWidth");
     const rectHeight = this.g.zoomer.get("rowHeight");
+    const borderWidth = 1.5;
     const xOffset = this.getXOffset(rectWidth);
 
     this.model.forEach((feature) => {
@@ -47,10 +56,16 @@ const CanvasPinnedBlock = boneView.extend({
       const y = (feature.attributes.row || 0) * rectWidth;
       const width = (feature.attributes.xEnd - feature.attributes.xStart + 1) * rectWidth;
       const height = 1 * rectHeight;
-      
-      // draw background block
+  
+      // draw background border
+      this.ctx.globalAlpha = 1;
       this.ctx.fillStyle = feature.attributes.fillColor;
       this.ctx.fillRect(x + xOffset, y, width, height);
+
+      // draw background block border
+      this.ctx.strokeStyle = 'black';
+      this.ctx.lineWidth = borderWidth;
+      this.ctx.strokeRect(x + xOffset, y, width, height);
 
       // draw text
       this.ctx.fillStyle = "black";

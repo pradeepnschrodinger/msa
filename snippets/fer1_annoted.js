@@ -90,7 +90,7 @@ const features = [
     "end": 16,
     "attributes": {
         "Name": "Niranjan",
-        "Color": "red"
+        "Color": "blue"
     }
   },
   {
