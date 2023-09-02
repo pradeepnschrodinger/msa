@@ -131,9 +131,7 @@ const View = boneView.extend({
 
   draw: function() {
     if (!(this.g.config.get("shouldRenderSeqBlockAsSvg") === true)) {
-      // fastest way to clear the canvas
-      // http://jsperf.com/canvas-clear-speed/25
-      this.el.width = this.el.width;
+      this.ctx.clearRect(0, 0, this.el.width, this.el.height)
     }
 
     // draw all the stuff
@@ -192,8 +190,10 @@ const View = boneView.extend({
       this.el.style.width = `${this.getPlannedElWidth()}px`;
       this.el.style.height = `${this.getPlannedElHeight()}px`;
     } else {
-      this.el.setAttribute('height', this.getPlannedElHeight() + "px");
-      this.el.setAttribute('width', this.getPlannedElWidth() + "px");
+      this.el.adjustSize({
+        height: this.getPlannedElHeight(),
+        width: this.getPlannedElWidth(),
+      })
     }
 
     if (this.g.config.get("shouldRenderSeqBlockAsSvg") === true) {

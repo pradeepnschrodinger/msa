@@ -1,4 +1,5 @@
 const boneView = require("backbone-childs");
+import { hdCanvas } from "../utils/canvas";
 import SeqBlock from "./canvas/CanvasSeqBlock";
 import LabelBlock from "./labels/LabelBlock";
 
@@ -26,7 +27,7 @@ const View = boneView.extend({
         seqblock = new SeqBlock({
           model: this.model,
           g: this.g,
-          el: document.createElement("canvas"),
+          el: hdCanvas(),
         });
       }
       seqblock.ordering = 0;

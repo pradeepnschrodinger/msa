@@ -1,3 +1,5 @@
+import { hdCanvas } from "../../utils/canvas";
+
 const Events = require("biojs-events");
 
 class CanvasCharCache {
@@ -28,16 +30,9 @@ class CanvasCharCache {
   // creates a canvas with a single letter
   // (for the fast font cache)
   createTile(letter, width, height) {
-
-    const canvas = this.cache[letter] = document.createElement("canvas");
-    const sharpnessFactor = 2;
-    canvas.setAttribute('height', height * sharpnessFactor + "px");
-    canvas.style.height = height + "px";
-    canvas.setAttribute('width', width * sharpnessFactor + "px");
-    canvas.style.width = width + "px";
-    
+    const canvas = this.cache[letter] = hdCanvas();
     this.ctx = canvas.getContext('2d');
-    this.ctx.setTransform(sharpnessFactor, 0, 0, sharpnessFactor, 0, 0);
+    canvas.adjustSize({ height, width })
     this.ctx.font = this.g.zoomer.get("residueFont") + "px mono";
 
     this.ctx.textBaseline = 'middle';
