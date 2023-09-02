@@ -81,16 +81,18 @@ const features = [
       "end": 15,
       "attributes": {
           "Name": "Nekadrew",
-          "Color": "blue"
-      }
-  },
-  {
-    "feature": "gene",
-    "start": 11,
-    "end": 16,
-    "attributes": {
-        "Name": "Niranjan",
-        "Color": "blue"
+          "Color": "#E5FCDD",
+          "textColor": "#71B567",
+        }
+      },
+      {
+        "feature": "gene",
+        "start": 11,
+        "end": 16,
+        "attributes": {
+          "Name": "Niranjan",
+          "Color": "#E5FCDD",
+          "textColor": "#71B567",
     }
   },
   {
@@ -99,7 +101,8 @@ const features = [
     "end": 35,
     "attributes": {
         "Name": "Nekadrew",
-        "Color": "blue"
+        "Color": "#E5FCDD",
+        "textColor": "#71B567",
     }
   },
   {
@@ -108,7 +111,8 @@ const features = [
     "end": 20,
     "attributes": {
         "Name": "Shweta",
-        "Color": "yellow"
+        "Color": "#E5FCDD",
+        "textColor": "#71B567",
     }
   },
 ];

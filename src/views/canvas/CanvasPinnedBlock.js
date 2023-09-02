@@ -46,6 +46,7 @@ const CanvasPinnedBlock = boneView.extend({
     const borderWidth = 0.75;
     const xOffset = this.getXOffset(rectWidth);
 
+    // TODO (pradeep): Perform virtualization here?
     this.model.forEach((feature) => {
       const x = feature.attributes.xStart * rectWidth;
       const y = (feature.attributes.row || 0) * rectWidth;
@@ -63,8 +64,8 @@ const CanvasPinnedBlock = boneView.extend({
       this.ctx.strokeRect(x + xOffset, y, width, height);
 
       // draw text
-      this.ctx.fillStyle = "black";
-      this.ctx.font = this.g.zoomer.get("residueFont") + "px mono";
+      this.ctx.fillStyle = feature.attributes.textColor || "black";
+      this.ctx.font = 'bold ' + this.g.zoomer.get("residueFont") + "px mono";
       this.ctx.textBaseline = 'middle';
       this.ctx.textAlign = "center";
 
