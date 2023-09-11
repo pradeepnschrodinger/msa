@@ -39,6 +39,9 @@
 .biojs_msa_headers {
     display: flex;
     height: 100%;
+    border-right: 1px solid darkgray;
+    border-bottom: 1px solid darkgray;
+    box-sizing: border-box;
 }
 
 .biojs_msa_header_label {
@@ -62,6 +65,13 @@
 .biojs_msa_rheaders {
   height: 100%;
   overflow-x: auto;
+  position: relative;
+  z-index: 1; /* this makes the scrollbar display over pinned annotations" */
+}
+
+.biojs_msa_labelblock {
+  border-right: 1px solid darkgray;
+  box-sizing: border-box;
 }
 
 .biojs_msa_labelblock::-webkit-scrollbar, .biojs_msa_rheader::-webkit-scrollbar{

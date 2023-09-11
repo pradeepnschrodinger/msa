@@ -42,9 +42,9 @@ const CanvasPinnedBlock = boneView.extend({
 
     // TODO (pradeep): Perform virtualization here?
     this.model.forEach((feature) => {
-      const x = feature.attributes.xStart * rectWidth;
+      const x = feature.attributes.start * rectWidth;
       const y = (feature.attributes.row || 0) * rectWidth;
-      const width = (feature.attributes.xEnd - feature.attributes.xStart + 1) * rectWidth;
+      const width = (feature.attributes.end - feature.attributes.start + 1) * rectWidth;
       const height = 1 * rectHeight;
   
       // draw background border
