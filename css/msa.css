@@ -34,13 +34,14 @@
     text-align: left;
     display: flex;
     flex-direction: row;
+    border-bottom: 1px solid darkgray;
+    box-sizing: border-box;
 }
 
 .biojs_msa_headers {
     display: flex;
     height: 100%;
     border-right: 1px solid darkgray;
-    border-bottom: 1px solid darkgray;
     box-sizing: border-box;
 }
 
