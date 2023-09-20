@@ -24,7 +24,7 @@ opts.conf = {
 opts.vis = {
   conserv: false,
   overviewbox: false,
-  seqlogo: true
+  seqlogo: false
 };
 
 // init msa
@@ -40,11 +40,13 @@ clustal.read(url, function(err, seqs) {
 xhr("./data/fer1.gff3", function(err, request, body) {
   var features = gffParser.parseSeqs(body);
   m.seqs.addFeatures(features);
+  m.render();
 });
 
 xhr("./data/fer1.gff_jalview", function(err, request, body) {
   var features = gffParser.parseSeqs(body);
   m.seqs.addFeatures(features);
+  m.render();
 });
 
 // the menu is independent to the MSA container
@@ -53,6 +55,52 @@ var defMenu = new msa.menu.defaultmenu({
   msa: m
 });
 defMenu.render();
+
+// pin features
+const pinnedFeatures = [
+  {
+      "feature": "gene",
+      "start": 0,
+      "end": 100,
+      "attributes": {
+          "Name": "VH",
+          "Color": "#E5FCDD",
+          "textColor": "#71B567",
+        }
+      },
+      {
+        "feature": "gene",
+        "start": 0,
+        "end": 20,
+        "attributes": {
+          "Name": "HFR1",
+          "Color": "#E5FCDD",
+          "textColor": "#71B567",
+    }
+  },
+  {
+    "feature": "gene",
+    "start": 21,
+    "end": 30,
+    "attributes": {
+        "Name": "H1",
+        "Color": "#E5FCDD",
+        "textColor": "#71B567",
+    }
+  },
+  {
+    "feature": "gene",
+    "start": 36,
+    "end": 40,
+    "attributes": {
+        "Name": "HFR2",
+        "Color": "#E5FCDD",
+        "textColor": "#71B567",
+    }
+  },
+];
+m.pinnedFeatures.reset(pinnedFeatures)
+m.render();
 
 // BioJS event system test (you can safely remove this in your app)
 //instance=m.g

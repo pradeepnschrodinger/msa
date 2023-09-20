@@ -131,9 +131,7 @@ const View = boneView.extend({
 
   draw: function() {
     if (!(this.g.config.get("shouldRenderSeqBlockAsSvg") === true)) {
-      // fastest way to clear the canvas
-      // http://jsperf.com/canvas-clear-speed/25
-      this.el.width = this.el.width;
+      this.ctx.clearRect(0, 0, this.el.width, this.el.height)
     }
 
     // draw all the stuff
@@ -142,6 +140,8 @@ const View = boneView.extend({
       this.seqDrawer.drawLetters();
       // row based
       this.seqDrawer.drawRows(this.sel._appendSelection, this.sel);
+
+      // draw features
       return this.seqDrawer.drawRows(this.drawFeatures, this);
     }
   },
@@ -151,7 +151,8 @@ const View = boneView.extend({
     const rectHeight = this.g.zoomer.get("rowHeight");
     if (data.model.attributes.height > 1) {
       const ctx = this.ctx;
-      data.model.attributes.features.each(function(feature) {
+      // draw background
+      data.model.attributes.features.each((feature) => {
         ctx.fillStyle = feature.attributes.fillColor || "red";
         const len = feature.attributes.xEnd - feature.attributes.xStart + 1;
         const y = (feature.attributes.row + 1) * rectHeight;
@@ -164,7 +165,7 @@ const View = boneView.extend({
       ctx.textBaseline = 'middle';
       ctx.textAlign = "center";
 
-      return data.model.attributes.features.each(function(feature) {
+      return data.model.attributes.features.each((feature) => {
         const len = feature.attributes.xEnd - feature.attributes.xStart + 1;
         const y = (feature.attributes.row + 1) * rectHeight;
         return ctx.fillText( feature.attributes.text, data.xZero + feature.attributes.xStart *
@@ -189,8 +190,10 @@ const View = boneView.extend({
       this.el.style.width = `${this.getPlannedElWidth()}px`;
       this.el.style.height = `${this.getPlannedElHeight()}px`;
     } else {
-      this.el.setAttribute('height', this.getPlannedElHeight() + "px");
-      this.el.setAttribute('width', this.getPlannedElWidth() + "px");
+      this.el.adjustSize({
+        height: this.getPlannedElHeight(),
+        width: this.getPlannedElWidth(),
+      })
     }
 
     if (this.g.config.get("shouldRenderSeqBlockAsSvg") === true) {
@@ -201,18 +204,18 @@ const View = boneView.extend({
 
 
     const zoomerScrollLeft = this.g.zoomer.get('_alignmentScrollLeft');
-    const zoomerScrollRight = this.g.zoomer.get('_alignmentScrollTop');
-    const scrollObj = this._checkScrolling( [ zoomerScrollLeft, zoomerScrollRight ])
+    const zoomerScrollTop = this.g.zoomer.get('_alignmentScrollTop');
+    const scrollObj = this._checkScrolling( [ zoomerScrollLeft, zoomerScrollTop ])
 
     this.g.zoomer._checkScrolling( scrollObj, {header: "canvasseq"});
 
     this._setColor();
 
-    this.seqDrawer = new CanvasSeqDrawer( this.g,this.ctx,this.model,
-      {width: this.el.width,
+    this.seqDrawer = new CanvasSeqDrawer( this.g,this.ctx,this.model, {
+      width: this.el.width,
       height: this.el.height,
       color: this.color,
-      cache: this.cache
+      cache: this.cache,
     });
 
     this.throttledDraw();

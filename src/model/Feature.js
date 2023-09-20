@@ -6,6 +6,7 @@ const Feature = Model.extend({
     xEnd: -1,
     height: -1,
     text: "",
+    textColor: "black",
     fillColor: "red",
     fillOpacity: 0.5,
     type: "rectangle",
@@ -32,6 +33,9 @@ const Feature = Model.extend({
       }
       if ((obj.attributes.Color != null)) {
         this.set("fillColor", obj.attributes.Color);
+      }
+      if ((obj.attributes.textColor != null)) {
+        this.set("textColor", obj.attributes.textColor);
       }
     }
 

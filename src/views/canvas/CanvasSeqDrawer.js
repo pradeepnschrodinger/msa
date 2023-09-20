@@ -68,14 +68,15 @@ const Drawer = {
   // returns first sequence in the viewport
   // y is the position to start drawing
   getStartSeq: function() {
-    const start = (Math.max(0, Math.floor( this.g.zoomer.get('_alignmentScrollTop') / this.rectHeight))) + 1;
+    const alignmentScrollTop = this.g.zoomer.get('_alignmentScrollTop');
+    const start = (Math.max(0, Math.floor(alignmentScrollTop / this.rectHeight))) + 1;
     let counter = 0;
     let i = 0;
     while (counter < start && i < this.model.length) {
       counter += this.model.at(i).attributes.height || 1;
       i++;
     }
-    const y = Math.max(0, this.g.zoomer.get('_alignmentScrollTop') - counter * this.rectHeight + (this.model.at(i - 1)
+    const y = Math.max(0, alignmentScrollTop - counter * this.rectHeight + (this.model.at(i - 1)
     .attributes.height  || 1 ) * this.rectHeight);
     return [i - 1, -y];
   },

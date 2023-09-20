@@ -29,13 +29,13 @@ const LabelHeader = view.extend({
       this.el.appendChild(this.metaDOM());
     }
 
-    this.el.style.display = "inline-block";
     this.el.style.fontSize = this.g.zoomer.get("markerFontsize");
     return this;
   },
 
   labelDOM: function() {
     var labelHeader = k.mk("div");
+    labelHeader.className = 'biojs_msa_header_label';
     labelHeader.style.width = this.g.zoomer.getLabelWidth();
     labelHeader.style.display = "inline-block";
 
