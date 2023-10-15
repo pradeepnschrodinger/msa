@@ -10,7 +10,6 @@ const FeatureCol = Collection.extend({
     this.startOnCache = [];
     // invalidate cache
     this.on( "all", (function() {
-      this.assignRows();
       return this.startOnCache = [];
     }), this);
     Collection.apply(this, arguments);
