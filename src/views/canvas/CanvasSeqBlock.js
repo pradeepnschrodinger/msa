@@ -117,6 +117,7 @@ const View = boneView.extend({
 
     events.mousewheel = "_onmousewheel";
     events.DOMMouseScroll = "_onmousewheel";
+    events.wheel = "_onmousewheel";
     this.delegateEvents(events);
 
     // listen for changes
