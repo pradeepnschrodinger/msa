@@ -72,6 +72,7 @@ const pinnedFeatures = [
         "feature": "gene",
         "start": 0,
         "end": 20,
+        "row": 1,
         "attributes": {
           "Name": "HFR1",
           "Color": "#E5FCDD",
@@ -82,6 +83,7 @@ const pinnedFeatures = [
     "feature": "gene",
     "start": 21,
     "end": 30,
+    "row": 1,
     "attributes": {
         "Name": "H1",
         "Color": "#E5FCDD",
@@ -92,6 +94,7 @@ const pinnedFeatures = [
     "feature": "gene",
     "start": 36,
     "end": 40,
+    "row": 1,
     "attributes": {
         "Name": "HFR2",
         "Color": "#E5FCDD",
