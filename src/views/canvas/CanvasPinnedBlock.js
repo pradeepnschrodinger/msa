@@ -17,10 +17,9 @@ const CanvasPinnedBlock = boneView.extend({
       this.g.zoomer, 
       "change:_alignmentScrollLeft change:_alignmentScrollTop change:alignmentWidth change:alignmentHeight", 
       function(model, value, options) {
-        if ((!(((typeof options !== "undefined" && options !== null) ? options.origin : undefined) != null)) || options.origin !== "canvasseq") {
-          return this.render();
-        }
-    });
+        return this.render();
+      }
+    );
   },
 
   adjustSize() {
