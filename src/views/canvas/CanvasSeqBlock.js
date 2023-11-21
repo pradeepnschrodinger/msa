@@ -1,7 +1,7 @@
 const boneView = require("backbone-childs");
 const mouse = require("mouse-pos");
 const C2S = require("canvas2svg");
-import {throttle, isEqual, omit} from "lodash";
+import {throttle, isEqual, omit, get} from "lodash";
 const jbone = require("jbone");
 
 import CharCache from "./CanvasCharCache";
@@ -14,9 +14,13 @@ const View = boneView.extend({
     this.g = data.g;
 
     this.listenTo(this.g.zoomer, "change:_alignmentScrollLeft change:_alignmentScrollTop", function(model,value, options) {
-      if ((!(((typeof options !== "undefined" && options !== null) ? options.origin : undefined) != null)) || options.origin !== "canvasseq") {
-        return this.render();
+      // no need to render if the event was triggered by this view
+      if (get(options, 'origin') === "canvasseq") {
+        // console.log("skip", options)
+        return
       }
+      // console.log("render", model, value, options)
+      return this.render();
     });
 
     this.listenTo(this.g.columns,"change:hidden", this.render);
