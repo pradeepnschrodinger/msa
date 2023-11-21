@@ -15,7 +15,7 @@ const CanvasPinnedBlock = boneView.extend({
   setupListeners() {
     this.listenTo(
       this.g.zoomer, 
-      "change:_alignmentScrollLeft change:_alignmentScrollTop change:alignmentWidth change:alignmentHeight", 
+      "change:_alignmentScrollLeft change:alignmentWidth change:alignmentHeight", 
       function(model, value, options) {
         return this.render();
       }

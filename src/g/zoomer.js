@@ -200,15 +200,6 @@ module.exports = Zoomer = Model.extend({
     return this.model = model;
   },
 
-  // updates both scroll properties (if needed)
-  _checkScrolling: function(scrollObj, opts) {
-    var xScroll = scrollObj[0];
-    var yScroll = scrollObj[1];
-
-    this.set("_alignmentScrollLeft", xScroll, opts);
-    return this.set("_alignmentScrollTop", yScroll, opts);
-  },
-
   getMaxAlignmentHeight: function() {
     var height = 0;
     this.model.each(function(seq) {

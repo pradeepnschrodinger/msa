@@ -1,27 +1,17 @@
 const boneView = require("backbone-childs");
 const mouse = require("mouse-pos");
 const C2S = require("canvas2svg");
-import {throttle, isEqual, omit, get} from "lodash";
-const jbone = require("jbone");
+import { throttle, isEqual, omit } from "lodash";
 
 import CharCache from "./CanvasCharCache";
 import SelectionClass from "./CanvasSelection";
 import CanvasSeqDrawer from "./CanvasSeqDrawer";
+import ScrollBody from "../../utils/scroll";
 
 const View = boneView.extend({
 
   initialize: function(data) {
     this.g = data.g;
-
-    this.listenTo(this.g.zoomer, "change:_alignmentScrollLeft change:_alignmentScrollTop", function(model,value, options) {
-      // no need to render if the event was triggered by this view
-      if (get(options, 'origin') === "canvasseq") {
-        // console.log("skip", options)
-        return
-      }
-      // console.log("render", model, value, options)
-      return this.render();
-    });
 
     this.listenTo(this.g.columns,"change:hidden", this.render);
     this.listenTo(this.g.zoomer,"change:alignmentWidth change:alignmentHeight", this.render);
@@ -83,6 +73,8 @@ const View = boneView.extend({
       this.throttledDraw = throttle(this.throttledDraw, 30);
     }
 
+    new ScrollBody(this.g, this, this.draw);
+
     return this.manageEvents();
   },
 
@@ -107,8 +99,6 @@ const View = boneView.extend({
 
   manageEvents: function() {
     const events = {};
-    events.mousedown = "_onmousedown";
-    events.touchstart = "_ontouchstart";
 
     if (this.g.config.get("registerMouseClicks")) {
       events.dblclick = "_onclick";
@@ -118,16 +108,9 @@ const View = boneView.extend({
       events.mouseout = "_onmouseout";
       events.mousemove = "_onmousemove";
     }
-
-    events.mousewheel = "_onmousewheel";
-    events.DOMMouseScroll = "_onmousewheel";
-    events.wheel = "_onmousewheel";
-    this.delegateEvents(events);
-
     // listen for changes
     this.listenTo(this.g.config, "change:registerMouseHover", this.manageEvents);
     this.listenTo(this.g.config, "change:registerMouseClick", this.manageEvents);
-    return this.dragStart = [];
   },
 
   _setColor: function() {
@@ -207,13 +190,6 @@ const View = boneView.extend({
       this.ctx = new C2S(width, height)
     }
 
-
-    const zoomerScrollLeft = this.g.zoomer.get('_alignmentScrollLeft');
-    const zoomerScrollTop = this.g.zoomer.get('_alignmentScrollTop');
-    const scrollObj = this._checkScrolling( [ zoomerScrollLeft, zoomerScrollTop ])
-
-    this.g.zoomer._checkScrolling( scrollObj, {header: "canvasseq"});
-
     this._setColor();
 
     this.seqDrawer = new CanvasSeqDrawer( this.g,this.ctx,this.model, {
@@ -231,75 +207,6 @@ const View = boneView.extend({
     return this;
   },
 
-  _onmousedrag: function(e, reversed) {
-    if (this.dragStart.length === 0) { return; }
-
-    const dragEnd = mouse.abs(e);
-    // relative to first click
-    const relEnd = [dragEnd[0] - this.dragStart[0], dragEnd[1] - this.dragStart[1]];
-    // relative to initial scroll status
-
-    // scale events
-    let scaleFactor = this.g.zoomer.get("canvasEventScale");
-    if (reversed) {
-      scaleFactor = 3;
-    }
-    for (let i = 0; i <= 1; i++) {
-      relEnd[i] = relEnd[i] * scaleFactor;
-    }
-
-    // calculate new scrolling vals
-    const relDist = [this.dragStartScroll[0] - relEnd[0], this.dragStartScroll[1] - relEnd[1]];
-
-    // round values
-    for (let i = 0; i <= 1; i++) {
-      relDist[i] = Math.round(relDist[i]);
-    }
-
-    // update scrollbar
-    const scrollCorrected = this._checkScrolling( relDist);
-    this.g.zoomer._checkScrolling(scrollCorrected, {origin: "canvasseq"});
-
-    // reset start if use scrolls out of bounds
-    for (let i = 0; i <= 1; i++) {
-      if (scrollCorrected[i] !== relDist[i]) {
-        if (scrollCorrected[i] === 0) {
-          // reset of left, top
-          this.dragStart[i] = dragEnd[i];
-          this.dragStartScroll[i] = 0;
-        } else {
-          // recalibrate on right, bottom
-          this.dragStart[i] = dragEnd[i] - scrollCorrected[i];
-        }
-      }
-    }
-
-    this.throttledDraw();
-
-    // abort selection events of the browser (mouse only)
-    if ((e.preventDefault != null)) {
-      e.preventDefault();
-      return e.stopPropagation();
-    }
-  },
-
-  // converts touches into old mouse event
-  _ontouchmove: function(e) {
-    this._onmousedrag(e.changedTouches[0], true);
-    e.preventDefault();
-    return e.stopPropagation();
-  },
-
-  // start the dragging mode
-  _onmousedown: function(e) {
-    this.dragStart = mouse.abs(e);
-    this.dragStartScroll = [this.g.zoomer.get('_alignmentScrollLeft'), this.g.zoomer.get('_alignmentScrollTop')];
-    jbone(document.body).on('mousemove.overmove', (e) => this._onmousedrag(e));
-    jbone(document.body).on('mouseup.overup', () => this._cleanup());
-    //jbone(document.body).on 'mouseout.overout', (e) => @_onmousewinout(e)
-    return e.preventDefault();
-  },
-
   _onmousemove: function(e) {
     const residueEvent = this._getResidueAtMouseEvent(e);
     this._onresiduehover(residueEvent);
@@ -315,55 +222,6 @@ const View = boneView.extend({
 
     this.previousRes = residue;
     this.g.trigger("residue:hover", residueEvent);
-  },
-
-  // starts the touch mode
-  _ontouchstart: function(e) {
-    this.dragStart = mouse.abs(e.changedTouches[0]);
-    this.dragStartScroll = [this.g.zoomer.get('_alignmentScrollLeft'), this.g.zoomer.get('_alignmentScrollTop')];
-    jbone(document.body).on('touchmove.overtmove', (e) => this._ontouchmove(e));
-      return jbone(document.body).on( 'touchend.overtend touchleave.overtleave touchcancel.overtcanel', (e) => this._touchCleanup(e)
-    );
-  },
-
-  // checks whether mouse moved out of the window
-  // -> terminate dragging
-  _onmousewinout: function(e) {
-    if (e.toElement === document.body.parentNode) {
-      return this._cleanup();
-    }
-  },
-
-  // terminates dragging
-  _cleanup: function() {
-    this.dragStart = [];
-    // remove all listeners
-    jbone(document.body).off('.overmove');
-    jbone(document.body).off('.overup');
-    return jbone(document.body).off('.overout');
-  },
-
-  // terminates touching
-  _touchCleanup: function(e) {
-    if (e.changedTouches.length > 0) {
-      // maybe we can send a final event
-      this._onmousedrag(e.changedTouches[0], true);
-    }
-
-    this.dragStart = [];
-    // remove all listeners
-    jbone(document.body).off('.overtmove');
-    jbone(document.body).off('.overtend');
-    jbone(document.body).off('.overtleave');
-    return jbone(document.body).off('.overtcancel');
-  },
-
-  // might be incompatible with some browsers
-  _onmousewheel: function(e) {
-    const delta = mouse.wheelDelta(e);
-    this.g.zoomer.set('_alignmentScrollLeft', this.g.zoomer.get('_alignmentScrollLeft') + delta[0]);
-    this.g.zoomer.set('_alignmentScrollTop', this.g.zoomer.get('_alignmentScrollTop') + delta[1]);
-    return e.preventDefault();
   },
 
   _onclick: function(e) {
@@ -437,29 +295,6 @@ const View = boneView.extend({
   _unwrapResidue(residueEvent) {
     return omit(residueEvent, 'evt');
   },
-
-  // checks whether the scrolling coordinates are valid
-  // @returns: [xScroll,yScroll] valid coordinates
-  _checkScrolling: function(scrollObj) {
-
-    // These calculations are taken from src/views/canvas/CanvasCoordsCache.js:
-    const maxScrollHeight = this.g.zoomer.getMaxAlignmentHeight() - this.g.zoomer.get('alignmentHeight');
-    const maxScrollWidth = this.g.zoomer.getMaxAlignmentWidth() - this.g.zoomer.getAlignmentWidth();
-
-    // 0: maxLeft, 1: maxTop
-    const max = [maxScrollWidth, maxScrollHeight];
-
-    for (let i = 0; i <= 1; i++) {
-      if (scrollObj[i] > max[i]) {
-        scrollObj[i] = max[i];
-      }
-
-      if (scrollObj[i] < 0) {
-        scrollObj[i] = 0;
-      }
-    }
-
-    return scrollObj;
-  }
 });
+
 export default View;

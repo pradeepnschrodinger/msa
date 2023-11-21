@@ -1,4 +1,4 @@
 {
 	"presets": ["es2015"],
-	"plugins": ["transform-export-extensions"]
+	"plugins": ["transform-export-extensions", "babel-plugin-transform-class-properties"]
 }
