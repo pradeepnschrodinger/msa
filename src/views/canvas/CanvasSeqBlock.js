@@ -108,6 +108,9 @@ const View = boneView.extend({
       events.mouseout = "_onmouseout";
       events.mousemove = "_onmousemove";
     }
+
+    this.delegateEvents(events);
+
     // listen for changes
     this.listenTo(this.g.config, "change:registerMouseHover", this.manageEvents);
     this.listenTo(this.g.config, "change:registerMouseClick", this.manageEvents);
