@@ -12,11 +12,9 @@ class ScrollBody {
 
     this.dragStart = [];
     this.dragStartScroll = [];
-
-    this._manageEvents();
   }
 
-  _manageEvents() {
+  getScrollEvents() {
     const events = {};
 
     // add scroll support
@@ -27,11 +25,11 @@ class ScrollBody {
     // add touch/drag scroll support
     events.mousedown = this._onmousedown;
     events.touchstart = this._ontouchstart;
-    
-    this.backboneView.delegateEvents(events);
 
     // call the callback function for scrolls whenever scroll offsets change
     this.backboneView.listenTo(this.g.zoomer, "change:_alignmentScrollLeft change:_alignmentScrollTop", this.onScrollCallback);
+
+    return events;
   }
 
   /**

@@ -73,7 +73,7 @@ const View = boneView.extend({
       this.throttledDraw = throttle(this.throttledDraw, 30);
     }
 
-    new ScrollBody(this.g, this, this.draw);
+    this.scrollBody = new ScrollBody(this.g, this, this.draw);
 
     return this.manageEvents();
   },
@@ -98,7 +98,7 @@ const View = boneView.extend({
   },
 
   manageEvents: function() {
-    const events = {};
+    const events = this.scrollBody.getScrollEvents();
 
     if (this.g.config.get("registerMouseClicks")) {
       events.dblclick = "_onclick";

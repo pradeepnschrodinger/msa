@@ -26,7 +26,8 @@ const View = boneView.extend({
       return this.render();
     });
 
-    new ScrollBody(this.g, this, this._adjustScrollingLeft);
+    this.scrollBody = new ScrollBody(this.g, this, this._adjustScrollingLeft);
+    this.delegateEvents(this.scrollBody.getScrollEvents());
 
     // collection view for all the headers
     this.addView("headers", new (boneView.extend({
