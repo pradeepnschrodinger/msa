@@ -57,7 +57,7 @@ class ScrollBody {
 
   // start the dragging mode
   _onmousedown = (e) => {
-    this.dragStart = mouse.abs(e);
+    this.dragStart = mouse.abs(e.originalEvent);
     this.dragStartScroll = [this.g.zoomer.get('_alignmentScrollLeft'), this.g.zoomer.get('_alignmentScrollTop')];
     jbone(document.body).on('mousemove.overmove', (e) => this._onmousedrag(e));
     jbone(document.body).on('mouseup.overup', () => this._cleanup());
@@ -67,7 +67,7 @@ class ScrollBody {
 
   // starts the touch mode
   _ontouchstart = (e) => {
-    this.dragStart = mouse.abs(e.changedTouches[0]);
+    this.dragStart = mouse.abs(e.originalEvent.changedTouches[0]);
     this.dragStartScroll = [this.g.zoomer.get('_alignmentScrollLeft'), this.g.zoomer.get('_alignmentScrollTop')];
     jbone(document.body).on('touchmove.overtmove', (e) => this._ontouchmove(e));
       return jbone(document.body).on( 'touchend.overtend touchleave.overtleave touchcancel.overtcanel', (e) => this._touchCleanup(e)
@@ -92,7 +92,7 @@ class ScrollBody {
   _onmousedrag = (e, reversed) => {
     if (this.dragStart.length === 0) { return; }
 
-    const dragEnd = mouse.abs(e);
+    const dragEnd = mouse.abs(e.originalEvent);
     // relative to first click
     const relEnd = [dragEnd[0] - this.dragStart[0], dragEnd[1] - this.dragStart[1]];
     // relative to initial scroll status

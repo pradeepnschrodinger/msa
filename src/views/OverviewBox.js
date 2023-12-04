@@ -183,7 +183,7 @@ const OverviewBox = view.extend({
     this.ctx.fillStyle = "#666666";
     this.ctx.globalAlpha = 0.9;
 
-    const rect = this._calcSelection( mouse.abs(e) );
+    const rect = this._calcSelection( mouse.abs(e.originalEvent) );
     this.ctx.fillRect(rect[0][0],rect[1][0],rect[0][1] - rect[0][0], rect[1][1] - rect[1][0]);
 
     // abort selection events of the browser
@@ -193,7 +193,7 @@ const OverviewBox = view.extend({
 
   // start the selection mode
   _onmousedown: function(e) {
-    this.dragStart = mouse.abs(e);
+    this.dragStart = mouse.abs(e.originalEvent);
     this.dragStartRel = mouse.rel(e);
 
     if (e.ctrlKey || e.metaKey) {
@@ -280,11 +280,11 @@ const OverviewBox = view.extend({
 
   // ends the selection mode
   _onmouseup: function(e) {
-    return this._endSelection(mouse.abs(e));
+    return this._endSelection(mouse.abs(e.originalEvent));
   },
 
   _onmouseout: function(e) {
-    return this._endSelection(mouse.abs(e));
+    return this._endSelection(mouse.abs(e.originalEvent));
   },
 
  // init the canvas
