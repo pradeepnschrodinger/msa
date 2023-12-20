@@ -65,9 +65,8 @@
 
 .biojs_msa_rheaders {
   height: 100%;
-  overflow-x: auto;
+  overflow-x: hidden; /* don't show a scrollbar */
   position: relative;
-  z-index: 1; /* this makes the scrollbar display over pinned annotations" */
 }
 
 .biojs_msa_labelblock {

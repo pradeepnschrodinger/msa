@@ -19,7 +19,8 @@ var url = "./data/fer1.clustal";
 
 opts.conf = {
   url: url, // we tell the MSA viewer about the URL source
-  dropImport: true
+  dropImport: true,
+  registerMouseHover: true,
 };
 opts.vis = {
   conserv: false,
@@ -104,6 +105,8 @@ const pinnedFeatures = [
 ];
 m.pinnedFeatures.reset(pinnedFeatures)
 m.render();
+
+m.g.on("residue:hover", function(data){ console.log('residue:hover', data) });
 
 // BioJS event system test (you can safely remove this in your app)
 //instance=m.g

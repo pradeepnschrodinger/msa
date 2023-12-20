@@ -4,9 +4,8 @@ import MarkerView from "./MarkerView";
 import ConservationView from "./ConservationView";
 import SeqLogoWrapper from "./SeqLogoWrapper";
 import GapView from "./GapView";
-import SeqBlock from "../canvas/CanvasSeqBlock";
 import PinnedBlock from "../canvas/CanvasPinnedBlock";
-import { head } from "lodash";
+import ScrollBody from "../../utils/scroll";
 
 const View = boneView.extend({
 
@@ -20,13 +19,15 @@ const View = boneView.extend({
     });
     this.listenTo(this.g.vis,"change", this._setSpacer);
     this.listenTo(this.g.zoomer,"change:alignmentWidth", this._setWidth);
-    this.listenTo(this.g.zoomer, "change:_alignmentScrollLeft", this._adjustScrollingLeft);
 
     // TODO: duplicate rendering
     this.listenTo(this.g.columns, "change:hidden", function() {
       this.draw();
       return this.render();
     });
+
+    this.scrollBody = new ScrollBody(this.g, this, this._adjustScrollingLeft);
+    this.delegateEvents(this.scrollBody.getScrollEvents());
 
     // collection view for all the headers
     this.addView("headers", new (boneView.extend({
