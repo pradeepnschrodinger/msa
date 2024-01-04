@@ -1,10 +1,13 @@
 const boneView = require("backbone-childs");
 import LabelRowView from "./LabelRowView";
+import { defer } from "lodash";
 
 const View = boneView.extend({
 
   initialize: function(data) {
     this.g = data.g;
+    this._adjustScrollingTop = this._adjustScrollingTop.bind(this);
+
     this.draw();
     this.listenTo(this.g.zoomer, "change:_alignmentScrollTop", this._adjustScrollingTop);
     this.g.vis.once('change:loaded', this._adjustScrollingTop , this);
@@ -22,7 +25,6 @@ const View = boneView.extend({
 
   draw: function() {
     this.removeViews();
-    console.log("redraw columns" , this.model.length);
     for (var i = 0; i < this.model.length; i++) {
         if (this.model.at(i).get('hidden')) { continue; }
         var view = new LabelRowView({model: this.model.at(i), g: this.g});
@@ -41,7 +43,7 @@ const View = boneView.extend({
 
   // sets the scrolling property (from another event e.g. dragging)
   _adjustScrollingTop() {
-    return this.el.scrollTop =  this.g.zoomer.get("_alignmentScrollTop");
+    this.el.scrollTop =  this.g.zoomer.get("_alignmentScrollTop");
   },
 
   render: function() {
@@ -55,6 +57,10 @@ const View = boneView.extend({
     this.el.style.lineHeight = `${this.g.zoomer.get("labelLineHeight")}`;
     this.el.style.width = 0 + this.g.zoomer.getLeftBlockWidth() + "px";
     this._setHeight();
+
+    // backbone JS has a delay with rendering the views into the DOM
+    defer(this._adjustScrollingTop);
+
     return this;
   },
 

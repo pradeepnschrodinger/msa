@@ -12,6 +12,8 @@ class ScrollBody {
 
     this.dragStart = [];
     this.dragStartScroll = [];
+
+    this._fixCurrentScroll();
   }
 
   getScrollEvents() {
@@ -173,6 +175,24 @@ class ScrollBody {
     }
 
     return scrollObj;
+  }
+
+  // Helper to fix the scrolling position
+  _fixCurrentScroll = () => {
+    const oldScrollLeft = this.g.zoomer.get('_alignmentScrollLeft');
+    const oldScrollTop = this.g.zoomer.get('_alignmentScrollTop');
+    const scrollCorrected = this._checkScrolling([
+      oldScrollLeft,
+      oldScrollTop
+    ]);
+
+    // only update if scroll values have changed
+    if (oldScrollLeft !== scrollCorrected[0]) {
+      this.g.zoomer.set('_alignmentScrollLeft', scrollCorrected[0]);
+    }
+    if (oldScrollTop !== scrollCorrected[1]) {
+      this.g.zoomer.set('_alignmentScrollTop', scrollCorrected[1]);
+    }
   }
 }
 

@@ -265,7 +265,7 @@ const View = boneView.extend({
   },
 
   _getResidueAtMouseEvent: function(e) {
-    const coords = mouse.rel(e);
+    const coords = mouse.rel(e.originalEvent);
 
     coords[0] += this.g.zoomer.get("_alignmentScrollLeft");
     let x = Math.floor(coords[0] / this.g.zoomer.get("columnWidth") );
@@ -286,7 +286,6 @@ const View = boneView.extend({
       const features = this.model.at(y).get("features").getFeatureOnRow(rowNumber - 1, x);
       if (!(features.length === 0)) {
         const feature = features[0];
-        console.log(features[0].attributes);
         return {seqId:seqId, feature: feature, rowPos: x, evt:e};
       }
     } else {
