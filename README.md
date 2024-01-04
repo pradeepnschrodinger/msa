@@ -458,7 +458,7 @@ zoomer: {
     markerHeight: 20,
 
     // canvas
-    residueFont: "13", //in px
+    residueFont: "13px Helvetica Neue",
     canvasEventScale: 1,
 
     // overview box

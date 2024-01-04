@@ -33,7 +33,7 @@ class CanvasCharCache {
     const canvas = this.cache[letter] = hdCanvas();
     this.ctx = canvas.getContext('2d');
     canvas.adjustSize({ height, width })
-    this.ctx.font = this.g.zoomer.get("residueFont") + "px mono";
+    this.ctx.font = this.g.zoomer.get("residueFont");
 
     this.ctx.textBaseline = 'middle';
     this.ctx.textAlign = "center";

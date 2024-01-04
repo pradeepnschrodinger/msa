@@ -53,7 +53,7 @@ module.exports = Zoomer = Model.extend({
     markerHeight: 20,
 
     // canvas
-    residueFont: "13", // in px
+    residueFont: "13px Helvetica Neue", // in px
     canvasEventScale: 1,
     minLetterDrawSize: 11,
 
