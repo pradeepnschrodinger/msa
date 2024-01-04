@@ -154,23 +154,17 @@ module.exports = Zoomer = Model.extend({
     if (this.g.config.get("shouldRenderSeqBlockAsSvg") === true) {
       val = calcWidth
     } else {
-      // This is to account for the margins/padding around the canvas's actual
-      // content area:
-      const marginAdjustment = 35;
       let parentWidth
       if ((this.el.parentNode != null) && this.el.parentNode.offsetWidth !== 0) {
-        parentWidth = this.el.parentNode.offsetWidth - marginAdjustment;
+        parentWidth = this.el.parentNode.offsetWidth;
       } else {
-        parentWidth = document.body.clientWidth - marginAdjustment;
+        parentWidth = document.body.clientWidth;
       }
 
       // TODO: dirty hack
       var maxWidth = parentWidth - this.getLeftBlockWidth();
       val = Math.min(maxWidth,calcWidth);
     }
-
-    // round to a valid AA box
-    val = Math.floor( val / this.get("columnWidth")) * this.get("columnWidth");
 
     //@set "alignmentWidth", val
     this.set("alignmentWidth", val)
