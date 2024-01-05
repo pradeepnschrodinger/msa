@@ -41,7 +41,7 @@ const View = boneView.extend({
 
 
     // clear the char cache
-    this.listenTo(this.g.zoomer, "change:residueFont", function() {
+    this.listenTo(this.g.zoomer, "change:residueFont change:residueFontOffset", function() {
       this.cache = new CharCache(this.g);
       return this.render();
     });

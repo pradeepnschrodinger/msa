@@ -33,12 +33,13 @@ class CanvasCharCache {
     const canvas = this.cache[letter] = hdCanvas();
     this.ctx = canvas.getContext('2d');
     canvas.adjustSize({ height, width })
-    this.ctx.font = this.g.zoomer.get("residueFont") + "px mono";
+    this.ctx.font = this.g.zoomer.get("residueFont");
+    const [xOffset, yOffset] = this.g.zoomer.get("residueFontOffset");
 
     this.ctx.textBaseline = 'middle';
     this.ctx.textAlign = "center";
 
-    return this.ctx.fillText(letter,width / 2,height / 2,width);
+    return this.ctx.fillText(letter, width / 2 + xOffset, height / 2 + yOffset, width);
   }
 };
 export default CanvasCharCache;
