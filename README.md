@@ -461,7 +461,7 @@ zoomer: {
     residueFont: "13px Helvetica Neue",
     residueFontOffset: [0, 0], // horizontal and vertical offset of residue font in px
     canvasEventScale: 1,
-    residueFontGetter: undefined
+    residueFontGetter: undefined // this can be overriden with a custom function of the following signature: (char: string, pos: {x: number, y: number}) => { font: string, color: string}
 
     // overview box
     boxRectHeight: 2,
