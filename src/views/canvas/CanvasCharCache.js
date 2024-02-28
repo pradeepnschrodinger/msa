@@ -1,4 +1,5 @@
 import { hdCanvas } from "../../utils/canvas";
+import { get } from "lodash";
 
 const Events = require("biojs-events");
 
@@ -12,7 +13,7 @@ class CanvasCharCache {
   }
 
   // returns a cached canvas
-  getFontTile(letter, width, height) {
+  getFontTile(letter, width, height, x, y) {
     // validate cache
     if (width !== this.cacheWidth || height !== this.cacheHeight) {
       this.cacheHeight = height;
@@ -20,20 +21,43 @@ class CanvasCharCache {
       this.cache = {};
     }
 
-    if (this.cache[letter] === undefined) {
-      this.createTile(letter, width, height);
+    const fontProps = this.getFontProperties(letter, x, y);
+    const cacheKey = this.getCacheKey(letter, fontProps);    
+    if (this.cache[cacheKey] === undefined) {
+      this.createTile(letter, width, height, fontProps, cacheKey);
     }
 
-    return this.cache[letter];
+    return this.cache[cacheKey];
+  }
+
+  getFontProperties(letter, x, y) {
+    const residueFontGetter = this.g.zoomer.get("residueFontGetter");
+    let font = this.g.zoomer.get("residueFont");
+    let color = "black";
+    if (residueFontGetter !== undefined) {
+      const fontProps = residueFontGetter(letter, {x, y});
+      font = get(fontProps, "font") || font;
+      color = get(fontProps, "color") || color;
+    }
+    return {
+      font,
+      color
+    }
+  }
+
+  getCacheKey(letter, fontProps) {
+    const {font, color} = fontProps;
+    return `${letter}-${font}-${color}`;
   }
 
   // creates a canvas with a single letter
   // (for the fast font cache)
-  createTile(letter, width, height) {
-    const canvas = this.cache[letter] = hdCanvas();
+  createTile(letter, width, height, fontProps, cacheKey) {
+    const canvas = this.cache[cacheKey] = hdCanvas();
     this.ctx = canvas.getContext('2d');
     canvas.adjustSize({ height, width })
-    this.ctx.font = this.g.zoomer.get("residueFont");
+    this.ctx.font = fontProps.font;
+    this.ctx.fillStyle = fontProps.color;
     const [xOffset, yOffset] = this.g.zoomer.get("residueFontOffset");
 
     this.ctx.textBaseline = 'middle';
