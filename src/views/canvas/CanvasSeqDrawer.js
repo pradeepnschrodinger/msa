@@ -26,10 +26,7 @@ const Drawer = {
     }
 
     // record monomers rendered for this frame
-    const startTime = performance.now();
     this.drawSeqs(function(data) { return this.drawSeq(data, (that, monomerBlock) => this.g.renderStats.setRenderedMonomer(monomerBlock)); });
-    console.log("stats: ", this.g.renderStats.get());
-    console.log("Time taken for stats", performance.now() - startTime, "ms")
 
     return this;
   },

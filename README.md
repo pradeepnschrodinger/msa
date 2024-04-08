@@ -510,6 +510,10 @@ const renderStats = msa.g.renderStats.get()
 gives
 ```
 {
+    "firstColumnIndex": 0,
+    "firstRowIndex": 0,
+    "lastColumnIndex": 4,
+    "lastRowIndex": 1,
     "sequenceBlock": {
         "0": {
             "monomers": [
@@ -539,9 +543,11 @@ gives
                 "#33ff00"
             ]
         },
+    },
 }
 ```
 The above example shows 2 sequences of monomer lengths 3 and 5 respectively with their displayed monomer symbol and background color.
+
 FAQ
 ----
 
