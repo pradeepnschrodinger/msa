@@ -514,7 +514,7 @@ gives
     "firstRowIndex": 0,
     "lastColumnIndex": 4,
     "lastRowIndex": 1,
-    "sequenceBlock": {
+    "renderedSequenceBlock": {
         "0": {
             "monomers": [
                 "M",
