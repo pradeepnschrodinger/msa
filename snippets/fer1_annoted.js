@@ -110,3 +110,5 @@ m.g.on("residue:hover", function(data){ console.log('residue:hover', data) });
 
 // BioJS event system test (you can safely remove this in your app)
 //instance=m.g
+
+window.m = m

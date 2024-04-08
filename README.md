@@ -500,6 +500,48 @@ menu: {
 }
 ```
 
+### Render Stats
+Information about the rendered content can be obtained by using the `renderStats` module, exposed in the global namespace (`msa.g`).
+This is useful incase devs wanna figure out what's actually rendered within the canvas.
+eg:
+```
+const renderStats = msa.g.renderStats.get()
+```
+gives
+```
+{
+    "sequenceBlock": {
+        "0": {
+            "monomers": [
+                "M",
+                "A",
+                "-",
+            ],
+            "colors": [
+                "#00ff00",
+                "#ccff00",
+                "#ffffff",
+            ]
+        },
+        "1": {
+            "monomers": [
+                "M",
+                "A",
+                "-",
+                "-",
+                "L"
+            ],
+            "colors": [
+                "#00ff00",
+                "#ccff00",
+                "#ffffff",
+                "#ffffff",
+                "#33ff00"
+            ]
+        },
+}
+```
+The above example shows 2 sequences of monomer lengths 3 and 5 respectively with their displayed monomer symbol and background color.
 FAQ
 ----
 
