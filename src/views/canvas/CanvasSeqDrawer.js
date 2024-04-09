@@ -1,4 +1,5 @@
 import {extend} from "lodash";
+import RenderStats from "../../utils/renderStats";
 
 const Drawer = {
 
@@ -9,6 +10,8 @@ const Drawer = {
   },
 
   drawLetters: function() {
+    // clear the stats every frame
+    this.g.renderStats.clear();
 
     this.updateConfig();
 
@@ -21,6 +24,9 @@ const Drawer = {
     if ( this.rectWidth >= this.g.zoomer.get('minLetterDrawSize')) {
       this.drawSeqs(function(data) { return this.drawSeq(data, this._drawLetter); });
     }
+
+    // record monomers rendered for this frame
+    this.drawSeqs(function(data) { return this.drawSeq(data, (that, monomerBlock) => this.g.renderStats.setRenderedMonomer(monomerBlock)); });
 
     return this;
   },
@@ -161,7 +167,7 @@ const Drawer = {
     } else {
       return that.ctx.drawImage( that.cache.getFontTile(data.c, data.rectWidth, data.rectHeight, data.x, data.y), data.xPos, data.yPos, data.rectWidth, data.rectHeight);
     }
-  }
+  },
 };
 
 const CanvasSeqDrawer = function(g,ctx,model,opts) {

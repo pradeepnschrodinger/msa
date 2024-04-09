@@ -30,6 +30,7 @@ import FileHelper from "./utils/file";
 import TreeHelper from "./utils/tree";
 import ProxyHelper from "./utils/proxy";
 import FeatureCol from "./model/FeatureCol";
+import RenderStats from "./utils/renderStats";
 
 // opts is a dictionary consisting of
 // @param el [String] id or reference to a DOM element
@@ -67,6 +68,7 @@ const MSA = boneView.extend({
     this.g.vis = new Visibility(data.vis, {model: this.seqs});
     this.g.visorder = new VisOrdering(data.visorder);
     this.g.zoomer = new Zoomer(data.zoomer,{g:this.g, model: this.seqs});
+    this.g.renderStats = new RenderStats({ g: this.g, model: this.seqs });
 
     this.g.scale = new StageScale(data.scale, {g: this.g});
 

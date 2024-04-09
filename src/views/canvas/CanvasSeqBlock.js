@@ -39,7 +39,6 @@ const View = boneView.extend({
 
     this.cache = new CharCache(this.g);
 
-
     // clear the char cache
     this.listenTo(this.g.zoomer, "change:residueFont change:residueFontOffset", function() {
       this.cache = new CharCache(this.g);
@@ -175,29 +174,30 @@ const View = boneView.extend({
   },
 
   render: function() {
+    const width = this.getPlannedElWidth();
+    const height = this.getPlannedElHeight();
+
     if (this.g.config.get("shouldRenderSeqBlockAsSvg") === true) {
-      this.el.setAttributeNS("http://www.w3.org/2000/svg", 'height', this.getPlannedElHeight());
-      this.el.setAttributeNS("http://www.w3.org/2000/svg", 'width', this.getPlannedElWidth());
-      this.el.style.width = `${this.getPlannedElWidth()}px`;
-      this.el.style.height = `${this.getPlannedElHeight()}px`;
+      this.el.setAttributeNS("http://www.w3.org/2000/svg", 'height', height);
+      this.el.setAttributeNS("http://www.w3.org/2000/svg", 'width', width);
+      this.el.style.width = `${width}px`;
+      this.el.style.height = `${height}px`;
     } else {
       this.el.adjustSize({
-        height: this.getPlannedElHeight(),
-        width: this.getPlannedElWidth(),
+        height,
+        width,
       })
     }
 
     if (this.g.config.get("shouldRenderSeqBlockAsSvg") === true) {
-      const width = this.getPlannedElWidth();
-      const height = this.getPlannedElHeight();
       this.ctx = new C2S(width, height)
     }
 
     this._setColor();
 
     this.seqDrawer = new CanvasSeqDrawer( this.g,this.ctx,this.model, {
-      width: this.el.width,
-      height: this.el.height,
+      width,
+      height,
       color: this.color,
       cache: this.cache,
     });
