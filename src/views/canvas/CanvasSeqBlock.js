@@ -178,7 +178,7 @@ const View = boneView.extend({
     const height = this.getPlannedElHeight();
 
     if (this.g.config.get("shouldRenderSeqBlockAsSvg") === true) {
-      this.el.setAttributeNS("http://www.w3.org/2000/svg", 'height', this.getPlannedElHeight());
+      this.el.setAttributeNS("http://www.w3.org/2000/svg", 'height', height);
       this.el.setAttributeNS("http://www.w3.org/2000/svg", 'width', width);
       this.el.style.width = `${width}px`;
       this.el.style.height = `${height}px`;
