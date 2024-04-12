@@ -62,7 +62,7 @@ class ScrollBody {
     this.dragStart = mouse.abs(e.originalEvent);
     this.dragStartScroll = [this.g.zoomer.get('_alignmentScrollLeft'), this.g.zoomer.get('_alignmentScrollTop')];
     jbone(document.body).on('mousemove.overmove', (e) => this._onmousedrag(e));
-    jbone(document.body).on('mouseup.overup', () => this._cleanup());
+    jbone(window).on('mouseup.overup', () => this._cleanup());
     //jbone(document.body).on 'mouseout.overout', (e) => @_onmousewinout(e)
     return e.preventDefault();
   }
