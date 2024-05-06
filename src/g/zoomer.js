@@ -139,7 +139,8 @@ module.exports = Zoomer = Model.extend({
      if (this.g.vis.get("labelId")) { val += this.get("labelIdLength"); }
      if (this.g.vis.get("customColumnsGetter")) {
         for (var idx = 0 ; idx < this.g.vis.get("customColumnsCount") ; idx++) {
-          val += this.g.vis.get("customColumnsGetter")(idx).length || this.get("customColumnsDefaultLength");
+          const column = this.g.vis.get("customColumnsGetter")(idx) || {};
+          val += column.length || this.get("customColumnsDefaultLength");
         }
      }
      if (this.g.vis.get("labelPartition")) { val += this.get("labelPartLength"); }

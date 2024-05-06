@@ -86,7 +86,7 @@ const LabelView = view.extend({
 
     if (this.g.vis.get("customColumnsGetter")) {
       for (var idx = 0; idx < this.g.vis.get("customColumnsCount"); idx++) {
-        const column = this.g.vis.get("customColumnsGetter")(idx);
+        const column = this.g.vis.get("customColumnsGetter")(idx) || {};
         const width = column.length || this.g.zoomer.get("customColumnsDefaultLength");
         var cell = column.cell;
         if (typeof cell === 'function') {
