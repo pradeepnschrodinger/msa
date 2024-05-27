@@ -36,7 +36,7 @@ const CanvasPinnedBlock = boneView.extend({
   drawFeatures() {
     const rectWidth = this.g.zoomer.get("columnWidth");
     const rectHeight = this.g.zoomer.get("rowHeight");
-    const borderWidth = 0.75;
+    const borderWidth = 1;
     const xOffset = this.getXOffset(rectWidth);
 
     // TODO (pradeep): Perform virtualization here?
@@ -52,9 +52,17 @@ const CanvasPinnedBlock = boneView.extend({
       this.ctx.fillRect(x + xOffset, y, width, height);
 
       // draw background block border
-      this.ctx.strokeStyle = 'black';
-      this.ctx.lineWidth = borderWidth;
+      this.ctx.strokeStyle = feature.attributes.verticalSeperatorColor || '#808080';
+      this.ctx.lineWidth = feature.attributes.verticalSeperatorWidth || borderWidth;
       this.ctx.strokeRect(x + xOffset, y, width, height);
+      
+      // draw top border
+      this.ctx.strokeStyle = feature.attributes.topBorderColor || '#999999'; // Default to #999999 if not specified
+      this.ctx.lineWidth = feature.attributes.topBorderWidth || 1; // Default to 1 if not specified
+      this.ctx.beginPath();
+      this.ctx.moveTo(x + xOffset, y);
+      this.ctx.lineTo(x + xOffset + width, y);
+      this.ctx.stroke();
 
       // draw text
       this.ctx.fillStyle = feature.attributes.textColor || "black";
