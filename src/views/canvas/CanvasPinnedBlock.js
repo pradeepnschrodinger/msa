@@ -51,13 +51,13 @@ const CanvasPinnedBlock = boneView.extend({
       this.ctx.fillStyle = feature.attributes.fillColor;
       this.ctx.fillRect(x + xOffset, y, width, height);
 
-      // draw vertical borders
+      // for vertical borders
       this.ctx.strokeStyle =
       feature.attributes.verticalSeperatorColor
       this.ctx.lineWidth =
         feature.attributes.verticalSeperatorWidth
 
-      // //draw left vertical border
+      // draw left vertical border
       this.ctx.beginPath();
       this.ctx.moveTo(x + xOffset, y);
       this.ctx.lineTo(x + xOffset, y + height);
