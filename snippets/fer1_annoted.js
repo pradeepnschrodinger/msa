@@ -63,6 +63,12 @@ const pinnedFeatures = [
       "feature": "gene",
       "start": 0,
       "end": 100,
+      "topBorderColor": "red",
+      "topBorderWidth": 3,
+      "verticalSeperatorColor": "blue",
+      "verticalSeperatorWidth": 5,
+      "bottomBorderColor": "black",
+      "bottomBorderWidth": 1,
       "attributes": {
           "Name": "VH",
           "Color": "#E5FCDD",

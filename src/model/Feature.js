@@ -12,6 +12,12 @@ const Feature = Model.extend({
     type: "rectangle",
     borderSize: 1,
     borderColor: "black",
+    verticalSeperatorColor: "black",
+    verticalSeperatorWidth: 1,
+    bottomBorderColor: "black",
+    bottomBorderWidth: 1,
+    topBorderColor: "black",
+    topBorderWidth: 1,
     borderOpacity: 0.5,
     validate: true,
     row: 0
