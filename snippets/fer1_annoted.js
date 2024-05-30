@@ -63,15 +63,15 @@ const pinnedFeatures = [
       "feature": "gene",
       "start": 0,
       "end": 100,
-      "topBorderColor": "red",
+      "topBorderColor": "#999999",
       "topBorderWidth": 3,
-      "verticalSeperatorColor": "blue",
-      "verticalSeperatorWidth": 5,
+      "verticalSeperatorColor": "#808080",
+      "verticalSeperatorWidth": 1,
       "bottomBorderColor": "black",
       "bottomBorderWidth": 1,
       "attributes": {
           "Name": "VH",
-          "Color": "#E5FCDD",
+          "Color": "#E5E5E5",
           "textColor": "#71B567",
         }
       },
@@ -82,7 +82,7 @@ const pinnedFeatures = [
         "row": 1,
         "attributes": {
           "Name": "HFR1",
-          "Color": "#E5FCDD",
+          "Color": "#F0F0F0",
           "textColor": "#71B567",
     }
   },
@@ -93,7 +93,7 @@ const pinnedFeatures = [
     "row": 1,
     "attributes": {
         "Name": "H1",
-        "Color": "#E5FCDD",
+        "Color": "#F8F8F8",
         "textColor": "#71B567",
     }
   },
@@ -104,7 +104,7 @@ const pinnedFeatures = [
     "row": 1,
     "attributes": {
         "Name": "HFR2",
-        "Color": "#E5FCDD",
+        "Color": "#F0F0F0",
         "textColor": "#71B567",
     }
   },
