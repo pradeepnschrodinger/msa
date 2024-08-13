@@ -45,11 +45,11 @@ const SelectionManager = Collection.extend({
   },
 
   isLabelSelected: function(seqId) {
-    return this.find(function(el) { return (el.get("type") === "label" || el.get("type") === "row") && el.get("seqId") === seqId; });
+    return this.find(function(el) { return el.get("type") === "label" && el.get("seqId") === seqId; });
   },
 
   isResidueSelected: function(seqId) {
-    return this.find(function(el) { return el.get("type") === "pos" && el.get("seqId") === seqId; });
+    return this.find(function(el) { return (el.get("type") === "pos" || el.get("type") === "row") && el.get("seqId") === seqId; });
   },
 
   getSelForRow: function(seqId) {
@@ -219,26 +219,50 @@ const SelectionManager = Collection.extend({
   },
 
   _handleE: function(e, selection) {
+    const lastSelection = selection;
     if (e.ctrlKey || e.metaKey) {
       if (this._isAlreadySelected(selection, this.models)) {
         this.remove(this._modelsToRemove(selection, this.models))
       } else {
-        this.add(selection)
+        this._addSelection(selection);
       }
     } else if (e.shiftKey) {
       this._handleShiftSelection(selection);
     }
     else {
-      this.reset([selection]);
+      this._resetSelection(selection);
     }
-    this._updateLastSelection(selection);
+    this._updateLastSelection(lastSelection);
   },
+
+  _addSelection: function(selection) {
+    let finalSelection = [];
+
+    selection = _.isArray(selection) ? selection : [selection];
+    selection.forEach((sel) => {
+      if (sel.get("type") === "row") {
+        finalSelection.push(sel);
+        finalSelection.push(new labelsel({seqId: sel.get("seqId")}));
+      } else {
+        finalSelection.push(sel);
+      }
+    })
+    this.add(finalSelection);
+  },
+
+  _resetSelection: function(selection) {
+    if (selection.get("type") === "row") {
+      selection = [selection, new labelsel({seqId: selection.get("seqId")})]
+    }
+    this.reset(selection);
+  },
+  
 
   _handleShiftSelection: function(selection) {
     const lastSelection = this.lastSelection;
 
     if (!lastSelection) {
-      this.add(selection);
+      this._addSelection(selection);
       return;
     }
 
@@ -259,18 +283,18 @@ const SelectionManager = Collection.extend({
 
     if (lastSelectionType === "row" && selectionType === "row") {
       // Select all rows between the last selection and the current selection
-      const rows = []
+      const selections = []
       for (let i = minSeqId; i <= maxSeqId; i++) {
-        rows.push(new rowsel({seqId: i}))
+        selections.push(new rowsel({seqId: i}))
       }
-      this.add(rows)
+      this._addSelection(selections)
     } else if (lastSelectionType === "column" && selectionType === "column") {
       // Select all columns between the last selection and the current selection
       const columns = []
       for (let i = minXStart; i <= maxXEnd; i++) {
           columns.push(new columnsel({xStart: i, xEnd: i}))
       }
-      this.add(columns)
+      this._addSelection(columns)
     } else if (lastSelectionType === "pos" && selectionType === "pos" ) {
       // Select all residues between the last selection and the current selection
       const positions = []
@@ -279,14 +303,14 @@ const SelectionManager = Collection.extend({
           positions.push(new possel({xStart: j, xEnd: j, seqId: i}))
         }
       }
-      this.add(positions)
+      this._addSelection(positions)
     } else if (lastSelectionType === "label" && selectionType === "label" ) {
       // Select all residues between the last selection and the current selection
       const labels = []
       for (let i = minSeqId; i <= maxSeqId; i++) {
         labels.push(new labelsel({seqId: i}))
       }
-      this.add(labels)
+      this._addSelection(labels)
     } else if (lastSelectionType === "row" && selectionType === "pos" || lastSelectionType === "pos" && selectionType === "row") {
       const positions = []
       for (let i = minSeqId; i <= maxSeqId; i++) {
@@ -294,16 +318,16 @@ const SelectionManager = Collection.extend({
           positions.push(new possel({xStart: j, xEnd: j, seqId: i}))
         }
       }
-      this.add(positions)
+      this._addSelection(positions)
     } else if (lastSelectionType === "column" && selectionType === "pos" || lastSelectionType === "pos" && selectionType === "column") {
       const positions = []
       for (let j = minXStart; j <= maxXEnd; j++) {
         positions.push(new possel({xStart: j, xEnd: j, seqId: selSeqId}))
       }
-      this.add(positions)
+      this._addSelection(positions)
     } else {
       // Select the current selection
-      this.add(selection)
+      this._addSelection(selection)
     }
   },
 
