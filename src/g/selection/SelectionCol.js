@@ -1,4 +1,4 @@
-import {sel, possel, rowsel, columnsel} from "./Selection";
+import {sel, possel, rowsel, columnsel, labelsel} from "./Selection";
 import {uniq, filter} from "lodash";
 const Collection = require("backbone-thin").Collection;
 
@@ -25,6 +25,12 @@ const SelectionManager = Collection.extend({
         }));
       });
 
+      this.listenTo(this.g, "label:click", function(e) {
+        return this._handleE(e.evt, new labelsel({
+          seqId: e.seqId
+        }));
+      });
+
       return this.listenTo(this.g, "column:click", function(e) {
         return this._handleE(e.evt, new columnsel({
           xStart: e.rowPos,
@@ -32,6 +38,18 @@ const SelectionManager = Collection.extend({
         }));
       });
     }
+  },
+
+  _updateLastSelection: function(selection) {
+    this.lastSelection = selection;
+  },
+
+  isLabelSelected: function(seqId) {
+    return this.find(function(el) { return (el.get("type") === "label" || el.get("type") === "row") && el.get("seqId") === seqId; });
+  },
+
+  isResidueSelected: function(seqId) {
+    return this.find(function(el) { return el.get("type") === "pos" && el.get("seqId") === seqId; });
   },
 
   getSelForRow: function(seqId) {
@@ -200,33 +218,129 @@ const SelectionManager = Collection.extend({
     return this.reset(s);
   },
 
-  // method to decide whether to start a new selection
-  // or append to the old one (depending whether CTRL was pressed)
   _handleE: function(e, selection) {
-    if (selection.get("type") === "row") {
-      const selectedRowSeqIds = this.models.map(m => m.get("seqId"))
-      const selectionId = selection.get("seqId")
-      if (e.ctrlKey || e.metaKey) {
-        if (selectedRowSeqIds.includes(selectionId)) {
-          const modelToRemove = this.models.find(m => m.get("seqId") === selectionId)
-          this.remove([modelToRemove])
-        } else {
-          this.add(selection)
-        }
+    if (e.ctrlKey || e.metaKey) {
+      if (this._isAlreadySelected(selection, this.models)) {
+        this.remove(this._modelsToRemove(selection, this.models))
       } else {
-        if (selectedRowSeqIds.includes(selectionId)) {
-          const modelToRemove = this.models.find(m => m.get("seqId") === selectionId)
-          this.remove([modelToRemove])
-        } else {
-          this.reset([selection]);
+        this.add(selection)
+      }
+    } else if (e.shiftKey) {
+      this._handleShiftSelection(selection);
+    }
+    else {
+      this.reset([selection]);
+    }
+    this._updateLastSelection(selection);
+  },
+
+  _handleShiftSelection: function(selection) {
+    const lastSelection = this.lastSelection;
+
+    if (!lastSelection) {
+      this.add(selection);
+      return;
+    }
+
+    const lastSelectionType = lastSelection.get("type")
+    const lSelSeqId = lastSelection.get("seqId")
+    const lSelXStart = lastSelection.get("xStart")
+    const lSelXEnd = lastSelection.get("xEnd")
+
+    const selectionType = selection.get("type")
+    const selSeqId = selection.get("seqId")
+    const selXStart = selection.get("xStart")
+    const selXEnd = selection.get("xEnd")
+
+    const minXStart = Math.min(lSelXStart, selXStart)
+    const maxXEnd = Math.max(lSelXEnd, selXEnd)
+    const minSeqId = Math.min(lSelSeqId, selSeqId)
+    const maxSeqId = Math.max(lSelSeqId, selSeqId)
+
+    if (lastSelectionType === "row" && selectionType === "row") {
+      // Select all rows between the last selection and the current selection
+      const rows = []
+      for (let i = minSeqId; i <= maxSeqId; i++) {
+        rows.push(new rowsel({seqId: i}))
+      }
+      this.add(rows)
+    } else if (lastSelectionType === "column" && selectionType === "column") {
+      // Select all columns between the last selection and the current selection
+      const columns = []
+      for (let i = minXStart; i <= maxXEnd; i++) {
+          columns.push(new columnsel({xStart: i, xEnd: i}))
+      }
+      this.add(columns)
+    } else if (lastSelectionType === "pos" && selectionType === "pos" ) {
+      // Select all residues between the last selection and the current selection
+      const positions = []
+      for (let i = minSeqId; i <= maxSeqId; i++) {
+        for (let j = minXStart; j <= maxXEnd; j++) {
+          positions.push(new possel({xStart: j, xEnd: j, seqId: i}))
         }
       }
+      this.add(positions)
+    } else if (lastSelectionType === "label" && selectionType === "label" ) {
+      // Select all residues between the last selection and the current selection
+      const labels = []
+      for (let i = minSeqId; i <= maxSeqId; i++) {
+        labels.push(new labelsel({seqId: i}))
+      }
+      this.add(labels)
+    } else if (lastSelectionType === "row" && selectionType === "pos" || lastSelectionType === "pos" && selectionType === "row") {
+      const positions = []
+      for (let i = minSeqId; i <= maxSeqId; i++) {
+        for (let j = selXStart; j <= selXEnd; j++) {
+          positions.push(new possel({xStart: j, xEnd: j, seqId: i}))
+        }
+      }
+      this.add(positions)
+    } else if (lastSelectionType === "column" && selectionType === "pos" || lastSelectionType === "pos" && selectionType === "column") {
+      const positions = []
+      for (let j = minXStart; j <= maxXEnd; j++) {
+        positions.push(new possel({xStart: j, xEnd: j, seqId: selSeqId}))
+      }
+      this.add(positions)
     } else {
-      if (e.ctrlKey || e.metaKey) {
-        this.add(selection);
-      } else {
-        this.reset([selection]);
-      }
+      // Select the current selection
+      this.add(selection)
+    }
+  },
+
+  _isAlreadySelected: function(selection, models) {
+    const selectionType = selection.get("type")
+    const modelsOfType = models.filter(m => m.get("type") === selectionType)
+    switch (selectionType) {
+      case "row":
+        return modelsOfType.some(m => m.get("seqId") === selection.get("seqId"))
+      case "label":
+        return modelsOfType.some(m => m.get("seqId") === selection.get("seqId"))
+      case "column":
+        return modelsOfType.some(m => m.get("xStart") === selection.get("xStart") && m.get("xEnd") === selection.get("xEnd"))
+      case "pos":
+        return modelsOfType.some(m => m.get("xStart") === selection.get("xStart") && m.get("xEnd") === selection.get("xEnd") && m.get("seqId") === selection.get("seqId"))
+      default:
+        return false
+    }
+  },
+
+  _modelsToRemove: function(selection, models) {
+    const selectionType = selection.get("type")
+    switch (selectionType) {
+      case "row":
+        // Remove all rowsel, labelsel, and possel with the same seqId
+        return models.filter(m => m.get("seqId") === selection.get("seqId"))
+        // Remove only the labelsel with the same seqId
+      case "label":
+        return models.filter(m => m.get("type") === "label" && m.get("seqId") === selection.get("seqId"))
+      case "column":
+        // Remove all overlapping columnsel and possel
+        return models.filter(m => selection.get("xStart") <= m.get("xStart") && m.get("xEnd") <= selection.get("xEnd"))
+      case "pos":
+        // Remove all overlapping possel
+        return models.filter(m => selection.get("xStart") <= m.get("xStart") && m.get("xEnd") <= selection.get("xEnd") && m.get("seqId") === selection.get("seqId"))
+      default:
+        return []
     }
   },
 

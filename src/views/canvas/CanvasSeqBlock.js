@@ -100,7 +100,7 @@ const View = boneView.extend({
     const events = this.scrollBody.getScrollEvents();
 
     if (this.g.config.get("registerMouseClicks")) {
-      events.dblclick = "_onclick";
+      events.click = "_onclick";
     }
     if (this.g.config.get("registerMouseHover")) {
       events.mousein = "_onmousein";

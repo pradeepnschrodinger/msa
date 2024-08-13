@@ -114,7 +114,7 @@ extend(CanvasSelection.prototype, {
     const beforeWidth = this.ctx.lineWidth;
     this.ctx.lineWidth = 3;
     const beforeStyle = this.ctx.strokeStyle;
-    this.ctx.strokeStyle = "#FF0000";
+    this.ctx.strokeStyle = "#1A53A0";
 
     xZero += k * boxWidth;
 

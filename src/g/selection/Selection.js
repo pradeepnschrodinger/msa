@@ -57,7 +57,23 @@ const PosSelection = RowSelection.extend(extend( {},
   })
 }));
 
+const LabelSelection = Selection.extend({
+  defaults: extend( {}, Selection.prototype.defaults,
+    {type: "label",
+    seqId: ""
+  }),
+
+  inRow() {
+    return false;
+  },
+
+  inColumn() {
+    return false;
+  },
+});
+
 export {Selection as sel};
 export {PosSelection as possel};
 export {RowSelection as rowsel};
 export {ColumnSelection as columnsel};
+export {LabelSelection as labelsel};
