@@ -69,6 +69,7 @@ const SelectionManager = Collection.extend({
      case "column":  return new columnsel(model);
      case "row":  return new rowsel(model);
      case "pos":  return new possel(model);
+     case "label":  return new labelsel(model);
    }
   },
 
@@ -219,8 +220,8 @@ const SelectionManager = Collection.extend({
   },
 
   _handleE: function(e, selection) {
-    const lastSelection = selection;
     if (e.ctrlKey || e.metaKey) {
+      this._updateLastSelection(selection);
       if (this._isAlreadySelected(selection, this.models)) {
         this.remove(this._modelsToRemove(selection, this.models))
       } else {
@@ -230,9 +231,9 @@ const SelectionManager = Collection.extend({
       this._handleShiftSelection(selection);
     }
     else {
+      this._updateLastSelection(selection);
       this._resetSelection(selection);
     }
-    this._updateLastSelection(lastSelection);
   },
 
   _addSelection: function(selection) {
@@ -260,6 +261,7 @@ const SelectionManager = Collection.extend({
 
   _handleShiftSelection: function(selection) {
     const lastSelection = this.lastSelection;
+    this._updateLastSelection(selection);
 
     if (!lastSelection) {
       this._addSelection(selection);
