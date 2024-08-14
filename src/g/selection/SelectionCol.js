@@ -260,6 +260,18 @@ const SelectionManager = Collection.extend({
   
 
   _handleShiftSelection: function(selection) {
+    const seqIdToIdxMap = this.g.seqs.models.reduce((acc, model, idx) => {
+      const { id } = model.attributes
+      acc[id] = idx
+      return acc
+    }, {});
+
+    const idxToSeqIdMap = this.g.seqs.models.reduce((acc, model, idx) => {
+      const { id } = model.attributes
+      acc[idx] = id
+      return acc
+    }, {});
+
     const lastSelection = this.lastSelection;
     this._updateLastSelection(selection);
 
@@ -269,25 +281,25 @@ const SelectionManager = Collection.extend({
     }
 
     const lastSelectionType = lastSelection.get("type")
-    const lSelSeqId = lastSelection.get("seqId")
+    const lSelSeqIdIdx = seqIdToIdxMap[lastSelection.get("seqId")]
     const lSelXStart = lastSelection.get("xStart")
     const lSelXEnd = lastSelection.get("xEnd")
 
     const selectionType = selection.get("type")
-    const selSeqId = selection.get("seqId")
+    const selSeqIdIdx = seqIdToIdxMap[selection.get("seqId")]
     const selXStart = selection.get("xStart")
     const selXEnd = selection.get("xEnd")
 
     const minXStart = Math.min(lSelXStart, selXStart)
     const maxXEnd = Math.max(lSelXEnd, selXEnd)
-    const minSeqId = Math.min(lSelSeqId, selSeqId)
-    const maxSeqId = Math.max(lSelSeqId, selSeqId)
+    const minSeqIdIdx = Math.min(lSelSeqIdIdx, selSeqIdIdx)
+    const maxSeqIdIdx = Math.max(lSelSeqIdIdx, selSeqIdIdx)
 
     if (lastSelectionType === "row" && selectionType === "row") {
       // Select all rows between the last selection and the current selection
       const selections = []
-      for (let i = minSeqId; i <= maxSeqId; i++) {
-        selections.push(new rowsel({seqId: i}))
+      for (let i = minSeqIdIdx; i <= maxSeqIdIdx; i++) {
+        selections.push(new rowsel({seqId: idxToSeqIdMap[i]}))
       }
       this._addSelection(selections)
     } else if (lastSelectionType === "column" && selectionType === "column") {
@@ -300,31 +312,31 @@ const SelectionManager = Collection.extend({
     } else if (lastSelectionType === "pos" && selectionType === "pos" ) {
       // Select all residues between the last selection and the current selection
       const positions = []
-      for (let i = minSeqId; i <= maxSeqId; i++) {
+      for (let i = minSeqIdIdx; i <= maxSeqIdIdx; i++) {
         for (let j = minXStart; j <= maxXEnd; j++) {
-          positions.push(new possel({xStart: j, xEnd: j, seqId: i}))
+          positions.push(new possel({xStart: j, xEnd: j, seqId: idxToSeqIdMap[i]}))
         }
       }
       this._addSelection(positions)
     } else if (lastSelectionType === "label" && selectionType === "label" ) {
       // Select all residues between the last selection and the current selection
       const labels = []
-      for (let i = minSeqId; i <= maxSeqId; i++) {
-        labels.push(new labelsel({seqId: i}))
+      for (let i = minSeqIdIdx; i <= maxSeqIdIdx; i++) {
+        labels.push(new labelsel({seqId: idxToSeqIdMap[i]}))
       }
       this._addSelection(labels)
     } else if (lastSelectionType === "row" && selectionType === "pos" || lastSelectionType === "pos" && selectionType === "row") {
       const positions = []
-      for (let i = minSeqId; i <= maxSeqId; i++) {
+      for (let i = minSeqIdIdx; i <= maxSeqIdIdx; i++) {
         for (let j = selXStart; j <= selXEnd; j++) {
-          positions.push(new possel({xStart: j, xEnd: j, seqId: i}))
+          positions.push(new possel({xStart: j, xEnd: j, seqId: idxToSeqIdMap[i]}))
         }
       }
       this._addSelection(positions)
     } else if (lastSelectionType === "column" && selectionType === "pos" || lastSelectionType === "pos" && selectionType === "column") {
       const positions = []
       for (let j = minXStart; j <= maxXEnd; j++) {
-        positions.push(new possel({xStart: j, xEnd: j, seqId: selSeqId}))
+        positions.push(new possel({xStart: j, xEnd: j, seqId: idxToSeqIdMap[selSeqIdIdx]}))
       }
       this._addSelection(positions)
     } else {
