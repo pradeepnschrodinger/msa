@@ -45,7 +45,7 @@ const View = boneView.extend({
 
   setSelection: function() {
     var isLabelSelected = this.g.selcol.isLabelSelected(this.model.id);
-    var isResidueSelected = this.g.selcol.isResidueSelected(this.model.id);
+    var isResidueSelected = this.g.selcol.isSomeResidueSelected(this.model.id);
     if (isLabelSelected) {
       return this.el.style.backgroundColor = "#B5C3DD";
     } else if (isResidueSelected) {

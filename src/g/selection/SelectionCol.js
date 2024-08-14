@@ -48,8 +48,8 @@ const SelectionManager = Collection.extend({
     return this.find(function(el) { return el.get("type") === "label" && el.get("seqId") === seqId; });
   },
 
-  isResidueSelected: function(seqId) {
-    return this.find(function(el) { return (el.get("type") === "pos" || el.get("type") === "row") && el.get("seqId") === seqId; });
+  isSomeResidueSelected: function(seqId) {
+    return this.find(function(el) { return ((el.get("type") === "pos" || el.get("type") === "row") && el.get("seqId") === seqId) || el.get("type") === "column"; });
   },
 
   getSelForRow: function(seqId) {
