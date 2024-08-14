@@ -125,7 +125,6 @@ const LabelView = view.extend({
   }, 200),
 
   _ondblclick: function(evt) {
-    console.log("dblclick", evt);
     this.dlbclicked = true;
     var seqId = this.model.get("id");
     return this.g.trigger("row:click", {seqId:seqId, evt:evt});
