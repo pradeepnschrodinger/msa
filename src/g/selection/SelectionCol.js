@@ -297,7 +297,7 @@ const SelectionManager = Collection.extend({
     return selectionData;
   },
 
-  resetColFromSelData: function(selectionData, silent = false) {
+  setSelectionData: function(selectionData, silent = false) {
     const sequences = this._getSequences();
     const models = [];
     const completelySelectedRows = [];
@@ -360,7 +360,7 @@ const SelectionManager = Collection.extend({
     // Refine the selection to remove any overlapping selections (convert pos selections to row or column selections if possible) 
     // and reduce contiguous columns or positions to groups of individual column or position selections
     const selectionData = this.getSelectionData();
-    this.resetColFromSelData(selectionData);
+    this.setSelectionData(selectionData);
   },
 
   _updateSelections: function(selectionArr, updateType, silent = false) {
