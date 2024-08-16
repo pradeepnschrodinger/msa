@@ -219,28 +219,154 @@ const SelectionManager = Collection.extend({
     return this.reset(s);
   },
 
+  _getSequences: function() {
+    const sequences = _.reduce(this.g.seqs.models, (acc, model) => {
+      const { id, seq } = model.attributes
+      acc[id] = { seq, id }
+      return acc
+    }, {});
+    return sequences;
+  },
+
+  getSelectionData: function() {
+    const sequences = this._getSequences();
+    const selectionData = {};
+    _.forEach(this.models, (model) => {
+      const { type: selType } = model.attributes;
+      switch (selType) {
+        case 'row': {
+          const { seqId } = model.attributes;
+          if (!_.has(selectionData, seqId)) {
+            if (sequences[seqId]) {
+              selectionData[seqId] = {
+                selectedResidues: _.range(sequences[seqId].seq.length),
+                isLabelSelected: false,
+              };
+            }
+          } else {
+            selectionData[seqId].selectedResidues = _.range(sequences[seqId].seq.length);
+          }
+          break;
+        }
+        case 'column': {
+          const { xStart, xEnd } = model.attributes;
+          _.forEach(sequences, (sequence) => {
+            if (_.has(selectionData, sequence.id)) {
+              selectionData[sequence.id].selectedResidues = Array.from(
+                new Set([...selectionData[sequence.id].selectedResidues, ..._.range(xStart, xEnd + 1)]),
+              );
+            } else {
+              selectionData[sequence.id] = {
+                selectedResidues: _.range(xStart, xEnd + 1),
+                isLabelSelected: false,
+              };
+            }
+          });
+          break;
+        }
+        case 'pos': {
+          const { xStart, xEnd, seqId } = model.attributes;
+          if (_.has(selectionData, seqId)) {
+            selectionData[seqId].selectedResidues = Array.from(
+              new Set([...selectionData[seqId].selectedResidues, ..._.range(xStart, xEnd + 1)]),
+            );
+          } else {
+            selectionData[seqId] = {
+              selectedResidues: _.range(xStart, xEnd + 1),
+              isLabelSelected: false,
+            };
+          }
+          break;
+        }
+        case 'label': {
+          const { seqId } = model.attributes;
+          if (!_.has(selectionData, seqId)) {
+            selectionData[seqId] = {
+              selectedResidues: [],
+              isLabelSelected: true,
+            };
+          } else {
+            selectionData[seqId].isLabelSelected = true;
+          }
+          break;
+        }
+        default:
+          break;
+      }
+    })
+    return selectionData;
+  },
+
+  resetColFromSelData: function(selectionData, silent = false) {
+    const sequences = this._getSequences();
+    const models = [];
+    const completelySelectedRows = [];
+
+    _.forEach(sequences, (sequence) => {
+      if (selectionData[sequence.id] && selectionData[sequence.id].selectedResidues.length === sequence.seq.length) {
+        completelySelectedRows.push(sequence.id);
+      }
+    });
+
+    let completelySelectedColumns = [];
+    if (_.keys(sequences).length === _.keys(selectionData).length) {
+      completelySelectedColumns = _.intersection(..._.map(selectionData, (data) => data.selectedResidues));
+    }
+    const partiallySelectedRows = _.omit(selectionData, completelySelectedRows);
+
+    completelySelectedRows.forEach((seqId) => {
+      models.push(new rowsel({ seqId }));
+    });
+
+    completelySelectedColumns.forEach((colIdx) => {
+      models.push(new columnsel({ xStart: colIdx, xEnd: colIdx }));
+    });
+
+    _.forEach(partiallySelectedRows, ({ selectedResidues }, seqId) => {
+      _.forEach(selectedResidues, (residueIdx) => {
+        if (!completelySelectedColumns.includes(residueIdx)) {
+          models.push(
+            new possel({
+              seqId: sequences[seqId].id,
+              xStart: residueIdx,
+              xEnd: residueIdx,
+            }),
+          );
+        }
+      });
+    })
+    const selectedEntities = _.keys(selectionData).filter(key => selectionData[key].isLabelSelected);
+    selectedEntities.forEach((seqId) => {
+      models.push(new labelsel({ seqId: sequences[seqId].id }));
+    });
+    this.reset(models, {silent});
+  },
+
   _handleE: function(e, selection) {
     if (e.ctrlKey || e.metaKey) {
-      this._updateLastSelection(selection);
-      if (this._isAlreadySelected(selection, this.models)) {
-        this.remove(this._modelsToRemove(selection, this.models));
+      if (this._isAlreadySelected(selection)) {
+        this._deselectSelection(selection);
       } else {
-        this._addSelection(selection);
+        this._updateSelections([selection], "add", true);
       }
     } else if (e.shiftKey) {
       this._handleShiftSelection(selection);
     }
     else {
-      this._updateLastSelection(selection);
-      this._resetSelection(selection);
+      this._updateSelections([selection], "reset", true);
     }
+
+    this._updateLastSelection(selection);
+    // Refine the selection to remove any overlapping selections (convert pos selections to row or column selections if possible) 
+    // and reduce contiguous columns or positions to groups of individual column or position selections
+    const selectionData = this.getSelectionData();
+    this.resetColFromSelData(selectionData);
   },
 
-  _addSelection: function(selection) {
+  _updateSelections: function(selectionArr, updateType, silent = false) {
     let finalSelection = [];
 
-    selection = _.isArray(selection) ? selection : [selection];
-    selection.forEach((sel) => {
+    selectionArr.forEach((sel) => {
       if (sel.get("type") === "row") {
         finalSelection.push(sel);
         finalSelection.push(new labelsel({seqId: sel.get("seqId")}));
@@ -248,14 +374,12 @@ const SelectionManager = Collection.extend({
         finalSelection.push(sel);
       }
     })
-    this.add(finalSelection);
-  },
-
-  _resetSelection: function(selection) {
-    if (selection.get("type") === "row") {
-      selection = [selection, new labelsel({seqId: selection.get("seqId")})];
+    if (updateType === "add") {
+      this.add(finalSelection, {silent});
     }
-    this.reset(selection);
+    if (updateType === "reset") {
+      this.reset(finalSelection, {silent});
+    }
   },
 
   _isSelectionValid: function(selection) {
@@ -285,10 +409,9 @@ const SelectionManager = Collection.extend({
     }, {});
 
     const lastSelection = this.lastSelection;
-    this._updateLastSelection(selection);
 
     if (!lastSelection || !this._isSelectionValid(lastSelection)) {
-      this._addSelection(selection);
+      this._updateSelections([selection], "add", true);
       return;
     }
 
@@ -313,14 +436,14 @@ const SelectionManager = Collection.extend({
       for (let i = minSeqIdIdx; i <= maxSeqIdIdx; i++) {
         selections.push(new rowsel({seqId: idxToSeqIdMap[i]}));
       }
-      this._addSelection(selections);
+      this._updateSelections(selections, "add", true);
     } else if (lastSelectionType === "column" && selectionType === "column") {
       // Select all columns between the last selection and the current selection
       const columns = [];
       for (let i = minXStart; i <= maxXEnd; i++) {
           columns.push(new columnsel({xStart: i, xEnd: i}));
       }
-      this._addSelection(columns);
+      this._updateSelections(columns, "add", true);
     } else if (lastSelectionType === "pos" && selectionType === "pos" ) {
       // Select all residues between the last selection and the current selection
       const positions = [];
@@ -329,14 +452,14 @@ const SelectionManager = Collection.extend({
           positions.push(new possel({xStart: j, xEnd: j, seqId: idxToSeqIdMap[i]}));
         }
       }
-      this._addSelection(positions);
+      this._updateSelections(positions, "add", true);
     } else if (lastSelectionType === "label" && selectionType === "label" ) {
       // Select all residues between the last selection and the current selection
       const labels = [];
       for (let i = minSeqIdIdx; i <= maxSeqIdIdx; i++) {
         labels.push(new labelsel({seqId: idxToSeqIdMap[i]}));
       }
-      this._addSelection(labels);
+      this._updateSelections(labels, "add", true);
     } else if (lastSelectionType === "row" && selectionType === "pos") {
       const positions = [];
       for (let i = minSeqIdIdx; i <= maxSeqIdIdx; i++) {
@@ -344,53 +467,106 @@ const SelectionManager = Collection.extend({
           positions.push(new possel({xStart: j, xEnd: j, seqId: idxToSeqIdMap[i]}));
         }
       }
-      this._addSelection(positions);
+      this._updateSelections(positions, "add", true);
     } else if (lastSelectionType === "column" && selectionType === "pos") {
       const positions = [];
       for (let j = minXStart; j <= maxXEnd; j++) {
         positions.push(new possel({xStart: j, xEnd: j, seqId: idxToSeqIdMap[selSeqIdIdx]}));
       }
-      this._addSelection(positions);
+      this._updateSelections(positions, "add", true);
     } else {
       // Select the current selection
-      this._addSelection(selection);
+      this._updateSelections([selection], "add", true);
     }
   },
 
-  _isAlreadySelected: function(selection, models) {
+  _isAlreadySelected: function(selection) {
+    // models are refined selections - we need to check if the selection is already present in the models
     const selectionType = selection.get("type");
-    const modelsOfType = models.filter(m => m.get("type") === selectionType);
     switch (selectionType) {
       case "row":
-        return modelsOfType.some(m => m.get("seqId") === selection.get("seqId"));
+        return _.some(this.models, m => m.get("type") === "row" && m.get("seqId") === selection.get("seqId"));
       case "label":
-        return modelsOfType.some(m => m.get("seqId") === selection.get("seqId"));
-      case "column":
-        return modelsOfType.some(m => m.get("xStart") === selection.get("xStart") && m.get("xEnd") === selection.get("xEnd"));
-      case "pos":
-        return modelsOfType.some(m => m.get("xStart") === selection.get("xStart") && m.get("xEnd") === selection.get("xEnd") && m.get("seqId") === selection.get("seqId"));
+        return _.some(this.models, m => m.get("type") === "label" && m.get("seqId") === selection.get("seqId"));
+      case "column": {
+        const columnModels =  _.filter(this.models, m => m.get("type") === "column")
+        const alreadySelectedColumns = new Set(_.map(columnModels, m => m.get("xStart"))); // In refined selections, xStart and xEnd are the same
+        for(let i = selection.get("xStart"); i <= selection.get("xEnd"); i++) {
+          if (!alreadySelectedColumns.has(i)) {
+            return false;
+          }
+        }
+        return true;
+      }
+      case "pos": {
+        const isRowSelected = _.some(this.models, m => m.get("type") === "row" && m.get("seqId") === selection.get("seqId"))
+        if (isRowSelected) {
+          return true;
+        }
+        const reqPosOrColModels = _.filter(this.models, m => (m.get("type") === "pos" && m.get("seqId") === selection.get("seqId")) || m.get("type") === "column")
+        const alreadySelectedPositions = new Set(_.map(reqPosOrColModels, m => m.get("xStart"))); // In refined selections, xStart and xEnd are the same
+        for(let i = selection.get("xStart"); i <= selection.get("xEnd"); i++) {
+          if (!alreadySelectedPositions.has(i)) {
+            return false;
+          }
+        }
+        return true;
+      }
       default:
         return false;
     }
   },
 
-  _modelsToRemove: function(selection, models) {
+  _deselectSelection: function(selection) {
     const selectionType = selection.get("type");
     switch (selectionType) {
       case "row":
-        // Remove all rowsel, labelsel, and possel with the same seqId
-        return models.filter(m => m.get("seqId") === selection.get("seqId"));
-        // Remove only the labelsel with the same seqId
+        this.remove(this.models.filter(m => m.get("seqId") === selection.get("seqId")), {silent: true});
+        break;
       case "label":
-        return models.filter(m => m.get("type") === "label" && m.get("seqId") === selection.get("seqId"));
+        this.remove(this.models.filter(m => m.get("type") === "label" && m.get("seqId") === selection.get("seqId")), {silent: true});
+        break;
       case "column":
-        // Remove all overlapping columnsel and possel
-        return models.filter(m => selection.get("xStart") <= m.get("xStart") && m.get("xEnd") <= selection.get("xEnd"));
+        this.remove(this.models.filter(m => selection.get("xStart") <= m.get("xStart") && m.get("xEnd") <= selection.get("xEnd")), {silent: true}); // xStart and xEnd are the same in refined selections
+        break;
       case "pos":
-        // Remove all overlapping possel
-        return models.filter(m => selection.get("xStart") <= m.get("xStart") && m.get("xEnd") <= selection.get("xEnd") && m.get("seqId") === selection.get("seqId"));
-      default:
-        return [];
+        const sequences = this._getSequences();
+        const { xStart, xEnd, seqId } = selection.attributes;
+        // If the complete row is selected, remove the row selection and add remaining positions for that row
+        const row = this.models.filter(m => m.get("type") === "row" && m.get("seqId") === seqId);
+        if (!_.isEmpty(row)) {
+          this.remove(row, {silent: true});
+          const positions = [];
+          for (let i = 0; i < xStart; i++) {
+            positions.push(new possel({xStart: i, xEnd: i, seqId: seqId}));
+          }
+          for (let i = xEnd + 1; i < sequences[seqId].seq.length; i++) {
+            positions.push(new possel({xStart: i, xEnd: i, seqId: seqId}));
+          }
+          this.add(positions, {silent: true});
+        }
+
+        // If the complete column is selected, remove the column selection and add remaining positions for that column
+        const columns = this.models.filter(m => m.get("type") === "column" && xStart <= m.get("xStart") && m.get("xEnd") <= xEnd);
+        if (!_.isEmpty(columns)) {
+          this.remove(columns, {silent: true});
+          const positions = [];
+          console.log(_.map(sequences, sequence => sequence.id))
+          const remainingSeqIds = _.filter(_.map(sequences, sequence => sequence.id), (id) => id !== seqId);
+          _.forEach(columns, (column) => {
+            // For refined selections, xStart and xEnd are the same
+            const xStart = column.get("xStart");
+            remainingSeqIds.forEach((seqId) => {
+              positions.push(new possel({xStart, xEnd: xStart, seqId}));
+            });
+
+          });
+          this.add(positions, {silent: true});
+        }
+
+        // Remove the position selections
+        this.remove(this.models.filter(m => m.get("type") === "pos" && m.get("seqId") === seqId && xStart <= m.get("xStart") && m.get("xEnd") <= xEnd), {silent: true});
+        break;
     }
   },
 
