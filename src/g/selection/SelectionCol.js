@@ -342,6 +342,14 @@ const SelectionManager = Collection.extend({
     this.reset(models, {silent});
   },
 
+  _refineSelections: function() {
+    // 1. Refine selections to remove any overlapping selections.
+    // 2. Convert pos selections to row or column selections, if possible.
+    // 2. Reduce contiguous column or position selections to groups of individual column or position selections.
+    const selectionData = this.getSelectionData();
+    this.setSelectionData(selectionData);
+  },
+
   _handleE: function(e, selection) {
     if (e.ctrlKey || e.metaKey) {
       if (this._isAlreadySelected(selection)) {
@@ -356,11 +364,8 @@ const SelectionManager = Collection.extend({
       this._updateSelections([selection], "reset", true);
     }
 
+    this._refineSelections();
     this._updateLastSelection(selection);
-    // Refine the selection to remove any overlapping selections (convert pos selections to row or column selections if possible) 
-    // and reduce contiguous columns or positions to groups of individual column or position selections
-    const selectionData = this.getSelectionData();
-    this.setSelectionData(selectionData);
   },
 
   _updateSelections: function(selectionArr, updateType, silent = false) {
