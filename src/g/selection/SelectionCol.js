@@ -53,6 +53,7 @@ const SelectionManager = Collection.extend({
   },
 
   isSomeResidueSelected: function(seqId) {
+    // Check if there is a row selection or a position selection for the given seqId, or if there is a column selection - in which case at least one residue is selected for all rows
     return this.find(function(el) { return ((el.get("type") === "pos" || el.get("type") === "row") && el.get("seqId") === seqId) || el.get("type") === "column"; });
   },
 
@@ -354,28 +355,18 @@ const SelectionManager = Collection.extend({
     this.setSelectionData(selectionData);
   },
 
-  UpdateType: {
-    ADD: "add",
-    RESET: "reset",
-  },
-
-  _updateSelections: function(selectionArr, updateType, silent = false) {
-    let finalSelection = [];
+  _getSelsWithLabelsForRows: function(selectionArr) {
+    let updatedSelectionArr = [];
 
     selectionArr.forEach((sel) => {
       if (sel.get("type") === "row") {
-        finalSelection.push(sel);
-        finalSelection.push(new labelsel({seqId: sel.get("seqId")}));
+        updatedSelectionArr.push(sel);
+        updatedSelectionArr.push(new labelsel({seqId: sel.get("seqId")}));
       } else {
-        finalSelection.push(sel);
+        updatedSelectionArr.push(sel);
       }
-    })
-    if (updateType === this.UpdateType.ADD) {
-      this.add(finalSelection, {silent});
-    }
-    if (updateType === this.UpdateType.RESET) {
-      this.reset(finalSelection, {silent});
-    }
+    });
+    return updatedSelectionArr;
   },
 
   _isSelectionValid: function(selection) {
@@ -407,7 +398,7 @@ const SelectionManager = Collection.extend({
     const lastSelection = this.lastSelection;
 
     if (!lastSelection || !this._isSelectionValid(lastSelection)) {
-      this._updateSelections([selection], this.UpdateType.ADD, true);
+      this.add(_getSelsWithLabelsForRows([selection]), {silent: true});
       return;
     }
 
@@ -432,14 +423,14 @@ const SelectionManager = Collection.extend({
       for (let i = minSeqIdIdx; i <= maxSeqIdIdx; i++) {
         selections.push(new rowsel({seqId: idxToSeqIdMap[i]}));
       }
-      this._updateSelections(selections, this.UpdateType.ADD, true);
+      this.add(_getSelsWithLabelsForRows(selections), {silent: true});
     } else if (lastSelectionType === "column" && selectionType === "column") {
       // Select all columns between the last selection and the current selection
       const columns = [];
       for (let i = minXStart; i <= maxXEnd; i++) {
           columns.push(new columnsel({xStart: i, xEnd: i}));
       }
-      this._updateSelections(columns, this.UpdateType.ADD, true);
+      this.add(columns, {silent: true});
     } else if (lastSelectionType === "pos" && selectionType === "pos" ) {
       // Select all residues between the last selection and the current selection
       const positions = [];
@@ -448,14 +439,14 @@ const SelectionManager = Collection.extend({
           positions.push(new possel({xStart: j, xEnd: j, seqId: idxToSeqIdMap[i]}));
         }
       }
-      this._updateSelections(positions, this.UpdateType.ADD, true);
+      this.add(positions, {silent: true});
     } else if (lastSelectionType === "label" && selectionType === "label" ) {
       // Select all residues between the last selection and the current selection
       const labels = [];
       for (let i = minSeqIdIdx; i <= maxSeqIdIdx; i++) {
         labels.push(new labelsel({seqId: idxToSeqIdMap[i]}));
       }
-      this._updateSelections(labels, this.UpdateType.ADD, true);
+      this.add(labels, {silent: true});
     } else if (lastSelectionType === "row" && selectionType === "pos") {
       const positions = [];
       for (let i = minSeqIdIdx; i <= maxSeqIdIdx; i++) {
@@ -463,16 +454,16 @@ const SelectionManager = Collection.extend({
           positions.push(new possel({xStart: j, xEnd: j, seqId: idxToSeqIdMap[i]}));
         }
       }
-      this._updateSelections(positions, this.UpdateType.ADD, true);
+      this.add(positions, {silent: true});
     } else if (lastSelectionType === "column" && selectionType === "pos") {
       const positions = [];
       for (let j = minXStart; j <= maxXEnd; j++) {
         positions.push(new possel({xStart: j, xEnd: j, seqId: idxToSeqIdMap[selSeqIdIdx]}));
       }
-      this._updateSelections(positions, this.UpdateType.ADD, true);
+      this.add(positions, {silent: true});
     } else {
       // Select the current selection
-      this._updateSelections([selection], this.UpdateType.ADD, true);
+      this.add(_getSelsWithLabelsForRows([selection]), {silent: true});
     }
   },
 
@@ -572,13 +563,13 @@ const SelectionManager = Collection.extend({
       if (this._isAlreadySelected(selection)) {
         this._deselectSelection(selection);
       } else {
-        this._updateSelections([selection], this.UpdateType.ADD, true);
+        this.add(_getSelsWithLabelsForRows([selection]), {silent: true});
       }
     } else if (e.shiftKey) {
       this._handleShiftSelection(selection);
     }
     else {
-      this._updateSelections([selection], this.UpdateType.RESET, true);
+      this.reset(_getSelsWithLabelsForRows([selection]), {silent: true});
     }
 
     this._updateLastSelection(selection);
