@@ -398,7 +398,7 @@ const SelectionManager = Collection.extend({
     const lastSelection = this.lastSelection;
 
     if (!lastSelection || !this._isSelectionValid(lastSelection)) {
-      this.add(_getSelsWithLabelsForRows([selection]), {silent: true});
+      this.add(this._getSelsWithLabelsForRows([selection]), {silent: true});
       return;
     }
 
@@ -423,7 +423,7 @@ const SelectionManager = Collection.extend({
       for (let i = minSeqIdIdx; i <= maxSeqIdIdx; i++) {
         selections.push(new rowsel({seqId: idxToSeqIdMap[i]}));
       }
-      this.add(_getSelsWithLabelsForRows(selections), {silent: true});
+      this.add(this._getSelsWithLabelsForRows(selections), {silent: true});
     } else if (lastSelectionType === "column" && selectionType === "column") {
       // Select all columns between the last selection and the current selection
       const columns = [];
@@ -463,7 +463,7 @@ const SelectionManager = Collection.extend({
       this.add(positions, {silent: true});
     } else {
       // Select the current selection
-      this.add(_getSelsWithLabelsForRows([selection]), {silent: true});
+      this.add(this._getSelsWithLabelsForRows([selection]), {silent: true});
     }
   },
 
@@ -563,13 +563,13 @@ const SelectionManager = Collection.extend({
       if (this._isAlreadySelected(selection)) {
         this._deselectSelection(selection);
       } else {
-        this.add(_getSelsWithLabelsForRows([selection]), {silent: true});
+        this.add(this._getSelsWithLabelsForRows([selection]), {silent: true});
       }
     } else if (e.shiftKey) {
       this._handleShiftSelection(selection);
     }
     else {
-      this.reset(_getSelsWithLabelsForRows([selection]), {silent: true});
+      this.reset(this._getSelsWithLabelsForRows([selection]), {silent: true});
     }
 
     this._updateLastSelection(selection);
