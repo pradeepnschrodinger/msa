@@ -350,22 +350,9 @@ const SelectionManager = Collection.extend({
     this.setSelectionData(selectionData);
   },
 
-  _handleE: function(e, selection) {
-    if (e.ctrlKey || e.metaKey) {
-      if (this._isAlreadySelected(selection)) {
-        this._deselectSelection(selection);
-      } else {
-        this._updateSelections([selection], "add", true);
-      }
-    } else if (e.shiftKey) {
-      this._handleShiftSelection(selection);
-    }
-    else {
-      this._updateSelections([selection], "reset", true);
-    }
-
-    this._updateLastSelection(selection);
-    this._refineSelections();
+  UpdateType: {
+    ADD: "add",
+    RESET: "reset",
   },
 
   _updateSelections: function(selectionArr, updateType, silent = false) {
@@ -379,10 +366,10 @@ const SelectionManager = Collection.extend({
         finalSelection.push(sel);
       }
     })
-    if (updateType === "add") {
+    if (updateType === this.UpdateType.ADD) {
       this.add(finalSelection, {silent});
     }
-    if (updateType === "reset") {
+    if (updateType === this.UpdateType.RESET) {
       this.reset(finalSelection, {silent});
     }
   },
@@ -416,7 +403,7 @@ const SelectionManager = Collection.extend({
     const lastSelection = this.lastSelection;
 
     if (!lastSelection || !this._isSelectionValid(lastSelection)) {
-      this._updateSelections([selection], "add", true);
+      this._updateSelections([selection], this.UpdateType.ADD, true);
       return;
     }
 
@@ -441,14 +428,14 @@ const SelectionManager = Collection.extend({
       for (let i = minSeqIdIdx; i <= maxSeqIdIdx; i++) {
         selections.push(new rowsel({seqId: idxToSeqIdMap[i]}));
       }
-      this._updateSelections(selections, "add", true);
+      this._updateSelections(selections, this.UpdateType.ADD, true);
     } else if (lastSelectionType === "column" && selectionType === "column") {
       // Select all columns between the last selection and the current selection
       const columns = [];
       for (let i = minXStart; i <= maxXEnd; i++) {
           columns.push(new columnsel({xStart: i, xEnd: i}));
       }
-      this._updateSelections(columns, "add", true);
+      this._updateSelections(columns, this.UpdateType.ADD, true);
     } else if (lastSelectionType === "pos" && selectionType === "pos" ) {
       // Select all residues between the last selection and the current selection
       const positions = [];
@@ -457,14 +444,14 @@ const SelectionManager = Collection.extend({
           positions.push(new possel({xStart: j, xEnd: j, seqId: idxToSeqIdMap[i]}));
         }
       }
-      this._updateSelections(positions, "add", true);
+      this._updateSelections(positions, this.UpdateType.ADD, true);
     } else if (lastSelectionType === "label" && selectionType === "label" ) {
       // Select all residues between the last selection and the current selection
       const labels = [];
       for (let i = minSeqIdIdx; i <= maxSeqIdIdx; i++) {
         labels.push(new labelsel({seqId: idxToSeqIdMap[i]}));
       }
-      this._updateSelections(labels, "add", true);
+      this._updateSelections(labels, this.UpdateType.ADD, true);
     } else if (lastSelectionType === "row" && selectionType === "pos") {
       const positions = [];
       for (let i = minSeqIdIdx; i <= maxSeqIdIdx; i++) {
@@ -472,16 +459,16 @@ const SelectionManager = Collection.extend({
           positions.push(new possel({xStart: j, xEnd: j, seqId: idxToSeqIdMap[i]}));
         }
       }
-      this._updateSelections(positions, "add", true);
+      this._updateSelections(positions, this.UpdateType.ADD, true);
     } else if (lastSelectionType === "column" && selectionType === "pos") {
       const positions = [];
       for (let j = minXStart; j <= maxXEnd; j++) {
         positions.push(new possel({xStart: j, xEnd: j, seqId: idxToSeqIdMap[selSeqIdIdx]}));
       }
-      this._updateSelections(positions, "add", true);
+      this._updateSelections(positions, this.UpdateType.ADD, true);
     } else {
       // Select the current selection
-      this._updateSelections([selection], "add", true);
+      this._updateSelections([selection], this.UpdateType.ADD, true);
     }
   },
 
@@ -538,7 +525,7 @@ const SelectionManager = Collection.extend({
       case "pos": {
         const { xStart, xEnd, seqId } = selection.attributes;
         // If the complete row is selected, remove the row selection and add remaining positions for that row
-        const row = this.models.filter(m => m.get("type") === "row" && m.get("seqId") === seqId);
+        const row = _.filter(this.models, m => m.get("type") === "row" && m.get("seqId") === seqId);
         if (!_.isEmpty(row)) {
           this.remove(row, {silent: true});
           const positions = [];
@@ -552,7 +539,7 @@ const SelectionManager = Collection.extend({
         }
 
         // If the complete column is selected, remove the column selection and add remaining positions for that column
-        const columns = this.models.filter(m => m.get("type") === "column" && xStart <= m.get("xStart") && m.get("xEnd") <= xEnd);
+        const columns = _.filter(this.models, m => m.get("type") === "column" && xStart <= m.get("xStart") && m.get("xEnd") <= xEnd);
         if (!_.isEmpty(columns)) {
           this.remove(columns, {silent: true});
           const positions = [];
@@ -568,12 +555,30 @@ const SelectionManager = Collection.extend({
         }
 
         // Remove the position selections
-        this.remove(this.models.filter(m => m.get("type") === "pos" && m.get("seqId") === seqId && xStart <= m.get("xStart") && m.get("xEnd") <= xEnd), {silent: true});
+        this.remove(_.filter(this.models, m => m.get("type") === "pos" && m.get("seqId") === seqId && xStart <= m.get("xStart") && m.get("xEnd") <= xEnd), {silent: true});
         break;
       }
       default:
         break;
     }
+  },
+
+  _handleE: function(e, selection) {
+    if (e.ctrlKey || e.metaKey) {
+      if (this._isAlreadySelected(selection)) {
+        this._deselectSelection(selection);
+      } else {
+        this._updateSelections([selection], this.UpdateType.ADD, true);
+      }
+    } else if (e.shiftKey) {
+      this._handleShiftSelection(selection);
+    }
+    else {
+      this._updateSelections([selection], this.UpdateType.RESET, true);
+    }
+
+    this._updateLastSelection(selection);
+    this._refineSelections();
   },
 
   // experimental reduce method for columns
