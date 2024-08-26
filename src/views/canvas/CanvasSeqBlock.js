@@ -235,6 +235,8 @@ const View = boneView.extend({
       } else {
         this.g.trigger("residue:click", res);
       }
+    } else {
+      this.g.trigger("background:click", e);
     }
     return this.throttledDraw();
   },

@@ -1,6 +1,6 @@
 const boneView = require("backbone-childs");
 import LabelRowView from "./LabelRowView";
-import { defer } from "lodash";
+import { some, defer } from "lodash";
 
 const View = boneView.extend({
 
@@ -34,7 +34,18 @@ const View = boneView.extend({
   },
 
   events:
-    {"scroll": "_sendScrollEvent"},
+    { 
+      "click": "_onClick",
+      "scroll": "_sendScrollEvent"
+    },
+
+  _onClick: function(e) {
+    const labelRows = this.$el.find(".biojs_msa_labelrow").toArray();
+    const isClickOnLabelRow = some(labelRows, labelrow => labelrow.contains(e.target));
+    if (!isClickOnLabelRow) {
+      this.g.trigger("background:click", e);
+    }
+  },
 
   // broadcast the scrolling event (by the scrollbar)
   _sendScrollEvent: function() {

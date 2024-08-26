@@ -31,11 +31,15 @@ const SelectionManager = Collection.extend({
         }));
       });
 
-      return this.listenTo(this.g, "column:click", function(e) {
+      this.listenTo(this.g, "column:click", function(e) {
         return this._handleE(e.evt, new columnsel({
           xStart: e.rowPos,
           xEnd: e.rowPos + e.stepSize - 1
         }));
+      });
+
+      return this.listenTo(this.g, "background:click", function(_e) {
+        return this.reset();
       });
     }
   },
