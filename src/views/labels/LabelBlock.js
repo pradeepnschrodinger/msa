@@ -43,6 +43,7 @@ const View = boneView.extend({
     const labelRows = this.$el.find(".biojs_msa_labelrow").toArray();
     const isClickOnLabelRow = some(labelRows, labelrow => labelrow.contains(e.target));
     if (!isClickOnLabelRow) {
+      // Triggered when clicking on the remaining space of the label block (not on a label row)
       this.g.trigger("background:click", e);
     }
   },

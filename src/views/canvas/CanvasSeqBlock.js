@@ -236,6 +236,7 @@ const View = boneView.extend({
         this.g.trigger("residue:click", res);
       }
     } else {
+      // Triggered when clicking on the unpainted section of the canvas
       this.g.trigger("background:click", e);
     }
     return this.throttledDraw();

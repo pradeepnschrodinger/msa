@@ -441,7 +441,7 @@ const SelectionManager = Collection.extend({
       }
       this.add(positions, {silent: true});
     } else if (lastSelectionType === "label" && selectionType === "label" ) {
-      // Select all residues between the last selection and the current selection
+      // Select all labels between the last selection and the current selection
       const labels = [];
       for (let i = minSeqIdIdx; i <= maxSeqIdIdx; i++) {
         labels.push(new labelsel({seqId: idxToSeqIdMap[i]}));
