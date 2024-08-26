@@ -468,7 +468,13 @@ const SelectionManager = Collection.extend({
   },
 
   _isAlreadySelected: function(selection) {
-    // models are refined selections - we need to check if the selection is already present in the models
+    // Models in the collection are refined selections
+    // To check if a selection is already selected, we need to check the following:
+    // 1) For row selections, check if there is a row model with the same seqId
+    // 2) For label selections, check if there is a label model with the same seqId
+    // 3) For column selections, check if there are column models for each value from xStart to xEnd of selection
+    // 4) For position selections, check if the entire row with same seqId is selected. If not, check if there are position or column models for each value from xStart to xEnd of selection
+
     const selectionType = selection.get("type");
     switch (selectionType) {
       case "row":
@@ -505,6 +511,15 @@ const SelectionManager = Collection.extend({
   },
 
   _deselectSelection: function(selection) {
+    // Since the selections are refined, de-selection should be done in the following way:
+    // 1) For row de-selections, remove all row, label and position models with the same seqId
+    // 2) For label de-selections, remove all label models with the same seqId
+    // 3) For column de-selections, remove all column models with xStart and xEnd between the xStart and xEnd of selection
+    // 4) For position de-selections, there can be 3 cases:
+    //    a) If the complete row is selected, remove the row selection and add remaining positions for that row
+    //    b) If the complete column is selected, remove the column selection and add remaining positions for that column. Do this for all columns in the selection.
+    //    c) Remove the position selections between xStart and xEnd of selection
+
     const selectionType = selection.get("type");
     const sequences = this._getSequences();
     switch (selectionType) {
