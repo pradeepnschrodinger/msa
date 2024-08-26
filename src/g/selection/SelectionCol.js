@@ -364,8 +364,8 @@ const SelectionManager = Collection.extend({
       this._updateSelections([selection], "reset", true);
     }
 
-    this._refineSelections();
     this._updateLastSelection(selection);
+    this._refineSelections();
   },
 
   _updateSelections: function(selectionArr, updateType, silent = false) {
@@ -524,18 +524,18 @@ const SelectionManager = Collection.extend({
 
   _deselectSelection: function(selection) {
     const selectionType = selection.get("type");
+    const sequences = this._getSequences();
     switch (selectionType) {
-      case "row":
-        this.remove(this.models.filter(m => m.get("seqId") === selection.get("seqId")), {silent: true});
+      case "row": 
+        this.remove(_.filter(this.models, m => m.get("seqId") === selection.get("seqId")), {silent: true});
         break;
       case "label":
-        this.remove(this.models.filter(m => m.get("type") === "label" && m.get("seqId") === selection.get("seqId")), {silent: true});
+        this.remove(_.filter(this.models, m => m.get("type") === "label" && m.get("seqId") === selection.get("seqId")), {silent: true});
         break;
       case "column":
-        this.remove(this.models.filter(m => selection.get("xStart") <= m.get("xStart") && m.get("xEnd") <= selection.get("xEnd")), {silent: true}); // xStart and xEnd are the same in refined selections
+        this.remove(_.filter(this.models, m => selection.get("xStart") <= m.get("xStart") && m.get("xEnd") <= selection.get("xEnd")), {silent: true}); // xStart and xEnd are the same in refined selections
         break;
-      case "pos":
-        const sequences = this._getSequences();
+      case "pos": {
         const { xStart, xEnd, seqId } = selection.attributes;
         // If the complete row is selected, remove the row selection and add remaining positions for that row
         const row = this.models.filter(m => m.get("type") === "row" && m.get("seqId") === seqId);
@@ -556,7 +556,6 @@ const SelectionManager = Collection.extend({
         if (!_.isEmpty(columns)) {
           this.remove(columns, {silent: true});
           const positions = [];
-          console.log(_.map(sequences, sequence => sequence.id))
           const remainingSeqIds = _.filter(_.map(sequences, sequence => sequence.id), (id) => id !== seqId);
           _.forEach(columns, (column) => {
             // For refined selections, xStart and xEnd are the same
@@ -564,13 +563,15 @@ const SelectionManager = Collection.extend({
             remainingSeqIds.forEach((seqId) => {
               positions.push(new possel({xStart, xEnd: xStart, seqId}));
             });
-
           });
           this.add(positions, {silent: true});
         }
 
         // Remove the position selections
         this.remove(this.models.filter(m => m.get("type") === "pos" && m.get("seqId") === seqId && xStart <= m.get("xStart") && m.get("xEnd") <= xEnd), {silent: true});
+        break;
+      }
+      default:
         break;
     }
   },
