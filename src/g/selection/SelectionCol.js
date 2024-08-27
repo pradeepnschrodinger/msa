@@ -39,6 +39,7 @@ const SelectionManager = Collection.extend({
       });
 
       return this.listenTo(this.g, "background:click", function(_e) {
+        _updateLastSelection(null);
         return this.reset();
       });
     }
