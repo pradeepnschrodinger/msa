@@ -346,6 +346,7 @@ const SelectionManager = Collection.extend({
       models.push(new labelsel({ seqId: sequences[seqId].id }));
     });
     this.reset(models, {silent});
+    _updateLastSelection(null);
   },
 
   _refineSelections: function() {
@@ -588,8 +589,8 @@ const SelectionManager = Collection.extend({
       this.reset(this._getSelsWithLabelsForRows([selection]), {silent: true});
     }
 
-    this._updateLastSelection(selection);
     this._refineSelections();
+    this._updateLastSelection(selection);
   },
 
   // experimental reduce method for columns
