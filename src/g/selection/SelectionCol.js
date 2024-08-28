@@ -235,128 +235,79 @@ const SelectionManager = Collection.extend({
   },
 
   getSelectionData: function() {
-    const sequences = this._getSequences();
-    const selectionData = {};
+    const selectionData = {
+      selectedRows: new Set(),
+      selectedColumns: new Set(),
+      selectedPositions: [],
+      selectedLabels: new Set(),
+    };
+    const selectedPositionsSet = new Set();
+
     _.forEach(this.models, (model) => {
       const { type: selType } = model.attributes;
       switch (selType) {
         case 'row': {
           const { seqId } = model.attributes;
-          if (!_.has(selectionData, seqId)) {
-            if (sequences[seqId]) {
-              selectionData[seqId] = {
-                selectedResidues: _.range(sequences[seqId].seq.length),
-                isLabelSelected: false,
-              };
-            }
-          } else {
-            selectionData[seqId].selectedResidues = _.range(sequences[seqId].seq.length);
-          }
+          selectionData.selectedRows.add(seqId);
           break;
         }
         case 'column': {
           const { xStart, xEnd } = model.attributes;
-          _.forEach(sequences, (sequence) => {
-            if (_.has(selectionData, sequence.id)) {
-              selectionData[sequence.id].selectedResidues = Array.from(
-                new Set([...selectionData[sequence.id].selectedResidues, ..._.range(xStart, xEnd + 1)]),
-              );
-            } else {
-              selectionData[sequence.id] = {
-                selectedResidues: _.range(xStart, xEnd + 1),
-                isLabelSelected: false,
-              };
-            }
-          });
+          for (let j = xStart; j <= xEnd; j++) {
+            selectionData.selectedColumns.add(j);
+          }
           break;
         }
         case 'pos': {
-          const { xStart, xEnd, seqId } = model.attributes;
-          if (_.has(selectionData, seqId)) {
-            selectionData[seqId].selectedResidues = Array.from(
-              new Set([...selectionData[seqId].selectedResidues, ..._.range(xStart, xEnd + 1)]),
-            );
-          } else {
-            selectionData[seqId] = {
-              selectedResidues: _.range(xStart, xEnd + 1),
-              isLabelSelected: false,
-            };
+          const { xStart, seqId, xEnd } = model.attributes;
+          for (let j = xStart; j <= xEnd; j++) {
+            if (!selectedPositionsSet.has(`${seqId}-${j}`)) {
+              selectionData.selectedPositions.push({ seqId: seqId, colIdx: j });
+              selectedPositionsSet.add(`${seqId}-${j}`);
+            }
           }
           break;
         }
         case 'label': {
           const { seqId } = model.attributes;
-          if (!_.has(selectionData, seqId)) {
-            selectionData[seqId] = {
-              selectedResidues: [],
-              isLabelSelected: true,
-            };
-          } else {
-            selectionData[seqId].isLabelSelected = true;
-          }
+          selectionData.selectedLabels.add(seqId);
           break;
         }
         default:
           break;
       }
     })
-    return selectionData;
+    return {
+      selectedRows: Array.from(selectionData.selectedRows),
+      selectedColumns: Array.from(selectionData.selectedColumns),
+      selectedPositions: selectionData.selectedPositions,
+      selectedLabels: Array.from(selectionData.selectedLabels),
+    };
   },
 
   setSelectionData: function(selectionData, silent = false) {
-    const sequences = this._getSequences();
-    const filteredSelectionData = _.pickBy(selectionData, (_data, seqId) => sequences[seqId]);
-    if (_.isEmpty(filteredSelectionData)) {
-      this.reset([], {silent});
-      return;
-    }
-
     const models = [];
-    const completelySelectedRows = [];
-    _.forEach(sequences, (sequence) => {
-      if (sequence.seq && filteredSelectionData[sequence.id].selectedResidues.length === sequence.seq.length) {
-        completelySelectedRows.push(sequence.id);
-      }
+    selectionData.selectedRows.forEach((seqId) => {
+      models.push(new rowsel({seqId}));
     });
 
-    let completelySelectedColumns = [];
-    if (_.keys(sequences).length === _.keys(filteredSelectionData).length) {
-      completelySelectedColumns = _.intersection(..._.map(filteredSelectionData, (data) => data.selectedResidues));
-    }
-
-    const partiallySelectedRows = _.omit(filteredSelectionData, completelySelectedRows);
-
-    completelySelectedRows.forEach((seqId) => {
-      models.push(new rowsel({ seqId }));
+    selectionData.selectedColumns.forEach((xStart) => {
+      models.push(new columnsel({xStart, xEnd: xStart}));
     });
 
-    completelySelectedColumns.forEach((colIdx) => {
-      models.push(new columnsel({ xStart: colIdx, xEnd: colIdx }));
+    selectionData.selectedPositions.forEach(({ seqId, colIdx }) => {
+      models.push(new possel({xStart: colIdx, xEnd: colIdx, seqId}));
     });
 
-    _.forEach(partiallySelectedRows, ({ selectedResidues }, seqId) => {
-      _.forEach(selectedResidues, (residueIdx) => {
-        if (!completelySelectedColumns.includes(residueIdx)) {
-          models.push(
-            new possel({
-              seqId: sequences[seqId].id,
-              xStart: residueIdx,
-              xEnd: residueIdx,
-            }),
-          );
-        }
-      });
-    })
-    const selectedEntities = _.keys(filteredSelectionData).filter(key => filteredSelectionData[key].isLabelSelected);
-    selectedEntities.forEach((seqId) => {
-      models.push(new labelsel({ seqId: sequences[seqId].id }));
+    selectionData.selectedLabels.forEach((seqId) => {
+      models.push(new labelsel({seqId}));
     });
+
     this.reset(models, {silent});
   },
 
   _refineSelections: function() {
-    // 1. Refine selections to remove any overlapping selections.
-    // 2. Convert pos selections to row or column selections, if possible.
+    // 1. Refine selections to remove any overlapping or duplicate selections.
     // 2. Reduce contiguous column or position selections to groups of individual column or position selections.
     const selectionData = this.getSelectionData();
     this.setSelectionData(selectionData);
