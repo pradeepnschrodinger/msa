@@ -305,20 +305,26 @@ const SelectionManager = Collection.extend({
 
   setSelectionData: function(selectionData, silent = false) {
     const sequences = this._getSequences();
+    const filteredSelectionData = _.pickBy(selectionData, (_data, seqId) => sequences[seqId]);
+    if (_.isEmpty(filteredSelectionData)) {
+      this.reset([], {silent});
+      return;
+    }
+
     const models = [];
     const completelySelectedRows = [];
-
     _.forEach(sequences, (sequence) => {
-      if (selectionData[sequence.id] && selectionData[sequence.id].selectedResidues.length === sequence.seq.length) {
+      if (filteredSelectionData[sequence.id].selectedResidues.length === sequence.seq?.length) {
         completelySelectedRows.push(sequence.id);
       }
     });
 
     let completelySelectedColumns = [];
-    if (_.keys(sequences).length === _.keys(selectionData).length) {
-      completelySelectedColumns = _.intersection(..._.map(selectionData, (data) => data.selectedResidues));
+    if (_.keys(sequences).length === _.keys(filteredSelectionData).length) {
+      completelySelectedColumns = _.intersection(..._.map(filteredSelectionData, (data) => data.selectedResidues));
     }
-    const partiallySelectedRows = _.omit(selectionData, completelySelectedRows);
+
+    const partiallySelectedRows = _.omit(filteredSelectionData, completelySelectedRows);
 
     completelySelectedRows.forEach((seqId) => {
       models.push(new rowsel({ seqId }));
@@ -341,7 +347,7 @@ const SelectionManager = Collection.extend({
         }
       });
     })
-    const selectedEntities = _.keys(selectionData).filter(key => selectionData[key].isLabelSelected);
+    const selectedEntities = _.keys(filteredSelectionData).filter(key => filteredSelectionData[key].isLabelSelected);
     selectedEntities.forEach((seqId) => {
       models.push(new labelsel({ seqId: sequences[seqId].id }));
     });
