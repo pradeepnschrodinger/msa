@@ -314,7 +314,7 @@ const SelectionManager = Collection.extend({
     const models = [];
     const completelySelectedRows = [];
     _.forEach(sequences, (sequence) => {
-      if (filteredSelectionData[sequence.id].selectedResidues.length === sequence.seq?.length) {
+      if (sequence.seq && filteredSelectionData[sequence.id].selectedResidues.length === sequence.seq.length) {
         completelySelectedRows.push(sequence.id);
       }
     });
