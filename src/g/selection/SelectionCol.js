@@ -39,7 +39,7 @@ const SelectionManager = Collection.extend({
       });
 
       return this.listenTo(this.g, "background:click", function(_e) {
-        _updateLastSelection(null);
+        this._updateLastSelection(null);
         return this.reset();
       });
     }
@@ -346,7 +346,6 @@ const SelectionManager = Collection.extend({
       models.push(new labelsel({ seqId: sequences[seqId].id }));
     });
     this.reset(models, {silent});
-    _updateLastSelection(null);
   },
 
   _refineSelections: function() {
