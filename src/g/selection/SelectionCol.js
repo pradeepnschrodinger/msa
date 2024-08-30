@@ -55,7 +55,11 @@ const SelectionManager = Collection.extend({
 
   isSomeResidueSelected: function(seqId) {
     // Check if there is a row selection or a position selection for the given seqId, or if there is a column selection - in which case at least one residue is selected for all rows
-    return this.find(function(el) { return ((el.get("type") === "pos" || el.get("type") === "row") && el.get("seqId") === seqId) || el.get("type") === "column"; });
+    return this.find(function(el) {
+      const isRowOrPositionModelForSeqId = (el.get("type") === "pos" || el.get("type") === "row") && el.get("seqId") === seqId;
+      const isColumnModel = el.get("type") === "column";
+      return isRowOrPositionModelForSeqId || isColumnModel;
+    });
   },
 
   getSelForRow: function(seqId) {
@@ -262,7 +266,7 @@ const SelectionManager = Collection.extend({
           const { xStart, seqId, xEnd } = model.attributes;
           for (let j = xStart; j <= xEnd; j++) {
             if (!selectedPositionsSet.has(`${seqId}-${j}`)) {
-              selectionData.selectedPositions.push({ seqId: seqId, colIdx: j });
+              selectionData.selectedPositions.push({ seqId: seqId, columnIdx: j });
               selectedPositionsSet.add(`${seqId}-${j}`);
             }
           }
@@ -284,7 +288,7 @@ const SelectionManager = Collection.extend({
       selectedLabels: Array.from(selectionData.selectedLabels),
     };
   },
-
+  // @param silent [Boolean] if true, no events are triggered for the collection update
   setSelectionData: function(selectionData, silent = false) {
     const models = [];
     selectionData.selectedRows.forEach((seqId) => {
@@ -295,8 +299,8 @@ const SelectionManager = Collection.extend({
       models.push(new columnsel({xStart, xEnd: xStart}));
     });
 
-    selectionData.selectedPositions.forEach(({ seqId, colIdx }) => {
-      models.push(new possel({xStart: colIdx, xEnd: colIdx, seqId}));
+    selectionData.selectedPositions.forEach(({ seqId, columnIdx }) => {
+      models.push(new possel({xStart: columnIdx, xEnd: columnIdx, seqId}));
     });
 
     selectionData.selectedLabels.forEach((seqId) => {
@@ -361,19 +365,19 @@ const SelectionManager = Collection.extend({
     }
 
     const lastSelectionType = lastSelection.get("type");
-    const lSelSeqIdIdx = seqIdToIdxMap[lastSelection.get("seqId")];
-    const lSelXStart = lastSelection.get("xStart");
-    const lSelXEnd = lastSelection.get("xEnd");
+    const lastSelSeqIdIdx = seqIdToIdxMap[lastSelection.get("seqId")];
+    const lastSelXStart = lastSelection.get("xStart");
+    const lastSelXEnd = lastSelection.get("xEnd");
 
     const selectionType = selection.get("type");
     const selSeqIdIdx = seqIdToIdxMap[selection.get("seqId")];
     const selXStart = selection.get("xStart");
     const selXEnd = selection.get("xEnd");
 
-    const minXStart = Math.min(lSelXStart, selXStart);
-    const maxXEnd = Math.max(lSelXEnd, selXEnd);
-    const minSeqIdIdx = Math.min(lSelSeqIdIdx, selSeqIdIdx);
-    const maxSeqIdIdx = Math.max(lSelSeqIdIdx, selSeqIdIdx);
+    const minXStart = Math.min(lastSelXStart, selXStart);
+    const maxXEnd = Math.max(lastSelXEnd, selXEnd);
+    const minSeqIdIdx = Math.min(lastSelSeqIdIdx, selSeqIdIdx);
+    const maxSeqIdIdx = Math.max(lastSelSeqIdIdx, selSeqIdIdx);
 
     if (lastSelectionType === "row" && selectionType === "row") {
       // Select all rows between the last selection and the current selection
