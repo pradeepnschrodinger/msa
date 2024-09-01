@@ -266,7 +266,7 @@ const SelectionManager = Collection.extend({
           const { xStart, seqId, xEnd } = model.attributes;
           for (let j = xStart; j <= xEnd; j++) {
             if (!selectedPositionsSet.has(`${seqId}-${j}`)) {
-              selectionData.selectedPositions.push({ seqId: seqId, columnIdx: j });
+              selectionData.selectedPositions.push({ seqId: seqId, columnIndex: j });
               selectedPositionsSet.add(`${seqId}-${j}`);
             }
           }
@@ -299,8 +299,8 @@ const SelectionManager = Collection.extend({
       models.push(new columnsel({xStart, xEnd: xStart}));
     });
 
-    selectionData.selectedPositions.forEach(({ seqId, columnIdx }) => {
-      models.push(new possel({xStart: columnIdx, xEnd: columnIdx, seqId}));
+    selectionData.selectedPositions.forEach(({ seqId, columnIndex }) => {
+      models.push(new possel({xStart: columnIndex, xEnd: columnIndex, seqId}));
     });
 
     selectionData.selectedLabels.forEach((seqId) => {
