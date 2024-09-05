@@ -12,7 +12,7 @@ const SelectionManager = Collection.extend({
       this.g = opts.g;
 
       this.listenTo(this.g, "residue:click", function(e) {
-        return this._handleE(e.evt, new possel({
+        return this._handleSelectionEvent(e.evt, new possel({
           xStart: e.rowPos,
           xEnd: e.rowPos,
           seqId: e.seqId
@@ -20,19 +20,19 @@ const SelectionManager = Collection.extend({
       });
 
       this.listenTo(this.g, "row:click", function(e) {
-        return this._handleE(e.evt, new rowsel({
+        return this._handleSelectionEvent(e.evt, new rowsel({
           seqId: e.seqId
         }));
       });
 
       this.listenTo(this.g, "label:click", function(e) {
-        return this._handleE(e.evt, new labelsel({
+        return this._handleSelectionEvent(e.evt, new labelsel({
           seqId: e.seqId
         }));
       });
 
       this.listenTo(this.g, "column:click", function(e) {
-        return this._handleE(e.evt, new columnsel({
+        return this._handleSelectionEvent(e.evt, new columnsel({
           xStart: e.rowPos,
           xEnd: e.rowPos + e.stepSize - 1
         }));
@@ -317,6 +317,8 @@ const SelectionManager = Collection.extend({
     this.setSelectionData(selectionData);
   },
 
+  // This function is used to add label selections for rows in the selection array. 
+  // In the current implementation, whenever we select a row, we also select the label for the row.
   _getSelsWithLabelsForRows: function(selectionArr) {
     let updatedSelectionArr = [];
 
@@ -331,15 +333,21 @@ const SelectionManager = Collection.extend({
     return updatedSelectionArr;
   },
 
+  // Note(ritik): This function is used to invalidate lastSelection if it is out-of-bounds for the current set of sequences. 
+  // We don't directly update lastSelection when we change sequence data in MSA. So, lastSelection may not be valid for the new data.
   _isSelectionValid: function(selection) {
     const seqId = selection.get("seqId");
     const xStart = selection.get("xStart");
     const xEnd = selection.get("xEnd");
 
-    return _.some(this.g.seqs.models, (model) => 
-      (!seqId || model.attributes.id === seqId) && 
-      (!xStart || xStart >= 0) && 
-      (!xEnd || xEnd < model.attributes.seq.length)
+    // For a selection to be valid, check if for some sequence, the seqId matches. If yes, further check if xStart and xEnd are in bounds.
+    return _.some(this.g.seqs.models, (model) => {
+        const seqIdMatch = !seqId || model.attributes.id === seqId;
+        const xStartValid = !xStart || xStart >= 0;
+        const xEndValid = !xEnd || xEnd < model.attributes.seq.length;
+
+        return seqIdMatch && xStartValid && xEndValid;
+      }
     );
   },
   
@@ -410,6 +418,7 @@ const SelectionManager = Collection.extend({
       }
       this.add(labels, {silent: true});
     } else if (lastSelectionType === "row" && selectionType === "pos") {
+      // 
       const positions = [];
       for (let i = minSeqIdIdx; i <= maxSeqIdIdx; i++) {
         for (let j = selXStart; j <= selXEnd; j++) {
@@ -418,6 +427,7 @@ const SelectionManager = Collection.extend({
       }
       this.add(positions, {silent: true});
     } else if (lastSelectionType === "column" && selectionType === "pos") {
+      //
       const positions = [];
       for (let j = minXStart; j <= maxXEnd; j++) {
         positions.push(new possel({xStart: j, xEnd: j, seqId: idxToSeqIdMap[selSeqIdIdx]}));
@@ -535,7 +545,7 @@ const SelectionManager = Collection.extend({
     }
   },
 
-  _handleE: function(e, selection) {
+  _handleSelectionEvent: function(e, selection) {
     if (e.ctrlKey || e.metaKey) {
       if (this._isAlreadySelected(selection)) {
         this._deselectSelection(selection);
