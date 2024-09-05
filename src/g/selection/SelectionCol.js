@@ -288,6 +288,7 @@ const SelectionManager = Collection.extend({
       selectedLabels: Array.from(selectionData.selectedLabels),
     };
   },
+
   // @param silent [Boolean] if true, no events are triggered for the collection update
   setSelectionData: function(selectionData, silent = false) {
     const models = [];
@@ -351,7 +352,6 @@ const SelectionManager = Collection.extend({
     );
   },
   
-
   _handleShiftSelection: function(selection) {
     const seqIdToIdxMap = _.reduce(this.g.seqs.models, (acc, model, idx) => {
       const { id } = model.attributes
@@ -418,7 +418,8 @@ const SelectionManager = Collection.extend({
       }
       this.add(labels, {silent: true});
     } else if (lastSelectionType === "row" && selectionType === "pos") {
-      // 
+      // Select all residues between the last row selection and the current position selection.
+      // Use column indices from the position selection.
       const positions = [];
       for (let i = minSeqIdIdx; i <= maxSeqIdIdx; i++) {
         for (let j = selXStart; j <= selXEnd; j++) {
@@ -427,7 +428,7 @@ const SelectionManager = Collection.extend({
       }
       this.add(positions, {silent: true});
     } else if (lastSelectionType === "column" && selectionType === "pos") {
-      //
+      // Select all residues between the last column selection and the current position selection, using the seqId from the position selection
       const positions = [];
       for (let j = minXStart; j <= maxXEnd; j++) {
         positions.push(new possel({xStart: j, xEnd: j, seqId: idxToSeqIdMap[selSeqIdIdx]}));
