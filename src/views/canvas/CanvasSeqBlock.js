@@ -100,7 +100,7 @@ const View = boneView.extend({
     const events = this.scrollBody.getScrollEvents();
 
     if (this.g.config.get("registerMouseClicks")) {
-      events.dblclick = "_onclick";
+      events.click = "_onclick";
     }
     if (this.g.config.get("registerMouseHover")) {
       events.mousein = "_onmousein";
@@ -235,6 +235,9 @@ const View = boneView.extend({
       } else {
         this.g.trigger("residue:click", res);
       }
+    } else {
+      // Triggered when clicking on the unpainted section of the canvas
+      this.g.trigger("background:click", e);
     }
     return this.throttledDraw();
   },
