@@ -36,7 +36,7 @@ const CanvasPinnedBlock = boneView.extend({
   drawFeatures() {
     const rectWidth = this.g.zoomer.get("columnWidth");
     const rectHeight = this.g.zoomer.get("rowHeight");
-    const borderWidth = 0.75;
+    const borderWidth = 1;
     const xOffset = this.getXOffset(rectWidth);
 
     // TODO (pradeep): Perform virtualization here?
@@ -51,10 +51,39 @@ const CanvasPinnedBlock = boneView.extend({
       this.ctx.fillStyle = feature.attributes.fillColor;
       this.ctx.fillRect(x + xOffset, y, width, height);
 
-      // draw background block border
-      this.ctx.strokeStyle = 'black';
-      this.ctx.lineWidth = borderWidth;
-      this.ctx.strokeRect(x + xOffset, y, width, height);
+      // for vertical borders
+      this.ctx.strokeStyle =
+      feature.attributes.verticalSeperatorColor
+      this.ctx.lineWidth =
+        feature.attributes.verticalSeperatorWidth
+
+      // draw left vertical border
+      this.ctx.beginPath();
+      this.ctx.moveTo(x + xOffset, y);
+      this.ctx.lineTo(x + xOffset, y + height);
+      this.ctx.stroke();
+
+      //draw right vertical border
+      this.ctx.beginPath();
+      this.ctx.moveTo(x + xOffset + width, y);
+      this.ctx.lineTo(x + xOffset + width, y + height);
+      this.ctx.stroke();
+
+      //draw bottom border
+      this.ctx.strokeStyle = feature.attributes.bottomBorderColor
+      this.ctx.lineWidth = feature.attributes.bottomBorderWidth
+      this.ctx.beginPath();
+      this.ctx.moveTo(x + xOffset, y + height);
+      this.ctx.lineTo(x + xOffset + width, y + height);
+      this.ctx.stroke();
+
+      // draw top border
+      this.ctx.strokeStyle = feature.attributes.topBorderColor 
+      this.ctx.lineWidth = feature.attributes.topBorderWidth
+      this.ctx.beginPath();
+      this.ctx.moveTo(x + xOffset, y);
+      this.ctx.lineTo(x + xOffset + width, y);
+      this.ctx.stroke();
 
       // draw text
       this.ctx.fillStyle = feature.attributes.textColor || "black";
