@@ -164,7 +164,7 @@ module.exports = Zoomer = Model.extend({
       }
 
       // TODO: dirty hack
-      var maxWidth = parentWidth - this.getLeftBlockWidth();
+      var maxWidth = Math.max(parentWidth - this.getLeftBlockWidth(), 0);
       val = Math.min(maxWidth,calcWidth);
     }
 
