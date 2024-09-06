@@ -14,6 +14,7 @@ const LabelView = view.extend({
     var events = {};
     if (this.g.config.get("registerMouseClicks")) {
       events.click = "_onclick";
+      events.dblclick = "_ondblclick";
     }
     if (this.g.config.get("registerMouseHover")) {
       events.mousein = "_onmousein";
@@ -115,7 +116,16 @@ const LabelView = view.extend({
     return id;
   },
 
-  _onclick: function(evt) {
+  _onclick: _.debounce(function(evt) {
+    if (this.dlbclicked) {
+      return this.dlbclicked = false;
+    }
+    var seqId = this.model.get("id");
+    return this.g.trigger("label:click", {seqId:seqId, evt:evt});
+  }, 200),
+
+  _ondblclick: function(evt) {
+    this.dlbclicked = true;
     var seqId = this.model.get("id");
     return this.g.trigger("row:click", {seqId:seqId, evt:evt});
   },

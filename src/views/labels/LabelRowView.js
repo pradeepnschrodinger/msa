@@ -44,11 +44,14 @@ const View = boneView.extend({
   },
 
   setSelection: function() {
-    var sel = this.g.selcol.getSelForRow(this.model.id);
-    if (sel.length > 0) {
-      return this.el.style.fontWeight = "bold";
+    var isLabelSelected = this.g.selcol.isLabelSelected(this.model.id);
+    var isResidueSelected = this.g.selcol.isSomeResidueSelected(this.model.id);
+    if (isLabelSelected) {
+      return this.el.style.backgroundColor = "#B5C3DD";
+    } else if (isResidueSelected) {
+      return this.el.style.backgroundColor = "#E7ECF4";
     } else {
-      return this.el.style.fontWeight = "normal";
+      return this.el.style.backgroundColor = "white";
     }
   }
 });

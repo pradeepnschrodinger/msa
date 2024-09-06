@@ -114,7 +114,8 @@ extend(CanvasSelection.prototype, {
     const beforeWidth = this.ctx.lineWidth;
     this.ctx.lineWidth = 3;
     const beforeStyle = this.ctx.strokeStyle;
-    this.ctx.strokeStyle = "#FF0000";
+    // #1A53A0 color is Fun Blue (https://chir.ag/projects/name-that-color/)
+    this.ctx.strokeStyle = "#1A53A0";
 
     xZero += k * boxWidth;
 

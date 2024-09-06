@@ -7,6 +7,8 @@ const Selection = Model.extend({
     {type: "super"}
 });
 
+// inRow and inColumn functions are used to determine if a model is in a particular row or column
+
 const RowSelection = Selection.extend({
   defaults: extend( {}, Selection.prototype.defaults,
     {type: "row",
@@ -17,6 +19,7 @@ const RowSelection = Selection.extend({
     return seqId === this.get("seqId");
   },
 
+  // a row selection is in every column
   inColumn(rowPos) {
     return true;
   },
@@ -33,6 +36,7 @@ const ColumnSelection = Selection.extend({
     xEnd: -1
   }),
 
+  // a column selection is in every row
   inRow() {
     return true;
   },
@@ -57,7 +61,25 @@ const PosSelection = RowSelection.extend(extend( {},
   })
 }));
 
+const LabelSelection = Selection.extend({
+  defaults: extend( {}, Selection.prototype.defaults,
+    {type: "label",
+    seqId: ""
+  }),
+
+  // a label selection is a different model type and has no meaning of being in a row or column
+  // so inRow() and inColumn() always return false
+  inRow() {
+    return false;
+  },
+
+  inColumn() {
+    return false;
+  },
+});
+
 export {Selection as sel};
 export {PosSelection as possel};
 export {RowSelection as rowsel};
 export {ColumnSelection as columnsel};
+export {LabelSelection as labelsel};
