@@ -151,7 +151,7 @@ module.exports = Zoomer = Model.extend({
   _adjustWidth: function() {
     if (!(this.el !== undefined && this.model !== undefined)) { return; }
 
-    var calcWidth = this.getAlignmentWidth( this.model.getMaxLength() - this.g.columns.get('hidden').length);
+    var calcWidth = this.getAlignmentWidth( this.model.getMaxLength() - this.g.columns.get('hidden').length) + 10;
 
     let val
     if (this.g.config.get("shouldRenderSeqBlockAsSvg") === true) {

@@ -43,7 +43,10 @@ const SeqCollection = Collection.extend({
   // true: returns the last element, false: returns undefined
   prev: function(model, endless) {
     let index = this.indexOf(model) - 1;
-    if (index < 0 && endless) { index = this.length - 1; }
+    if (index < 0) { 
+      if (endless) { index = this.length - 1; }
+      else { return null; }
+    }
     return this.at(index);
   },
 
@@ -52,7 +55,10 @@ const SeqCollection = Collection.extend({
   // true: returns the first element, false: returns undefined
   next: function(model, endless) {
     let index = this.indexOf(model) + 1;
-    if (index === this.length && endless) { index = 0; }
+    if (index === this.length ) { 
+      if (endless) { index = 0; }
+      else { return null; }
+    }
     return this.at(index);
   },
 
