@@ -116,6 +116,7 @@ extend(CanvasSelection.prototype, {
     const beforeStyle = this.ctx.strokeStyle;
     // #1A53A0 color is Fun Blue (https://chir.ag/projects/name-that-color/)
     this.ctx.strokeStyle = "#1A53A0";
+    const adjustment = this.ctx.lineWidth / 2;
 
     xZero += k * boxWidth;
 
@@ -129,25 +130,25 @@ extend(CanvasSelection.prototype, {
       }
       // upper line
       if (!((typeof mPrevSel !== "undefined" && mPrevSel !== null) && mPrevSel.indexOf(xPos) >= 0)) {
-        this.ctx.moveTo(xZero + xPart, yZero);
-        this.ctx.lineTo(xPart + boxWidth + xZero, yZero);
+        this.ctx.moveTo(xZero + xPart, yZero + adjustment);
+        this.ctx.lineTo(xPart + boxWidth + xZero, yZero + adjustment);
       }
       // lower line
       if (!((typeof mNextSel !== "undefined" && mNextSel !== null) && mNextSel.indexOf(xPos) >= 0)) {
-        this.ctx.moveTo(xPart + xZero, boxHeight + yZero);
-        this.ctx.lineTo(xPart + boxWidth + xZero, boxHeight + yZero);
+        this.ctx.moveTo(xPart + xZero, boxHeight + yZero - adjustment);
+        this.ctx.lineTo(xPart + boxWidth + xZero, boxHeight + yZero - adjustment);
       }
 
       xPart += boxWidth;
     }
 
     // left
-    this.ctx.moveTo(xZero,yZero);
-    this.ctx.lineTo(xZero, boxHeight + yZero);
+    this.ctx.moveTo(xZero + adjustment,yZero);
+    this.ctx.lineTo(xZero + adjustment, boxHeight + yZero);
 
     // right
-    this.ctx.moveTo(xZero + totalWidth,yZero);
-    this.ctx.lineTo(xZero + totalWidth, boxHeight + yZero);
+    this.ctx.moveTo(xZero + totalWidth - adjustment,yZero);
+    this.ctx.lineTo(xZero + totalWidth - adjustment, boxHeight + yZero);
 
     this.ctx.stroke();
     this.ctx.strokeStyle = beforeStyle;
