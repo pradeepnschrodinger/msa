@@ -80,6 +80,17 @@ extend(CanvasSelection.prototype, {
     })();
   },
 
+  _drawVerticalLine: function (xStart, yStart, yEnd) {
+    this.ctx.moveTo(xStart, yStart);
+    this.ctx.lineTo(xStart, yEnd);
+  },
+
+  _drawVerticalBorder: function (xPos, yStart, yEnd, hasTopBorder, hasBottomBorder) {
+    const adjustedYStart = hasTopBorder ? yStart : yStart - this.ctx.lineWidth;
+    const adjustedYEnd = hasBottomBorder ? yEnd : yEnd + this.ctx.lineWidth;
+    this._drawVerticalLine(xPos, adjustedYStart, adjustedYEnd);
+  },
+
   // draws a single user selection
   _renderSelection: function(data) {
 
@@ -112,7 +123,7 @@ extend(CanvasSelection.prototype, {
 
     this.ctx.beginPath();
     const beforeWidth = this.ctx.lineWidth;
-    this.ctx.lineWidth = 3;
+    this.ctx.lineWidth = 2;
     const beforeStyle = this.ctx.strokeStyle;
     // #1A53A0 color is Fun Blue (https://chir.ag/projects/name-that-color/)
     this.ctx.strokeStyle = "#1A53A0";
@@ -122,6 +133,12 @@ extend(CanvasSelection.prototype, {
 
     // split up the selection into single cells
     let xPart = 0;
+
+    let firstSelectedResidueBottomBorder = false;
+    let firstSelectedResidueTopBorder = false;
+    let lastSelectedResidueBottomBorder = false;
+    let lastSelectedResidueTopBorder = false;
+
     const end1 = selectionLength - 1;
     for (let i = 0; i <= end1; i++) {
       let xPos = n + i;
@@ -132,23 +149,37 @@ extend(CanvasSelection.prototype, {
       if (!((typeof mPrevSel !== "undefined" && mPrevSel !== null) && mPrevSel.indexOf(xPos) >= 0)) {
         this.ctx.moveTo(xZero + xPart, yZero + adjustment);
         this.ctx.lineTo(xPart + boxWidth + xZero, yZero + adjustment);
+        if (i === 0) {
+          firstSelectedResidueTopBorder = true;
+        } 
+        if (i === end1) {
+          lastSelectedResidueTopBorder = true;
+        }
       }
       // lower line
       if (!((typeof mNextSel !== "undefined" && mNextSel !== null) && mNextSel.indexOf(xPos) >= 0)) {
         this.ctx.moveTo(xPart + xZero, boxHeight + yZero - adjustment);
         this.ctx.lineTo(xPart + boxWidth + xZero, boxHeight + yZero - adjustment);
+        if (i === 0) {
+          firstSelectedResidueBottomBorder = true;
+        } 
+        if (i === end1) {
+          lastSelectedResidueBottomBorder = true;
+        }
       }
 
       xPart += boxWidth;
     }
+    const leftX = xZero + adjustment;
+    const rightX = xZero + totalWidth - adjustment;
+    const yStart = yZero;
+    const yEnd = yZero + boxHeight;
 
-    // left
-    this.ctx.moveTo(xZero + adjustment,yZero);
-    this.ctx.lineTo(xZero + adjustment, boxHeight + yZero);
-
-    // right
-    this.ctx.moveTo(xZero + totalWidth - adjustment,yZero);
-    this.ctx.lineTo(xZero + totalWidth - adjustment, boxHeight + yZero);
+    // draw vertical borders
+    // left border
+    this._drawVerticalBorder(leftX, yStart, yEnd, firstSelectedResidueTopBorder, firstSelectedResidueBottomBorder);
+    // right border
+    this._drawVerticalBorder(rightX, yStart, yEnd, lastSelectedResidueTopBorder, lastSelectedResidueBottomBorder);
 
     this.ctx.stroke();
     this.ctx.strokeStyle = beforeStyle;
