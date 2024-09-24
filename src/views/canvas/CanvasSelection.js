@@ -123,7 +123,7 @@ extend(CanvasSelection.prototype, {
 
     this.ctx.beginPath();
     const beforeWidth = this.ctx.lineWidth;
-    this.ctx.lineWidth = 2;
+    this.ctx.lineWidth = this.g.zoomer.get("selectionBorderWidth");
     const beforeStyle = this.ctx.strokeStyle;
     // #1A53A0 color is Fun Blue (https://chir.ag/projects/name-that-color/)
     this.ctx.strokeStyle = "#1A53A0";

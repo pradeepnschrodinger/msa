@@ -159,8 +159,9 @@ class ScrollBody {
 
     // These calculations are taken from src/views/canvas/CanvasCoordsCache.js:
     const maxScrollHeight = this.g.zoomer.getMaxAlignmentHeight() - this.g.zoomer.get('alignmentHeight');
-    // // Note(ritik): Added 1px to fix the border getting clipped for last residue selection in scrollable sequences
-    const maxScrollWidth = this.g.zoomer.getMaxAlignmentWidth() - this.g.zoomer.getAlignmentWidth() + 1;
+    // // Note(ritik): Added extra pixels to fix the border getting clipped for last residue selection in scrollable sequences
+    const scrollWidthAdjustment = this.g.zoomer.get("selectionBorderWidth") / 2;
+    const maxScrollWidth = this.g.zoomer.getMaxAlignmentWidth() - this.g.zoomer.getAlignmentWidth() + scrollWidthAdjustment;
 
     // 0: maxLeft, 1: maxTop
     const max = [maxScrollWidth, maxScrollHeight];

@@ -35,6 +35,7 @@ module.exports = Zoomer = Model.extend({
     columnWidth: 17,
     rowHeight: 17,
     autoResize: true, // only for the width
+    selectionBorderWidth: 2,
 
     // labels
     labelIdLength: 20,
@@ -170,8 +171,9 @@ module.exports = Zoomer = Model.extend({
     }
 
     //@set "alignmentWidth", val
-    // Note(ritik): Added 1px to fix the border getting clipped for last residue selection in sequences
-    this.set("alignmentWidth", val + 1)
+    // Note(ritik): Added extra pixels to fix the border getting clipped for last residue selection in sequences
+    const widthAdjustment = this.get("selectionBorderWidth") / 2;
+    this.set("alignmentWidth", val + widthAdjustment)
     return val;
   },
 
