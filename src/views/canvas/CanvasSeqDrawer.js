@@ -105,6 +105,9 @@ const Drawer = {
   // TODO: very expensive method
   drawSeq: function(data, callback) {
     const seq = data.model.get("seq");
+    const seqId = data.model.get("id");
+    const seqSelection = this.g.selcol.getBlocksForRow(seqId, seq.length);
+    const isNothingSelected = this.g.selcol.isEmpty();
     const y = data.yPos;
     const rectWidth = this.rectWidth;
     const rectHeight = this.rectHeight;
@@ -124,6 +127,8 @@ const Drawer = {
       res.x = j;
       res.c = c;
       res.xPos = x;
+      res.isSelected = seqSelection.includes(j);
+      res.isNothingSelected = isNothingSelected;
 
       // local call is faster than apply
       // http://jsperf.com/function-calls-direct-vs-apply-vs-call-vs-bind/6
@@ -149,8 +154,10 @@ const Drawer = {
       y: data.y
     });
     if ((typeof color !== "undefined" && color !== null)) {
+      that.ctx.globalAlpha = data.isSelected? 1: (data.isNothingSelected)? 1: 0.7;
       that.ctx.fillStyle = color;
-      return that.ctx.fillRect(data.xPos,data.yPos,data.rectWidth,data.rectHeight);
+      that.ctx.fillRect(data.xPos,data.yPos,data.rectWidth,data.rectHeight);
+      return that.ctx.globalAlpha = 1;
     }
   },
 
@@ -165,7 +172,7 @@ const Drawer = {
       that.ctx.textBaseline = "middle";
       that.ctx.fillText(data.c, data.xPos + data.rectWidth / 2, data.yPos + data.rectHeight - data.rectHeight / 2);
     } else {
-      return that.ctx.drawImage( that.cache.getFontTile(data.c, data.rectWidth, data.rectHeight, data.x, data.y), data.xPos, data.yPos, data.rectWidth, data.rectHeight);
+      return that.ctx.drawImage( that.cache.getFontTile(data.c, data.rectWidth, data.rectHeight, data.x, data.y, data.isSelected), data.xPos, data.yPos, data.rectWidth, data.rectHeight);
     }
   },
 };
