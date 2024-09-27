@@ -46,9 +46,6 @@ extend(CanvasSelection.prototype, {
     const mPrevSel = getNextPrev[0];
     const mNextSel = getNextPrev[1];
 
-    const boxWidth = this.g.zoomer.get("columnWidth");
-    const boxHeight = this.g.zoomer.get("rowHeight");
-
     // avoid unnecessary loops
     if (selection.length === 0) { return; }
 
@@ -134,10 +131,10 @@ extend(CanvasSelection.prototype, {
     // split up the selection into single cells
     let xPart = 0;
 
-    let firstSelectedResidueBottomBorder = false;
-    let firstSelectedResidueTopBorder = false;
-    let lastSelectedResidueBottomBorder = false;
-    let lastSelectedResidueTopBorder = false;
+    let firstSelectedResidueHasBottomBorder = false;
+    let firstSelectedResidueHasTopBorder = false;
+    let lastSelectedResidueHasBottomBorder = false;
+    let lastSelectedResidueHasTopBorder = false;
 
     const end1 = selectionLength - 1;
     for (let i = 0; i <= end1; i++) {
@@ -150,10 +147,10 @@ extend(CanvasSelection.prototype, {
         this.ctx.moveTo(xZero + xPart, yZero + adjustment);
         this.ctx.lineTo(xPart + boxWidth + xZero, yZero + adjustment);
         if (i === 0) {
-          firstSelectedResidueTopBorder = true;
+          firstSelectedResidueHasTopBorder = true;
         } 
         if (i === end1) {
-          lastSelectedResidueTopBorder = true;
+          lastSelectedResidueHasTopBorder = true;
         }
       }
       // lower line
@@ -161,10 +158,10 @@ extend(CanvasSelection.prototype, {
         this.ctx.moveTo(xPart + xZero, boxHeight + yZero - adjustment);
         this.ctx.lineTo(xPart + boxWidth + xZero, boxHeight + yZero - adjustment);
         if (i === 0) {
-          firstSelectedResidueBottomBorder = true;
+          firstSelectedResidueHasBottomBorder = true;
         } 
         if (i === end1) {
-          lastSelectedResidueBottomBorder = true;
+          lastSelectedResidueHasBottomBorder = true;
         }
       }
 
@@ -177,9 +174,9 @@ extend(CanvasSelection.prototype, {
 
     // draw vertical borders
     // left border
-    this._drawVerticalBorder(leftX, yStart, yEnd, firstSelectedResidueTopBorder, firstSelectedResidueBottomBorder);
+    this._drawVerticalBorder(leftX, yStart, yEnd, firstSelectedResidueHasTopBorder, firstSelectedResidueHasBottomBorder);
     // right border
-    this._drawVerticalBorder(rightX, yStart, yEnd, lastSelectedResidueTopBorder, lastSelectedResidueBottomBorder);
+    this._drawVerticalBorder(rightX, yStart, yEnd, lastSelectedResidueHasTopBorder, lastSelectedResidueHasBottomBorder);
 
     this.ctx.stroke();
     this.ctx.strokeStyle = beforeStyle;
