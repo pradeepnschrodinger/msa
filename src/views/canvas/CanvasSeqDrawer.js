@@ -154,7 +154,7 @@ const Drawer = {
       y: data.y
     });
     if ((typeof color !== "undefined" && color !== null)) {
-      that.ctx.globalAlpha = data.isSelected? 1: (data.isNothingSelected)? 1: 0.7;
+      that.ctx.globalAlpha = data.isSelected? 1: (data.isNothingSelected)? 1: 0.65;
       that.ctx.fillStyle = color;
       that.ctx.fillRect(data.xPos,data.yPos,data.rectWidth,data.rectHeight);
       return that.ctx.globalAlpha = 1;
