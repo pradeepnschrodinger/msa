@@ -19,7 +19,9 @@ const View = boneView.extend({
     });
     this.listenTo(this.g.vis,"change", this._setSpacer);
     this.listenTo(this.g.zoomer,"change:alignmentWidth", this._setWidth);
-
+    this.listenTo(this.g.vis,"change:customColumnsGetter",function() {
+      this.g.zoomer.set("_alignmentScrollLeft", 0);
+    })
     // TODO: duplicate rendering
     this.listenTo(this.g.columns, "change:hidden", function() {
       this.draw();
