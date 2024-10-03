@@ -77,15 +77,16 @@ extend(CanvasSelection.prototype, {
     })();
   },
 
-  _drawVerticalLine: function (xStart, yStart, yEnd) {
-    this.ctx.moveTo(xStart, yStart);
-    this.ctx.lineTo(xStart, yEnd);
+  _drawHorizontalBorder: function (yPos, xStart, xEnd) {
+    this.ctx.moveTo(xStart, yPos);
+    this.ctx.lineTo(xEnd, yPos);
   },
 
   _drawVerticalBorder: function (xPos, yStart, yEnd, hasTopBorder, hasBottomBorder) {
     const adjustedYStart = hasTopBorder ? yStart : yStart - this.ctx.lineWidth;
     const adjustedYEnd = hasBottomBorder ? yEnd : yEnd + this.ctx.lineWidth;
-    this._drawVerticalLine(xPos, adjustedYStart, adjustedYEnd);
+    this.ctx.moveTo(xPos, adjustedYStart);
+    this.ctx.lineTo(xPos, adjustedYEnd);
   },
 
   // draws a single user selection
@@ -144,8 +145,7 @@ extend(CanvasSelection.prototype, {
       }
       // upper line
       if (!((typeof mPrevSel !== "undefined" && mPrevSel !== null) && mPrevSel.indexOf(xPos) >= 0)) {
-        this.ctx.moveTo(xZero + xPart, yZero + adjustment);
-        this.ctx.lineTo(xPart + boxWidth + xZero, yZero + adjustment);
+        this._drawHorizontalBorder(yZero + adjustment, xZero + xPart, xZero + xPart + boxWidth);
         if (i === 0) {
           firstSelectedResidueHasTopBorder = true;
         } 
@@ -155,8 +155,7 @@ extend(CanvasSelection.prototype, {
       }
       // lower line
       if (!((typeof mNextSel !== "undefined" && mNextSel !== null) && mNextSel.indexOf(xPos) >= 0)) {
-        this.ctx.moveTo(xPart + xZero, boxHeight + yZero - adjustment);
-        this.ctx.lineTo(xPart + boxWidth + xZero, boxHeight + yZero - adjustment);
+        this._drawHorizontalBorder(yZero + boxHeight - adjustment, xZero + xPart, xZero + xPart + boxWidth);
         if (i === 0) {
           firstSelectedResidueHasBottomBorder = true;
         } 
