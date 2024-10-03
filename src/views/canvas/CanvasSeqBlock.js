@@ -283,6 +283,7 @@ const View = boneView.extend({
     y = Math.max(0,y);
 
     const seqId = this.model.at(y).get("id");
+    const seqLen = this.model.at(y).get("seq").length;
 
     if (rowNumber > 0) {
       // click on a feature
@@ -293,6 +294,10 @@ const View = boneView.extend({
       }
     } else {
       // click on a seq
+      // check if the residue position is in the sequence
+      if (x >= seqLen) {
+        return;
+      }
       return {seqId:seqId, rowPos: x, evt:e};
     }
   },
