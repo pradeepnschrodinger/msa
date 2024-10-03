@@ -167,7 +167,7 @@ extend(CanvasSelection.prototype, {
       xPart += boxWidth;
     }
     const leftX = xZero + adjustment;
-    const rightX = xZero + totalWidth - adjustment;
+    const rightX = xZero + totalWidth - 2 * adjustment;
     const yStart = yZero;
     const yEnd = yZero + boxHeight;
 

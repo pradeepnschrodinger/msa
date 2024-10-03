@@ -171,9 +171,7 @@ module.exports = Zoomer = Model.extend({
     }
 
     //@set "alignmentWidth", val
-    // Note(ritik): Added extra pixels to fix the border getting clipped for last residue selection in sequences
-    const widthAdjustment = this.get("selectionBorderWidth") / 2;
-    this.set("alignmentWidth", val + widthAdjustment)
+    this.set("alignmentWidth", val)
     return val;
   },
 
