@@ -441,6 +441,7 @@ zoomer: {
     columnWidth: 15,
     rowHeight: 15,
     autoResize: true, // only for the width
+    selectionBorderWidth: 2, // sets the thickness of selection borders for residue selection
 
     // labels
     textVisible: true,
