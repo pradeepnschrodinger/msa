@@ -53,12 +53,18 @@ const SelectionManager = Collection.extend({
     return this.find(function(el) { return el.get("type") === "label" && el.get("seqId") === seqId; });
   },
 
-  isSomeResidueSelected: function(seqId, seqLen) {
+  isAnyResidueSelectedInRow: function(seqId, seqLen) {
     // Check if there is a row selection or a position selection for the given seqId, or if there is a column selection within the sequence length
     return this.find(function(el) {
       const isRowOrPositionModelForSeqId = (el.get("type") === "pos" || el.get("type") === "row") && el.get("seqId") === seqId;
       const isColumnModelWithinSequence = el.get("type") === "column" && el.get("xEnd") < seqLen;
       return isRowOrPositionModelForSeqId || isColumnModelWithinSequence;
+    });
+  },
+
+  isAnyResidueSelected: function() {
+    return this.find(function(el) {
+      return el.get("type") !== "label";
     });
   },
 

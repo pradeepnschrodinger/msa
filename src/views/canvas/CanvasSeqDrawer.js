@@ -105,6 +105,9 @@ const Drawer = {
   // TODO: very expensive method
   drawSeq: function(data, callback) {
     const seq = data.model.get("seq");
+    const seqId = data.model.get("id");
+    const seqSelection = this.g.selcol.getBlocksForRow(seqId, seq.length);
+    const hasResidueSelection = this.g.selcol.isAnyResidueSelected();
     const y = data.yPos;
     const rectWidth = this.rectWidth;
     const rectHeight = this.rectHeight;
@@ -124,6 +127,8 @@ const Drawer = {
       res.x = j;
       res.c = c;
       res.xPos = x;
+      res.isSelected = seqSelection.includes(j);
+      res.hasResidueSelection = hasResidueSelection;
 
       // local call is faster than apply
       // http://jsperf.com/function-calls-direct-vs-apply-vs-call-vs-bind/6
@@ -149,8 +154,12 @@ const Drawer = {
       y: data.y
     });
     if ((typeof color !== "undefined" && color !== null)) {
+      // NOTE (ritik): Change the opacity of non-selected residues to 65% whenever there is a residue selection
+      // This is done to make the selected residues more prominent
+      that.ctx.globalAlpha = data.isSelected? 1: (data.hasResidueSelection)? 0.65: 1;
       that.ctx.fillStyle = color;
-      return that.ctx.fillRect(data.xPos,data.yPos,data.rectWidth,data.rectHeight);
+      that.ctx.fillRect(data.xPos,data.yPos,data.rectWidth,data.rectHeight);
+      return that.ctx.globalAlpha = 1;
     }
   },
 

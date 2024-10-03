@@ -32,9 +32,10 @@ module.exports = Zoomer = Model.extend({
     // general
     alignmentWidth: "auto",
     alignmentHeight: 225,
-    columnWidth: 15,
-    rowHeight: 15,
+    columnWidth: 17,
+    rowHeight: 17,
     autoResize: true, // only for the width
+    selectionBorderWidth: 2,
 
     // labels
     labelIdLength: 20,
