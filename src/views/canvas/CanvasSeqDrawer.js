@@ -174,7 +174,7 @@ const Drawer = {
       that.ctx.textBaseline = "middle";
       that.ctx.fillText(data.c, data.xPos + data.rectWidth / 2, data.yPos + data.rectHeight - data.rectHeight / 2);
     } else {
-      return that.ctx.drawImage( that.cache.getFontTile(data.c, data.rectWidth, data.rectHeight, data.x, data.y, data.isSelected), data.xPos, data.yPos, data.rectWidth, data.rectHeight);
+      return that.ctx.drawImage( that.cache.getFontTile(data.c, data.rectWidth, data.rectHeight, data.x, data.y), data.xPos, data.yPos, data.rectWidth, data.rectHeight);
     }
   },
 };
