@@ -582,7 +582,6 @@ const SelectionManager = Collection.extend({
       this._handleShiftSelection(selection);
     }
     else {
-      // Click with 
       this._resetSelection(selection, {silent: true});
     }
 
