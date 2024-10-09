@@ -553,7 +553,6 @@ const SelectionManager = Collection.extend({
   },
 
   _resetSelection: function(selection, options) {
-    // Check selection type
     const selectionType = selection.get("type");
     const labelSelections = _.filter(this.models, m => m.get("type") === "label");
     const residueSelections = _.filter(this.models, m => m.get("type") !== "label");
@@ -583,6 +582,7 @@ const SelectionManager = Collection.extend({
       this._handleShiftSelection(selection);
     }
     else {
+      // Click with 
       this._resetSelection(selection, {silent: true});
     }
 
