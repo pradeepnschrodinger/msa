@@ -552,6 +552,25 @@ const SelectionManager = Collection.extend({
     }
   },
 
+  _resetSelection: function(selection, options) {
+    const selectionType = selection.get("type");
+    const labelSelections = _.filter(this.models, m => m.get("type") === "label");
+    const residueSelections = _.filter(this.models, m => m.get("type") !== "label");
+    if (selectionType === "label") {  // Label Selection
+      // Replace all the label selections with the new label selection
+      // Do not reset the residue selections
+      this.reset([selection, ...residueSelections], options);
+    } else if (selectionType === "column" || selectionType === "pos") {  // Residue Selection
+      // Replace all the residues selections with the new residue selection
+      // Do not reset the label selections
+      this.reset([selection, ...labelSelections], options);
+    } else { 
+      // Simultaneous Label and Residue Selection (via Row Selection)
+      // Replace all the selections with the new label & residue selection
+      this.reset(this._getSelsWithLabelsForRows([selection]), options);
+    }
+  },
+
   _handleSelectionEvent: function(e, selection) {
     if (e.ctrlKey || e.metaKey) {
       if (this._isAlreadySelected(selection)) {
@@ -563,7 +582,7 @@ const SelectionManager = Collection.extend({
       this._handleShiftSelection(selection);
     }
     else {
-      this.reset(this._getSelsWithLabelsForRows([selection]), {silent: true});
+      this._resetSelection(selection, {silent: true});
     }
 
     this._refineSelections();
