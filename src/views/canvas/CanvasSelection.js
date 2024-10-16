@@ -52,7 +52,7 @@ extend(CanvasSelection.prototype, {
     let hiddenOffset = 0;
     return (() => {
       const result = [];
-      const end = seq.length - 1;
+      const end = this.g.seqs.getMaxLength() - 1;
       for (let n = 0; n <= end; n++) {
         result.push((() => {
           if (data.hidden.indexOf(n) >= 0) {
@@ -103,7 +103,7 @@ extend(CanvasSelection.prototype, {
 
     // get the length of this selection
     let selectionLength = 0;
-    const end = data.model.get("seq").length - 1;
+    const end = this.g.seqs.getMaxLength() - 1;
     for (let i = n; i <= end; i++) {
       if (selection.indexOf(i) >= 0) {
         selectionLength++;
