@@ -48,6 +48,13 @@ const View = boneView.extend({
     this.addView("pinnedSeqBlock", pinnedBlock);
 
     this.draw();
+    
+    // NOTE (ritik): Using defer to set the scrollLeft to delay the execution until the current call stack has cleared to ensure that the element has been
+    // successfully mounted to the DOM. We need to set the scrollLeft in this manner because on selecting a custom column, the scrollLeft of rheaders was
+    // getting reset to 0.
+    _.defer(() => {
+      document.querySelector('.biojs_msa_rheaders').scrollLeft = this.g.zoomer.get("_alignmentScrollLeft");
+    })
 
     return this.g.vis.once('change:loaded', this._adjustScrollingLeft, this);
   },
