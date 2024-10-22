@@ -49,9 +49,9 @@ const View = boneView.extend({
 
     this.draw();
     
-    // NOTE (ritik): Selecting a custom column in Sequence Viewer was resetting the `scrollLeft` of `rheaders` to 0. To preserve the scroll on selecting a custom column,
+    // NOTE (ritik): Selecting a custom column in Sequence Viewer was resetting the `scrollLeft` of `rheaders` to 0. To preserve the scroll when selecting a custom column,
     // set the element scroll after it is mounted in the DOM. For this, we are using `defer`, which sets the `scrollLeft` of `rheaders` after the current call stack is cleared. 
-    // This ensures that the element is fully mounted and rendered in the DOM (in the previous call stack) before adjusting the scroll position.
+    // This ensures the element is fully mounted and rendered in the DOM (in the previous call stack) before adjusting the scroll position.
     _.defer(() => {
       document.querySelector('.biojs_msa_rheaders').scrollLeft = this.g.zoomer.get("_alignmentScrollLeft");
     })
