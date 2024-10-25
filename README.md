@@ -462,7 +462,8 @@ zoomer: {
     residueFont: "13px Helvetica Neue",
     residueFontOffset: [0, 0], // horizontal and vertical offset of residue font in px
     canvasEventScale: 1,
-    residueFontGetter: undefined // this can be overriden with a custom function of the following signature: (char: string, pos: {x: number, y: number}) => { font: string, color: string}
+    residueFontPropsGetter: undefined // this can be overriden with a custom function of the following signature: (residueCode: string, pos: {x: number, y: number}) => { font: string, color: string}
+    residueTilePropsGetter: undefined // function to get the properties for a specific residue tile, which can be overriden with a custom function of the following signature: (pos: {x: number, y: number}) => { hasBottomBorder: boolean }
 
     // overview box
     boxRectHeight: 2,

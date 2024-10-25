@@ -31,11 +31,11 @@ class CanvasCharCache {
   }
 
   getFontProperties(code, x, y) {
-    const residueFontGetter = this.g.zoomer.get("residueFontGetter");
+    const residueFontPropsGetter = this.g.zoomer.get("residueFontPropsGetter");
     let font = this.g.zoomer.get("residueFont");
     let color = "black";
-    if (residueFontGetter !== undefined) {
-      const fontProps = residueFontGetter(code, {x, y});
+    if (residueFontPropsGetter !== undefined) {
+      const fontProps = residueFontPropsGetter(code, {x, y});
       font = get(fontProps, "font") || font;
       color = get(fontProps, "color") || color;
     }
