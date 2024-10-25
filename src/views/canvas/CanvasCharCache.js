@@ -73,7 +73,6 @@ class CanvasCharCache {
     const displayCode = code.slice(0, 6);
     const displayCodeWidth = this.ctx.measureText(displayCode).width;
     
-
     const startX = (width - displayCodeWidth) / 2;
     const startY = tileCenterY;
     this.ctx.fillText(displayCode.slice(0, 4), startX, startY);
