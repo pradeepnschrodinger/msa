@@ -121,7 +121,6 @@ const Drawer = {
 
     for (let j = start; j <  seq.length; j++) {
       let c = seq[j];
-      c = c.toUpperCase();
 
       // call the custom function
       res.x = j;

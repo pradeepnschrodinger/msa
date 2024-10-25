@@ -13,7 +13,7 @@ class CanvasCharCache {
   }
 
   // returns a cached canvas
-  getFontTile(letter, width, height, x, y) {
+  getFontTile(code, width, height, x, y) {
     // validate cache
     if (width !== this.cacheWidth || height !== this.cacheHeight) {
       this.cacheHeight = height;
@@ -21,21 +21,21 @@ class CanvasCharCache {
       this.cache = {};
     }
 
-    const fontProps = this.getFontProperties(letter, x, y);
-    const cacheKey = this.getCacheKey(letter, fontProps);    
+    const fontProps = this.getFontProperties(code, x, y);
+    const cacheKey = this.getCacheKey(code, fontProps);    
     if (this.cache[cacheKey] === undefined) {
-      this.createTile(letter, width, height, fontProps, cacheKey);
+      this.createTile(code, width, height, fontProps, cacheKey);
     }
 
     return this.cache[cacheKey];
   }
 
-  getFontProperties(letter, x, y) {
+  getFontProperties(code, x, y) {
     const residueFontGetter = this.g.zoomer.get("residueFontGetter");
     let font = this.g.zoomer.get("residueFont");
     let color = "black";
     if (residueFontGetter !== undefined) {
-      const fontProps = residueFontGetter(letter, {x, y});
+      const fontProps = residueFontGetter(code, {x, y});
       font = get(fontProps, "font") || font;
       color = get(fontProps, "color") || color;
     }
@@ -45,14 +45,14 @@ class CanvasCharCache {
     }
   }
 
-  getCacheKey(letter, fontProps) {
+  getCacheKey(code, fontProps) {
     const {font, color} = fontProps;
-    return `${letter}-${font}-${color}`;
+    return `${code}-${font}-${color}`;
   }
 
-  // creates a canvas with a single letter
+  // creates a canvas with a residue code
   // (for the fast font cache)
-  createTile(letter, width, height, fontProps, cacheKey) {
+  createTile(code, width, height, fontProps, cacheKey) {
     const canvas = this.cache[cacheKey] = hdCanvas();
     this.ctx = canvas.getContext('2d');
     canvas.adjustSize({ height, width })
@@ -61,9 +61,31 @@ class CanvasCharCache {
     const [xOffset, yOffset] = this.g.zoomer.get("residueFontOffset");
 
     this.ctx.textBaseline = 'middle';
-    this.ctx.textAlign = "center";
+    
+    const tileCenterX = width / 2 + xOffset;
+    const tileCenterY = height / 2 + yOffset;
 
-    return this.ctx.fillText(letter, width / 2 + xOffset, height / 2 + yOffset, width);
+    if (code.length <= 6) {
+      this.ctx.textAlign = 'center';
+      return this.ctx.fillText(code, tileCenterX, tileCenterY, width);
+    }
+    
+    const displayCode = code.slice(0, 6);
+    const displayCodeWidth = this.ctx.measureText(displayCode).width;
+    
+
+    const startX = (width - displayCodeWidth) / 2;
+    const startY = tileCenterY;
+    this.ctx.fillText(displayCode.slice(0, 4), startX, startY);
+    
+    this.ctx.fillStyle = "#262626";
+    const offsetX1 = startX + this.ctx.measureText(displayCode.slice(0, 4)).width;
+    this.ctx.fillText(displayCode[4], offsetX1, startY);
+
+    this.ctx.fillStyle = "#454545";
+    this.ctx.font = `italic ${fontProps.font}`;
+    const offsetX2 = offsetX1 + this.ctx.measureText(displayCode[4]).width;
+    return this.ctx.fillText(displayCode[5], offsetX2, startY);
   }
 };
 export default CanvasCharCache;
