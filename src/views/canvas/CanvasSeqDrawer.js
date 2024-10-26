@@ -163,7 +163,7 @@ const Drawer = {
       let hasBottomBorder = false;
       if (residueTilePropsGetter !== undefined) {
         const tileProps = residueTilePropsGetter({x: data.x, y: data.y});
-        hasBottomBorder = _.get(tileProps, 'hasBottomBorder') || false;
+        hasBottomBorder = _.get(tileProps, 'hasBottomBorder') || hasBottomBorder;
       }
       if (hasBottomBorder) {
         // Add border at the bottom of a residue tile
