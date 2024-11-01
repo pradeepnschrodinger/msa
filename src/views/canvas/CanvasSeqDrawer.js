@@ -167,8 +167,9 @@ const Drawer = {
       }
       if (hasBottomBorder) {
         // Add border at the bottom of a residue tile
-        that.ctx.fillStyle = "#666666";
-        that.ctx.fillRect(data.xPos,data.yPos + data.rectHeight - (0.1 * data.rectHeight),data.rectWidth,0.1 * data.rectHeight);
+        const bottomBorderHeight = 0.1 * data.rectHeight;
+        that.ctx.fillStyle = "#888888";
+        that.ctx.fillRect(data.xPos,data.yPos + data.rectHeight - bottomBorderHeight,data.rectWidth, bottomBorderHeight);
       }
       return that.ctx.globalAlpha = 1;
     }
