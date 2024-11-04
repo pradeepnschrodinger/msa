@@ -64,7 +64,7 @@ class CanvasCharCache {
     const maxResidueCodeLength = this.g.zoomer.get("maxResidueCodeLength")
     const tileCenterX = width / 2 + xOffset;
     const tileCenterY = height / 2 + yOffset;
-     code = 'xyzxyzx';
+
     if (code.length <= maxResidueCodeLength) {
       this.ctx.textAlign = 'center';
       return this.ctx.fillText(code, tileCenterX, tileCenterY, width);
