@@ -61,30 +61,30 @@ class CanvasCharCache {
     const [xOffset, yOffset] = this.g.zoomer.get("residueFontOffset");
 
     this.ctx.textBaseline = 'middle';
-    
+    const maxResidueCodeLength = this.g.zoomer.get("maxResidueCodeLength")
     const tileCenterX = width / 2 + xOffset;
     const tileCenterY = height / 2 + yOffset;
-
-    if (code.length <= 6) {
+     code = 'xyzxyzx';
+    if (code.length <= maxResidueCodeLength) {
       this.ctx.textAlign = 'center';
       return this.ctx.fillText(code, tileCenterX, tileCenterY, width);
     }
     
-    const displayCode = code.slice(0, 6);
+    const displayCode = code.slice(0, maxResidueCodeLength);
     const displayCodeWidth = this.ctx.measureText(displayCode).width;
     
     const startX = (width - displayCodeWidth) / 2;
     const startY = tileCenterY;
-    this.ctx.fillText(displayCode.slice(0, 4), startX, startY);
+    this.ctx.fillText(displayCode.slice(0, maxResidueCodeLength - 2), startX, startY);
     
     this.ctx.fillStyle = "#333333";
-    const offsetX1 = startX + this.ctx.measureText(displayCode.slice(0, 4)).width;
-    this.ctx.fillText(displayCode[4], offsetX1, startY);
+    const offsetX1 = startX + this.ctx.measureText(displayCode.slice(0, maxResidueCodeLength - 2)).width;
+    this.ctx.fillText(displayCode[maxResidueCodeLength - 2], offsetX1, startY);
 
     this.ctx.fillStyle = "#555555";
     this.ctx.font = `italic ${fontProps.font}`;
-    const offsetX2 = offsetX1 + this.ctx.measureText(displayCode[4]).width;
-    return this.ctx.fillText(displayCode[5], offsetX2, startY);
+    const offsetX2 = offsetX1 + this.ctx.measureText(displayCode[maxResidueCodeLength - 2]).width;
+    return this.ctx.fillText(displayCode[maxResidueCodeLength - 1], offsetX2, startY);
   }
 };
 export default CanvasCharCache;
