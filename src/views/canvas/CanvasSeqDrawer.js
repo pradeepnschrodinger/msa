@@ -16,9 +16,7 @@ const Drawer = {
     this.updateConfig();
 
     // rects
-    this.ctx.globalAlpha = this.g.colorscheme.get("opacity");
     this.drawSeqs(function(data) { return this.drawSeq(data, this._drawRect); });
-    this.ctx.globalAlpha = 1;
 
     // letters
     if ( this.rectWidth >= this.g.zoomer.get('minLetterDrawSize')) {
@@ -156,7 +154,8 @@ const Drawer = {
     if ((typeof color !== "undefined" && color !== null)) {
       // NOTE (ritik): Change the opacity of non-selected residues to 65% whenever there is a residue selection
       // This is done to make the selected residues more prominent
-      that.ctx.globalAlpha = data.isSelected? 1: (data.hasResidueSelection)? 0.65: 1;
+      const opacity = that.g.colorscheme.get("opacity");
+      that.ctx.globalAlpha = data.isSelected? opacity : (data.hasResidueSelection)? 0.65 * opacity : opacity;
       that.ctx.fillStyle = color;
       that.ctx.fillRect(data.xPos,data.yPos,data.rectWidth,data.rectHeight);
       return that.ctx.globalAlpha = 1;

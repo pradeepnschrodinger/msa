@@ -22,4 +22,22 @@ const adjustSize = function ({ height, width }) {
   this.getContext('2d').scale(sharpnessFactor, sharpnessFactor);
 };
 
-export { hdCanvas }
+const emulatedScrollableCanvas = () => {
+  const canvas = hdCanvas()
+  const innerDiv = document.createElement("div")
+  const outerDiv = document.createElement("div")
+
+  // Nest canvas inside innerDiv
+  innerDiv.appendChild(canvas);
+
+  // Nest innerDiv inside outerDiv
+  outerDiv.appendChild(innerDiv);
+
+  return {
+    outerDiv,
+    innerDiv,
+    canvas
+  };
+}
+
+export { hdCanvas, emulatedScrollableCanvas }

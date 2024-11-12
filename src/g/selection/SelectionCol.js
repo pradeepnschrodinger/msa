@@ -63,7 +63,7 @@ const SelectionManager = Collection.extend({
   },
 
   isAnyResidueSelected: function() {
-    return this.find(function(el) {
+    return !!this.find(function(el) {
       return el.get("type") !== "label";
     });
   },

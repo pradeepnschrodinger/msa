@@ -7,7 +7,7 @@
 }
 
 .biojs_msa_seqblock {
-    cursor: move;
+    cursor: pointer;
 }
 
 .biojs_msa_layer{
@@ -77,13 +77,13 @@
   box-sizing: border-box;
 }
 
-.biojs_msa_labelblock::-webkit-scrollbar, .biojs_msa_rheader::-webkit-scrollbar{
+.biojs_msa_labelblock::-webkit-scrollbar, .biojs_msa_seqblock::-webkit-scrollbar{
      /* FIX scrollbars on Mac */
     -webkit-appearance: none;
     width: 7px;
     height: 7px;
 }
-.biojs_msa_labelblock::-webkit-scrollbar-thumb, .biojs_msa_rheader::-webkit-scrollbar-thumb{
+.biojs_msa_labelblock::-webkit-scrollbar-thumb, .biojs_msa_seqblock::-webkit-scrollbar-thumb {
     border-radius: 4px;
     background-color: rgba(0,0,0,.5);
     box-shadow: 0 0 1px rgba(255,255,255,.5);

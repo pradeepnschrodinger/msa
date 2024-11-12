@@ -1,5 +1,5 @@
 const boneView = require("backbone-childs");
-import { hdCanvas } from "../utils/canvas";
+import { emulatedScrollableCanvas } from "../utils/canvas";
 import SeqBlock from "./canvas/CanvasSeqBlock";
 import LabelBlock from "./labels/LabelBlock";
 
@@ -24,10 +24,13 @@ const View = boneView.extend({
           el: childEl,
         });
       } else {
+        const {outerDiv, innerDiv, canvas} = emulatedScrollableCanvas();
         seqblock = new SeqBlock({
           model: this.model,
           g: this.g,
-          el: hdCanvas(),
+          el: outerDiv,
+          innerDiv: innerDiv,
+          canvas: canvas
         });
       }
       seqblock.ordering = 0;

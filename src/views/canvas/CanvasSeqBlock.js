@@ -12,6 +12,8 @@ const View = boneView.extend({
 
   initialize: function(data) {
     this.g = data.g;
+    this.innerDiv = data.innerDiv;
+    this.canvas = data.canvas;
 
     this.listenTo(this.g.columns,"change:hidden", this.render);
     this.listenTo(this.g.zoomer,"change:alignmentWidth change:alignmentHeight", this.render);
@@ -25,7 +27,7 @@ const View = boneView.extend({
       this.el.classList.add("biojs_msa_seqblock")
     } else {
       this.el.style.display = "inline-block";
-      this.el.style.overflowX = "hidden";
+      this.el.style.overflowX = "auto";
       this.el.style.overflowY = "hidden";
       this.el.className = "biojs_msa_seqblock";
     }
@@ -34,7 +36,7 @@ const View = boneView.extend({
     if (this.g.config.get("shouldRenderSeqBlockAsSvg") === true) {
       this.ctx = new C2S();
     } else {
-      this.ctx = this.el.getContext('2d');
+      this.ctx = this.canvas.getContext('2d');
     }
 
     this.cache = new CharCache(this.g);
@@ -72,7 +74,7 @@ const View = boneView.extend({
       this.throttledDraw = throttle(this.throttledDraw, 30);
     }
 
-    this.scrollBody = new ScrollBody(this.g, this, this.draw);
+    this.scrollBody = new ScrollBody(this.g, this, this.repositionCanvas);
 
     return this.manageEvents();
   },
@@ -106,6 +108,7 @@ const View = boneView.extend({
       events.mousein = "_onmousein";
       events.mouseout = "_onmouseout";
       events.mousemove = "_onmousemove";
+      events.scroll = "_onscroll";
     }
 
     this.delegateEvents(events);
@@ -173,9 +176,22 @@ const View = boneView.extend({
     return this.g.zoomer.getAlignmentWidth();
   },
 
+  repositionCanvas: function() {
+    // scroll the inner div
+    this.el.scrollLeft = this.g.zoomer.get("_alignmentScrollLeft");
+    this.el.scrollTop = this.g.zoomer.get("_alignmentScrollTop");
+
+    // reposition the canvas so that it is always in the viewport
+    this.canvas.style.transform = `translateX(${this.el.scrollLeft}px)`;
+
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.draw();
+  },
+
   render: function() {
     const width = this.getPlannedElWidth();
     const height = this.getPlannedElHeight();
+    const maxAlignmentWidth = this.g.zoomer.getMaxAlignmentWidth();
 
     if (this.g.config.get("shouldRenderSeqBlockAsSvg") === true) {
       this.el.setAttributeNS("http://www.w3.org/2000/svg", 'height', height);
@@ -183,10 +199,23 @@ const View = boneView.extend({
       this.el.style.width = `${width}px`;
       this.el.style.height = `${height}px`;
     } else {
-      this.el.adjustSize({
+      const scrollBarHeight = 7;
+      this.el.style.width = `${width}px`;
+      this.el.style.height = `${height + scrollBarHeight}px`;
+
+      this.innerDiv.style.width = `${maxAlignmentWidth}px`;
+      this.innerDiv.style.height = `${height}px`;
+
+      this.innerDiv.className = "biojs_msa_seqblock_wrapper";
+      this.canvas.adjustSize({
         height,
         width,
-      })
+      });
+
+      this.canvas.style.display = "inline-block";
+      this.canvas.style.overflowX = "hidden";
+      this.canvas.style.overflowY = "hidden";
+      this.canvas.className = "biojs_msa_seqblock_canvas";
     }
 
     if (this.g.config.get("shouldRenderSeqBlockAsSvg") === true) {
@@ -213,6 +242,14 @@ const View = boneView.extend({
   _onmousemove: function(e) {
     const residueEvent = this._getResidueAtMouseEvent(e);
     this._onresiduehover(residueEvent);
+  },
+
+  _onscroll: function(_e) {
+    this.g.zoomer.set("_alignmentScrollLeft", this.el.scrollLeft);
+    // reposition the canvas so that it is always in the viewport
+    this.canvas.style.transform = `translateX(${this.el.scrollLeft}px)`;
+
+    return this.draw();
   },
 
   _onresiduehover: function(residueEvent) {
