@@ -157,20 +157,7 @@ const Drawer = {
       // This is done to make the selected residues more prominent
       that.ctx.globalAlpha = data.isSelected? 1: (data.hasResidueSelection)? 0.65: 1;
       that.ctx.fillStyle = color;
-
       that.ctx.fillRect(data.xPos,data.yPos,data.rectWidth,data.rectHeight);
-      const residueTilePropsGetter = that.g.zoomer.get("residueTilePropsGetter");
-      let hasBottomBorder = false;
-      if (residueTilePropsGetter !== undefined) {
-        const tileProps = residueTilePropsGetter({x: data.x, y: data.y});
-        hasBottomBorder = _.get(tileProps, 'hasBottomBorder') || hasBottomBorder;
-      }
-      if (hasBottomBorder) {
-        // Add border at the bottom of a residue tile
-        const bottomBorderHeight = 0.1 * data.rectHeight;
-        that.ctx.fillStyle = "#888888";
-        that.ctx.fillRect(data.xPos,data.yPos + data.rectHeight - bottomBorderHeight,data.rectWidth, bottomBorderHeight);
-      }
       return that.ctx.globalAlpha = 1;
     }
   },
