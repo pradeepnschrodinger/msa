@@ -464,7 +464,7 @@ zoomer: {
     maxResidueCodeLength: 6, // maximum length of residue code to be displayed in the viewer, codes with greater length are truncated with a fading effect 
     canvasEventScale: 1,
     residueFontGetter: undefined // this can be overriden with a custom function of the following signature: (residueCode: string, pos: {x: number, y: number}) => { font: string, color: string}
-    
+
     // overview box
     boxRectHeight: 2,
     boxRectWidth: 2,
