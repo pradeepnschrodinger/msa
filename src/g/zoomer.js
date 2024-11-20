@@ -64,7 +64,7 @@ module.exports = Zoomer = Model.extend({
     maxResidueCodeLength: 6,
     canvasEventScale: 1,
     minLetterDrawSize: 11,
-    residueFontPropsGetter: undefined, // function to get the font properties for a specific residue
+    residueFontGetter: undefined, // function to get the font properties for a specific residue
 
     // overview box
     boxRectHeight: 2,
