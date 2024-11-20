@@ -14,6 +14,11 @@ module.exports = Zoomer = Model.extend({
     }), this
     );
 
+    this.listenTo( this, "change:columnWidth", () => {
+      // This recalculates the width of the alignment if the column width is changed
+      this._adjustWidth();
+    });
+
     this.listenTo(options.model, "reset add remove", () => {
       // This recalculates the width of the alignment if there is any row added or removed or reset
       this._adjustWidth();
@@ -56,6 +61,7 @@ module.exports = Zoomer = Model.extend({
     // canvas
     residueFont: "13px Helvetica Neue",
     residueFontOffset: [0, 0], // horizontal and vertical offset of residue font in px
+    maxResidueCodeLength: 6,
     canvasEventScale: 1,
     minLetterDrawSize: 11,
     residueFontGetter: undefined, // function to get the font properties for a specific residue
