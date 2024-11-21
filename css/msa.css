@@ -68,8 +68,9 @@
 
 .biojs_msa_rheaders {
   height: 100%;
-  overflow-x: hidden; /* don't show a scrollbar */
+  overflow-x: auto;
   position: relative;
+  transform: rotateX(180deg);
 }
 
 .biojs_msa_labelblock {
@@ -77,16 +78,20 @@
   box-sizing: border-box;
 }
 
-.biojs_msa_labelblock::-webkit-scrollbar, .biojs_msa_rheader::-webkit-scrollbar{
+.biojs_msa_labelblock::-webkit-scrollbar, .biojs_msa_rheaders::-webkit-scrollbar{
      /* FIX scrollbars on Mac */
     -webkit-appearance: none;
-    width: 7px;
-    height: 7px;
+    width: 11px;
+    height: 11px;
 }
-.biojs_msa_labelblock::-webkit-scrollbar-thumb, .biojs_msa_rheader::-webkit-scrollbar-thumb{
-    border-radius: 4px;
-    background-color: rgba(0,0,0,.5);
-    box-shadow: 0 0 1px rgba(255,255,255,.5);
+.biojs_msa_labelblock::-webkit-scrollbar-thumb, .biojs_msa_rheaders::-webkit-scrollbar-thumb{
+    border-radius: 6px;
+    background-color: #e1e0e0;
+    border: 2px solid transparent; /* Adds space around the thumb */
+    background-clip: content-box;
+}
+.biojs_msa_labelblock::-webkit-scrollbar-track, .biojs_msa_rheaders::-webkit-scrollbar-track {
+  background: #c3c2c2;
 }
 
 /* END BASIC */
@@ -95,6 +100,10 @@
 .biojs_msa_marker {
   color: #999;
   white-space: nowrap;
+  transform: rotateX(180deg);
+  position: absolute;
+  bottom: 0;
+  padding-top: 3px; 
 }
 
 .biojs_msa_marker .msa-col-header {
