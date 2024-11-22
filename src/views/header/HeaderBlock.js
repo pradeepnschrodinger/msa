@@ -32,7 +32,7 @@ const View = boneView.extend({
 
     this.el.style.height = (
       11 + // Height of scrollbar
-      17.5 + // Height of marker
+      19.5 + // Height of marker
       this.g.zoomer.get('rowHeight') * this.g.pinnedFeatures.getCurrentHeight()
     ) + 'px';
     this.el.className = "biojs_msa_header";
