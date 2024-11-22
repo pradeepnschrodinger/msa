@@ -86,12 +86,12 @@
 }
 .biojs_msa_labelblock::-webkit-scrollbar-thumb, .biojs_msa_rheaders::-webkit-scrollbar-thumb{
     border-radius: 6px;
-    background-color: #e1e0e0;
+    background-color: #c3c2c2;
     border: 2px solid transparent; /* Adds space around the thumb */
     background-clip: content-box;
 }
 .biojs_msa_labelblock::-webkit-scrollbar-track, .biojs_msa_rheaders::-webkit-scrollbar-track {
-  background: #c3c2c2;
+  background: #e1e0e0;
 }
 
 /* END BASIC */
@@ -103,7 +103,8 @@
   transform: rotateX(180deg);
   position: absolute;
   bottom: 0;
-  padding-top: 3px; 
+  padding: 3px 0px;
+  box-sizing: border-box;
 }
 
 .biojs_msa_marker .msa-col-header {
