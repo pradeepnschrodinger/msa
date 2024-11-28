@@ -70,6 +70,7 @@
   height: 100%;
   overflow-x: auto;
   position: relative;
+  /* Note (ritik): Rotating the element by 180deg along the X-axis to position the scroll-bar at the top of the element */
   transform: rotateX(180deg);
 }
 
@@ -82,7 +83,7 @@
      /* FIX scrollbars on Mac */
     -webkit-appearance: none;
     width: 11px;
-    height: 11px;
+    height: 11px; /* Used in the calculation for height of HeaderBlock.js */
 }
 .biojs_msa_labelblock::-webkit-scrollbar-thumb, .biojs_msa_rheaders::-webkit-scrollbar-thumb{
     border-radius: 6px;
@@ -100,10 +101,11 @@
 .biojs_msa_marker {
   color: #999;
   white-space: nowrap;
+  /* Note (ritik): Rotating the content of biojs_msa_rheaders again by 180deg along the X-axis to obtain the same orientation for the content as earlier */
   transform: rotateX(180deg);
   position: absolute;
   bottom: 0;
-  padding: 3px 0px 5px;
+  padding: 3px 0px 5px; /* Affects the marker height, which is used in the calculation for height of HeaderBlock.js */
   box-sizing: border-box;
 }
 
