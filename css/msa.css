@@ -79,19 +79,19 @@
   box-sizing: border-box;
 }
 
-.biojs_msa_labelblock::-webkit-scrollbar, .biojs_msa_rheaders::-webkit-scrollbar{
+.biojs_msa_labelblock::-webkit-scrollbar, .biojs_msa_rheaders::-webkit-scrollbar, .biojs_msa_labelblock::-moz-scrollbar, .biojs_msa_rheaders::-moz-scrollbar{
      /* FIX scrollbars on Mac */
     -webkit-appearance: none;
     width: 11px;
     height: 11px; /* Used in the calculation for height of HeaderBlock.js */
 }
-.biojs_msa_labelblock::-webkit-scrollbar-thumb, .biojs_msa_rheaders::-webkit-scrollbar-thumb{
+.biojs_msa_labelblock::-webkit-scrollbar-thumb, .biojs_msa_rheaders::-webkit-scrollbar-thumb, .biojs_msa_labelblock::-moz-scrollbar-thumb, .biojs_msa_rheaders::-moz-scrollbar-thumb{
     border-radius: 6px;
     background-color: #c3c2c2;
     border: 2px solid transparent; /* Adds space around the thumb */
     background-clip: content-box;
 }
-.biojs_msa_labelblock::-webkit-scrollbar-track, .biojs_msa_rheaders::-webkit-scrollbar-track {
+.biojs_msa_labelblock::-webkit-scrollbar-track, .biojs_msa_rheaders::-webkit-scrollbar-track, .biojs_msa_labelblock::-moz-scrollbar-track, .biojs_msa_rheaders::-moz-scrollbar-track {
   background: #e1e0e0;
 }
 
