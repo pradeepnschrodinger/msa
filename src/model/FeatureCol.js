@@ -68,7 +68,7 @@ const FeatureCol = Collection.extend({
 
   getCurrentHeight: function() {
     if (this.length === 0) {
-      return 1;
+      return 0;
     }
     return (this.max(function(el) { return el.get("row"); })).attributes.row + 1;
   },

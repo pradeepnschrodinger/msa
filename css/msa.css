@@ -68,8 +68,10 @@
 
 .biojs_msa_rheaders {
   height: 100%;
-  overflow-x: hidden; /* don't show a scrollbar */
+  overflow-x: auto;
   position: relative;
+  /* Note (ritik): Rotating the element by 180deg along the X-axis to position the scroll-bar at the top of the element */
+  transform: rotateX(180deg);
 }
 
 .biojs_msa_labelblock {
@@ -77,16 +79,20 @@
   box-sizing: border-box;
 }
 
-.biojs_msa_labelblock::-webkit-scrollbar, .biojs_msa_rheader::-webkit-scrollbar{
+.biojs_msa_labelblock::-webkit-scrollbar, .biojs_msa_rheaders::-webkit-scrollbar, .biojs_msa_labelblock::-moz-scrollbar, .biojs_msa_rheaders::-moz-scrollbar{
      /* FIX scrollbars on Mac */
     -webkit-appearance: none;
-    width: 7px;
-    height: 7px;
+    width: 11px;
+    height: 11px; /* Used in the calculation for height of HeaderBlock.js */
 }
-.biojs_msa_labelblock::-webkit-scrollbar-thumb, .biojs_msa_rheader::-webkit-scrollbar-thumb{
-    border-radius: 4px;
-    background-color: rgba(0,0,0,.5);
-    box-shadow: 0 0 1px rgba(255,255,255,.5);
+.biojs_msa_labelblock::-webkit-scrollbar-thumb, .biojs_msa_rheaders::-webkit-scrollbar-thumb, .biojs_msa_labelblock::-moz-scrollbar-thumb, .biojs_msa_rheaders::-moz-scrollbar-thumb{
+    border-radius: 6px;
+    background-color: #c3c2c2;
+    border: 2px solid transparent; /* Adds space around the thumb */
+    background-clip: content-box;
+}
+.biojs_msa_labelblock::-webkit-scrollbar-track, .biojs_msa_rheaders::-webkit-scrollbar-track, .biojs_msa_labelblock::-moz-scrollbar-track, .biojs_msa_rheaders::-moz-scrollbar-track {
+  background: #e1e0e0;
 }
 
 /* END BASIC */
@@ -95,6 +101,12 @@
 .biojs_msa_marker {
   color: #999;
   white-space: nowrap;
+  /* Note (ritik): Rotating the content of biojs_msa_rheaders again by 180deg along the X-axis to obtain the same orientation for the content as earlier */
+  transform: rotateX(180deg);
+  position: absolute;
+  bottom: 0;
+  padding: 3px 0px 5px; /* Affects the marker height, which is used in the calculation for height of HeaderBlock.js */
+  box-sizing: border-box;
 }
 
 .biojs_msa_marker .msa-col-header {
