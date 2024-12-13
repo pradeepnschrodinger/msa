@@ -72,7 +72,10 @@ const View = boneView.extend({
       this.throttledDraw = throttle(this.throttledDraw, 30);
     }
 
-    this.scrollBody = new ScrollBody(this.g, this, this.draw);
+    this.scrollBody = new ScrollBody(this.g, this, () => {
+      this.draw();
+      this.g.trigger("residue:scroll");
+    });
 
     return this.manageEvents();
   },
