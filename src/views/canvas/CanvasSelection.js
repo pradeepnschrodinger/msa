@@ -13,27 +13,19 @@ extend(CanvasSelection.prototype, {
   // returns an array with the currently selected residues
   // e.g. [0,3] = pos 0 and 3 are selected
   _getSelection: function(model) {
-    const maxLen = model.get("seq").length;
+    const seqLen = model.get("seq").length;
     const selection = [];
     const sels = this.g.selcol.getSelForRow(model.get("id"));
-    const rows = find(sels, function(el) { return el.get("type") === "row"; });
-    if ((typeof rows !== "undefined" && rows !== null)) {
-      // full match
-      const end = maxLen - 1;
-      for (let n = 0; n <= end; n++) {
-        selection.push(n);
-      }
-    } else if (sels.length > 0) {
-      for (let i = 0, sel; i < sels.length; i++) {
-        sel = sels[i];
+    _.forEach(sels, function(sel) {
+      const selType = sel.get("type");
+      if (selType === "row") {
+        selection.push(..._.range(seqLen));
+      } else {
         const start = sel.get("xStart");
         const end = sel.get("xEnd");
-        for (let n = start; n <= end; n++) {
-          selection.push(n);
-        }
+        selection.push(..._.range(start, end + 1));
       }
-    }
-
+    });
     return selection;
   },
 
