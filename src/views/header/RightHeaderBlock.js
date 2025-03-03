@@ -97,7 +97,11 @@ const View = boneView.extend({
     this.el.className = "biojs_msa_rheader";
     //@el.style.height = @g.zoomer.get("markerHeight") + "px"
     this._setWidth();
-    this._adjustScrollingLeft();
+
+    _.defer(() => {
+      this._adjustScrollingLeft();
+    });
+
     return this;
   },
 
@@ -114,6 +118,7 @@ const View = boneView.extend({
       var scrollLeft = this.g.zoomer.get("_alignmentScrollLeft");
       this.blockEvents = true;
       this.getView('headers').el.scrollLeft = scrollLeft;
+
     }
   },
 
