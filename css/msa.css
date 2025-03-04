@@ -105,7 +105,7 @@
   transform: rotateX(180deg);
   position: absolute;
   bottom: 0;
-  padding: 3px 0px 5px; /* Affects the marker height, which is used in the calculation for height of HeaderBlock.js */
+  padding: 14px 0px 5px; /* Affects the marker height, which is used in the calculation for height of HeaderBlock.js */
   box-sizing: border-box;
 }
 
