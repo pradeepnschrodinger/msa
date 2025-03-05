@@ -118,7 +118,6 @@ const View = boneView.extend({
       var scrollLeft = this.g.zoomer.get("_alignmentScrollLeft");
       this.blockEvents = true;
       this.getView('headers').el.scrollLeft = scrollLeft;
-
     }
   },
 
