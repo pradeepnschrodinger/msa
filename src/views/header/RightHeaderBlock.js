@@ -98,10 +98,7 @@ const View = boneView.extend({
     //@el.style.height = @g.zoomer.get("markerHeight") + "px"
     this._setWidth();
 
-    _.defer(() => {
-      this._adjustScrollingLeft();
-    });
-
+    this._adjustScrollingLeft();
     return this;
   },
 
