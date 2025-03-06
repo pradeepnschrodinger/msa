@@ -31,7 +31,7 @@ const View = boneView.extend({
     this.renderSubviews();
 
     this.el.style.height = (
-      11 + // Height of scrollbar
+      22 + // Height of scrollbar (11px for `always on` Scrollbar, additional 11px for overlay scrollbar)
       22 + // Height of marker
       this.g.zoomer.get('rowHeight') * this.g.pinnedFeatures.getCurrentHeight()
     ) + 'px';
